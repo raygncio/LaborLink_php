@@ -1,3 +1,7 @@
+<?php 
+ 
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -68,18 +72,19 @@
           </div>
 
           <form
-            action="cr-address.html"
+            action="cr-address.php"
             class="row g-3 needs-validation"
+            method="POST"
             novalidate
           >
             <div class="col-md-6">
               <label for="firstName" class="form-label">First name</label>
-              <input type="text" class="form-control" id="firstName" required />
+              <input type="text" class="form-control" id="firstName" name="firstName" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
               <label for="lastName" class="form-label">Last name</label>
-              <input type="text" class="form-control" id="lastName" required />
+              <input type="text" class="form-control" id="lastName" name="lastName" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
@@ -88,13 +93,14 @@
                 type="text"
                 class="form-control"
                 id="middleName"
+                name="middleName"
                 required
               />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
               <label for="suffixName" class="form-label">Suffix name</label>
-              <input type="text" class="form-control" id="suffixName" />
+              <input type="text" class="form-control" id="suffixName" name="suffixName" />
               <div class="valid-feedback">This is optional :)</div>
             </div>
             <div class="col-md-3">
@@ -103,13 +109,14 @@
                 type="date"
                 class="form-control"
                 id="birthMonth"
+                name="birthMonth"
                 required
               />
               <div class="invalid-feedback">Please select a valid date.</div>
             </div>
             <div class="col-md-3">
               <label for="sex" class="form-label">Biological Sex</label>
-              <select class="form-select" id="sex" required>
+              <select class="form-select" id="sex" name="sex" required>
                 <option selected disabled value="">Sex</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>

@@ -1,3 +1,25 @@
+<?php
+   // Initialize the session
+  session_start();
+        
+  // Store the submitted data sent
+  // via POST method, stored 
+    
+  // Temporarily in $_POST structure
+
+  $_SESSION['street_add'] = $_POST['streetAdd'];
+
+  $_SESSION['state'] = $_POST['state'];
+
+  $_SESSION['city'] = $_POST['city'];
+
+  $_SESSION['zipcode'] = $_POST['zip'];
+
+  $_SESSION['country'] = $_POST['country'];
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -68,25 +90,26 @@
           </div>
 
           <form
-            action="cr-completion.html"
+            action="cr-completion.php"
             class="row g-3 needs-validation"
+            method="POST"
             novalidate
           >
             <div class="col-md-12">
               <label for="emailAdd" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="emailAdd" required />
+              <input type="email" class="form-control" id="emailAdd" name="emailAdd" required />
               <div class="invalid-feedback">
                 Please enter a valid email address
               </div>
             </div>
             <div class="col-md-6">
               <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" required />
+              <input type="text" class="form-control" id="username" name="userName" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
               <label for="phoneNumber" class="form-label">Phone number</label>
-              <input type="text" class="form-control" id="phoneNumber" required />
+              <input type="text" class="form-control" id="phoneNumber" name= "phoneNumber" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
@@ -95,6 +118,7 @@
                 type="password"
                 class="form-control"
                 id="password"
+                name="password"
                 required
               />
               <div id="passwordHelpBlock" class="form-text">

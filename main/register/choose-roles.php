@@ -1,3 +1,7 @@
+<?php 
+  include "register.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -48,7 +52,7 @@
                 <img src="../icons/user.jpg" class="card-img-top" alt="user">
                 <div class="card-body">
                   <h3 class="card-title header blue-font">As a Customer</h3>
-                  <a href="cr-userprof.html" class="btn btn-primary blue-btn">Register</a>
+                  <a href="cr-userprof.php" class="btn btn-primary blue-btn">Register</a>
                 </div>
             </div>
         </div>

@@ -1,3 +1,27 @@
+<?php 
+
+  // Initialize the session
+  session_start();
+        
+  // Store the submitted data sent
+  // via POST method, stored 
+    
+  // Temporarily in $_POST structure
+
+  $_SESSION['first_name'] = $_POST['firstName'];
+
+  $_SESSION['last_name'] = $_POST['lastName'];
+
+  $_SESSION['middle_name'] = $_POST['middleName'];
+
+  $_SESSION['suffix_name'] = $_POST['suffixName'];
+
+  $_SESSION['dob'] = $_POST['birthMonth'];
+
+  $_SESSION['sex'] = $_POST['sex'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -68,28 +92,29 @@
           </div>
 
           <form
-            action="cr-account.html"
+            action="cr-account.php"
             class="row g-3 needs-validation"
+            method="POST"
             novalidate
           >
             <div class="col-md-12">
               <label for="streetAdd" class="form-label">Street Address</label>
-              <input type="text" class="form-control" id="streetAdd" required />
+              <input type="text" class="form-control" id="streetAdd" name="streetAdd" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
               <label for="state" class="form-label">State/Province</label>
-              <input type="text" class="form-control" id="state" required />
+              <input type="text" class="form-control" id="state" name="state" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
               <label for="city" class="form-label">City</label>
-              <input type="text" class="form-control" id="city" required />
+              <input type="text" class="form-control" id="city" name="city" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-3">
               <label for="zip" class="form-label">Zip COde</label>
-              <input type="text" class="form-control" id="zip" required />
+              <input type="text" class="form-control" id="zip" name="zip" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-3">
@@ -99,6 +124,7 @@
                 class="form-control"
                 id="country"
                 value="Philippines"
+                name="country"
                 required
               />
               <div class="valid-feedback">Yeah</div>
