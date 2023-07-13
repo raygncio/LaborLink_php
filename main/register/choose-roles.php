@@ -57,7 +57,7 @@
                 <img src="../icons/worker.jpg" class="card-img-top" alt="worker">
                 <div class="card-body">
                   <h3 class="card-title header orange-font">As a Laborer</h3>
-                  <a href="lr-userprof.html" class="btn btn-primary orange-btn">Register</a>
+                  <a href="lr-userprof.php" class="btn btn-primary orange-btn">Register</a>
                 </div>
             </div>
         </div>

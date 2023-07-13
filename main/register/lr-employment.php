@@ -1,3 +1,23 @@
+<?php
+   // Initialize the session
+  session_start();
+        
+  // Store the submitted data sent
+  // via POST method, stored 
+    
+  // Temporarily in $_POST structure
+
+  $_SESSION['street_add'] = $_POST['streetAdd'];
+
+  $_SESSION['state'] = $_POST['state'];
+
+  $_SESSION['city'] = $_POST['city'];
+
+  $_SESSION['zipcode'] = $_POST['zip'];
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -21,7 +41,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="../app.css" />
   </head>
 
   <body>
@@ -49,12 +69,12 @@
               <a class="nav-link disabled" href="#">User Profile</a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link active" aria-current="page" href="#"
-                >Address</a
-              >
+              <a class="nav-link disabled" href="#">Address</a>
             </li>
             <li class="nav-item mt-2">
-              <a class="nav-link disabled" href="#">Employment Info</a>
+              <a class="nav-link active" aria-current="page" href="#"
+                >Employment Info</a
+              >
             </li>
             <li class="nav-item mt-2">
               <a class="nav-link disabled" href="#">Account Info</a>
@@ -66,45 +86,90 @@
         </div>
         <div class="col-7 border whites p-4 orange-font regForms">
           <div class="row">
-            <h3 class="header">Residential Address</h3>
+            <h3 class="header">Employment Information and Certification</h3>
             <hr />
           </div>
 
           <form
-            action="lr-employment.html"
+            action="lr-account.php"
             class="row g-3 needs-validation"
+            method="POST"
             novalidate
           >
-            <div class="col-md-12">
-              <label for="streetAdd" class="form-label">Street Address</label>
-              <input type="text" class="form-control" id="streetAdd" required />
+            <div class="col-md-6">
+              <label for="employmentType" class="form-label"
+                >Type of Employment</label
+              >
+              <select class="form-select" id="employmentType" name="employmentType" required>
+                <option selected disabled value="">Type of Employment</option>
+                <option value="Employed">Employed</option>
+                <option value="Employed">Self-employed</option>
+                <option value="Unnemployed">Business Owner</option>
+                <option value="Unnemployed">Unemployed</option>
+              </select>
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
-              <label for="state" class="form-label">State/Province</label>
-              <input type="text" class="form-control" id="state" required />
+              <label for="employer" class="form-label">Employer</label>
+              <input type="text" class="form-control" id="employer" name="employer" required />
+              <div id="passwordHelpBlock" class="form-text">
+                Type "N/A" if not applicable
+              </div>
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
-              <label for="city" class="form-label">City</label>
-              <input type="text" class="form-control" id="city" required />
+              <label for="validID" class="form-label">Any valid ID</label>
+              <select class="form-select" id="validID" name="validID" required>
+                <option selected disabled value="">Type of ID</option>
+                <option value="passport">Passport</option>
+                <option value="tin">TIN ID</option>
+                <option value="drvlicense">Driver's License</option>
+                <option value="sss">SSS</option>
+                <option value="voters">Voter's ID</option>
+                <option value="others">Others</option>
+              </select>
+              <div id="validIDHelp" class="form-text">
+                *2 ID required if employed: 1 any valid ID, 1 TIN
+              </div>
               <div class="valid-feedback">Looks good!</div>
             </div>
-            <div class="col-md-3">
-              <label for="zip" class="form-label">Zip COde</label>
-              <input type="text" class="form-control" id="zip" required />
-              <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="col-md-3">
-              <label for="country" class="form-label">Country</label>
+            <div class="col-md-6">
+              <label for="validIDFile" class="form-label">Attachment/s 1</label>
               <input
-                type="text"
+                type="file"
                 class="form-control"
-                id="country"
-                value="Philippines"
-                required
+                id="validIDFile"
+                name="validIDFile"
+                multiple
+                disabled
               />
-              <div class="valid-feedback">Yeah</div>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="col-md-6">
+              <label for="proof" class="form-label"
+                >Choose Proof of Employment/Profession</label
+              >
+              <select class="form-select" id="proof" name="proof" required>
+                <option selected disabled value="">Type of Proof</option>
+                <option value="Certification">Certification</option>
+                <option value="Letter">Letter</option>
+              </select>
+              <div id="proofHelp" class="form-text">
+                *DTI is required for business owners
+              </div>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="col-md-6">
+              <label for="proofFile" class="form-label">Attachment 2</label>
+              <input
+                type="file"
+                class="form-control"
+                id="proofFile"
+                name="proofFile"
+                multiple
+                disabled
+              />
+              <div class="valid-feedback">Looks good!</div>
             </div>
 
             <div class="col-12 text-end">

@@ -1,3 +1,77 @@
+<?php
+  //Initializing the session
+  session_start();
+      
+  include "../config.php";
+  include "../register/verify-acc.php";
+
+  // prevent resubmission upon refresh
+  if (empty($_SESSION['first_name']) ||
+      empty($_SESSION['last_name']) ||
+      empty($_SESSION['dob']) ||
+      empty($_SESSION['sex']) ||
+      empty($_SESSION['street_add']) ||
+      empty($_SESSION['state']) ||
+      empty($_SESSION['city']) ||
+      empty($_SESSION['zipcode'])) {
+      
+        header("Location: ../index.html");
+
+        //clear post and session data
+        $_POST = array();
+        session_destroy();
+        
+        $conn->close();
+        exit;
+
+      }
+
+  if (!accDetailsTaken()) {
+
+  //writing MySQL Query to insert the details
+  $insert_query = "INSERT INTO users (
+                  user_role,
+                  first_name,
+                  last_name,
+                  middle_name,
+                  suffix,
+                  dob,
+                  sex,
+                  street_address,
+                  state,
+                  city,
+                  zip_code,
+                  email_add,
+                  username,
+                  phone_number,
+                  password,
+                  status
+                  ) VALUES (
+                  'client',
+                  '$_SESSION[first_name]',
+                  '$_SESSION[last_name]',
+                  '$_SESSION[middle_name]',
+                  '$_SESSION[suffix_name]',
+                  '$_SESSION[dob]',
+                  '$_SESSION[sex]',
+                  '$_SESSION[street_add]',
+                  '$_SESSION[state]',
+                  '$_SESSION[city]',
+                  '$_SESSION[zipcode]',
+                  '$_POST[emailAdd]',
+                  '$_POST[userName]',
+                  '$_POST[phoneNumber]',
+                  '$_POST[password]',
+                  'active'
+                  )";
+
+  $result = $conn->query($insert_query);
+  
+  }
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -21,7 +95,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="../app.css" />
   </head>
 
   <body>

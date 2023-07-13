@@ -1,3 +1,26 @@
+<?php
+   // Initialize the session
+  session_start();
+        
+  // Store the submitted data sent
+  // via POST method, stored 
+    
+  // Temporarily in $_POST structure
+
+  $_SESSION['employment_type'] = $_POST['employmentType'];
+
+  $_SESSION['employer'] = $_POST['employer'];
+
+  $_SESSION['valid_ID'] = $_POST['validID'];
+
+  $_SESSION['valid_ID_File'] = $_POST['validIDFile'];
+
+  $_SESSION['proof'] = $_POST['proof'];
+
+  $_SESSION['proof_file'] = $_POST['proofFile'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -21,7 +44,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="../app.css" />
   </head>
 
   <body>
@@ -71,25 +94,27 @@
           </div>
 
           <form
-            action="lr-completion.html"
+            action="lr-completion.php"
             class="row g-3 needs-validation"
+            method="POST"
+            onsubmit="validate_password();"
             novalidate
           >
             <div class="col-md-12">
               <label for="emailAdd" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="emailAdd" required />
+              <input type="email" class="form-control" id="emailAdd" name="emailAdd" required />
               <div class="invalid-feedback">
                 Please enter a valid email address
               </div>
             </div>
             <div class="col-md-6">
               <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" required />
+              <input type="text" class="form-control" id="username" name="userName" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
               <label for="phoneNumber" class="form-label">Phone number</label>
-              <input type="text" class="form-control" id="phoneNumber" required />
+              <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required />
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="col-md-6">
@@ -98,6 +123,7 @@
                 type="password"
                 class="form-control"
                 id="password"
+                name="password"
                 required
               />
               <div id="passwordHelpBlock" class="form-text">
@@ -115,6 +141,7 @@
                 type="password"
                 class="form-control"
                 id="password"
+                name="passwordConfirm"
                 required
               />
               <div class="invalid-feedback">Password doesn't match</div>
@@ -172,6 +199,23 @@
         });
       })();
     </script>
+
+    <script type="text/javascript">
+      function validate_password() {
+    
+        var pass = document.getElementById('password').value;
+        var confirm_pass = document.getElementById('passwordConfirm').value;
+        if (pass != confirm_pass) {
+          alert("Password doesn't match!");
+          event.preventDefault(); 
+          returnToPreviousPage();
+          return false;
+        }
+        return true;
+                
+      }
+    </script>
+
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"

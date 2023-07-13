@@ -8,7 +8,6 @@
   // prevent resubmission upon refresh
   if (empty($_SESSION['first_name']) ||
       empty($_SESSION['last_name']) ||
-      empty($_SESSION['middle_name']) ||
       empty($_SESSION['dob']) ||
       empty($_SESSION['sex']) ||
       empty($_SESSION['street_add']) ||

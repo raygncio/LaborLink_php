@@ -15,7 +15,7 @@
 
   $_SESSION['zipcode'] = $_POST['zip'];
 
-  $_SESSION['country'] = $_POST['country'];
+  //$_SESSION['country'] = $_POST['country'];
 
 ?>
 
