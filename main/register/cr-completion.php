@@ -2,26 +2,27 @@
   //Initializing the session
   session_start();
       
-  include "config.php";
+  include "../config.php";
 
+  
   //writing MySQL Query to insert the details
-  $insert_query = "INSERT INTO 'users' (
-                  'user_role',
-                  'first_name',
-                  'last_name',
-                  'middle_name',
-                  'suffix',
-                  'dob',
-                  'sex',
-                  'street_address',
-                  'state',
-                  'city',
-                  'zip_code',
-                  'email_add',
-                  'username',
-                  'phone_number',
-                  'password',
-                  'status',
+  $insert_query = "INSERT INTO users (
+                  user_role,
+                  first_name,
+                  last_name,
+                  middle_name,
+                  suffix,
+                  dob,
+                  sex,
+                  street_address,
+                  state,
+                  city,
+                  zip_code,
+                  email_add,
+                  username,
+                  phone_number,
+                  password,
+                  status
                   ) VALUES (
                   'client',
                   '$_SESSION[first_name]',
@@ -34,7 +35,6 @@
                   '$_SESSION[state]',
                   '$_SESSION[city]',
                   '$_SESSION[zipcode]',
-                  '$_SESSION[country]',
                   '$_POST[emailAdd]',
                   '$_POST[userName]',
                   '$_POST[phoneNumber]',
@@ -43,18 +43,7 @@
                   )";
 
   $result = $conn->query($insert_query);
-
-  if ($result == TRUE) {
-              
-    echo "New record created successfully.";
-              
-  }else{
-              
-    echo "Error:". $sql . "<br>". $conn->error;
-              
-  } 
-              
-  $conn->close(); 
+  
 
 ?>
 
@@ -81,7 +70,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="../app.css" />
   </head>
 
   <body>
@@ -123,21 +112,56 @@
         </div>
         <div class="col-7 border whites p-4 orange-font regForms">
           <div class="row justify-content-center py-4">
-            <div class="col-12">
-              <img
-                src="../icons/login/done.png"
-                class="img-fluid mx-auto d-block"
-                alt="..."
-              />
-            </div>
-            <div class="col-12 mt-3">
-              <h3 class="display-4 header text-center">Congratulations!</h3>
-            </div>
-            <div class="col-12 mb-5">
-              <p class="header text-center">
-                Your account has been successfully created!
-              </p>
-            </div>
+            <!--MESSAGE-->
+            <?php 
+            if ($result == TRUE) {
+               
+              echo "
+              <div class='col-12'>
+                <img
+                  src='../icons/login/done.png'
+                  class='img-fluid mx-auto d-block'
+                  alt='...'
+                />
+              </div>
+              <div class='col-12 mt-3'>
+                <h3 class='display-4 header text-center'>Congratulations!</h3>
+              </div>
+              <div class='col-12 mb-5'>
+                <p class='header text-center'>
+                  Your account has been successfully created! :)
+                </p>
+              </div>
+              ";
+                        
+            } else {
+
+              echo "
+              <div class='col-12'>
+                <img
+                  src='../icons/login/oh-no.png'
+                  class='img-fluid mx-auto d-block'
+                  alt='...'
+                />
+              </div>
+              <div class='col-12 mt-3'>
+                <h3 class='display-4 header text-center'>Oh no!</h3>
+              </div>
+              <div class='col-12 mb-5'>
+                <p class='header text-center'>
+                  Error: . $sql . <br> . $conn->error;
+                </p>
+              </div>
+              ";
+                               
+                        
+            } 
+                        
+            $conn->close();
+
+
+            ?>
+            <!--BUTTONS-->
             <div class="col-5">
               <a
                 href="../index.html"

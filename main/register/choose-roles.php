@@ -1,7 +1,3 @@
-<?php 
-  include "register.php";
-?>
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,7 +20,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="../app.css" />
   </head>
 
   <body>

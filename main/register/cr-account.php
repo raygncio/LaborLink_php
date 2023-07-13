@@ -43,7 +43,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="../app.css" />
   </head>
 
   <body>
