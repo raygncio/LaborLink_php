@@ -5,6 +5,28 @@
   include "../config.php";
   include "../register/verify-acc.php";
 
+  // prevent resubmission upon refresh
+  if (empty($_SESSION['first_name']) ||
+      empty($_SESSION['last_name']) ||
+      empty($_SESSION['middle_name']) ||
+      empty($_SESSION['dob']) ||
+      empty($_SESSION['sex']) ||
+      empty($_SESSION['street_add']) ||
+      empty($_SESSION['state']) ||
+      empty($_SESSION['city']) ||
+      empty($_SESSION['zipcode'])) {
+      
+        header("Location: ../index.html");
+
+        //clear post and session data
+        $_POST = array();
+        session_destroy();
+        
+        $conn->close();
+        exit;
+
+      }
+
   if (!accDetailsTaken()) {
 
   //writing MySQL Query to insert the details
@@ -174,7 +196,7 @@
                 </div>
                 <div class='col-12 mb-5'>
                   <p class='header text-center'>
-                    Please try again!
+                    SQL ERROR. Please try again!
                   </p>
                 </div>
                 ";
@@ -183,13 +205,6 @@
               }
             } 
             
-            //clear post and session data
-            $_POST = array();
-            session_destroy();
-            
-            $conn->close();
-
-
             ?>
             <!--BUTTONS-->
             <div class="col-5">
@@ -210,6 +225,15 @@
                 Login
               </a>
             </div>
+            <?php 
+              //clear post and session data and close connection
+              $_POST = array();
+              session_destroy();
+              
+              $conn->close();
+              exit;
+            ?>
+            <!--END OF BUTTONS-->
           </div>
         </div>
       </div>
