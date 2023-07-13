@@ -13,7 +13,11 @@
       empty($_SESSION['street_add']) ||
       empty($_SESSION['state']) ||
       empty($_SESSION['city']) ||
-      empty($_SESSION['zipcode'])) {
+      empty($_SESSION['zipcode']) ||
+      empty($_SESSION['specialization']) ||
+      empty($_SESSION['employment_type']) ||
+      empty($_SESSION['valid_ID']) ||
+      empty($_SESSION['proof'])) {
       
         header("Location: ../index.html");
 
@@ -24,7 +28,7 @@
         $conn->close();
         exit;
 
-      }
+  }
 
   if (!accDetailsTaken()) {
 
@@ -66,6 +70,48 @@
                   )";
 
   $result = $conn->query($insert_query);
+
+  //set file inputs to empty 
+  if(!isset($_SESSION['valid_ID_File']) && !isset($_SESSION['proof_file'])) {
+    $_SESSION['valid_ID_File'] = "";
+    $_SESSION['proof_file'] = "";
+  }
+
+  //get user id
+  $get_user_details = "SELECT username, user_id FROM users";
+  $get_user_result = $conn->query($get_user_details);
+  if ($get_user_result->num_rows > 0) {
+    while ($row = $get_user_result->fetch_assoc()) {
+      if ($row['username'] == $_POST['userName']) {
+        $user_id = $row['user_id'];
+      } 
+    }
+  }
+    
+
+  $insert_query_2 = "INSERT INTO applications (
+    application_status,
+    specialization,
+    employment_type,
+    employer,
+    valid_id,
+    valid_id_proof,
+    certification,
+    certification_proof,
+    user_id
+    ) VALUES (
+    'pending',
+    '$_SESSION[specialization]',
+    '$_SESSION[employment_type]',
+    '$_SESSION[employer]',
+    '$_SESSION[valid_ID]',
+    '$_SESSION[valid_ID_File]',
+    '$_SESSION[proof]',
+    '$_SESSION[proof_file]',
+    '$user_id'
+    )";
+
+  $result_2 = $conn->query($insert_query_2);
   
   }
 
@@ -140,21 +186,75 @@
         </div>
         <div class="col-7 border whites p-4 orange-font regForms">
           <div class="row justify-content-center py-4">
-            <div class="col-12">
-              <img
-                src="../icons/login/done.png"
-                class="img-fluid mx-auto d-block"
-                alt="..."
-              />
-            </div>
-            <div class="col-12 mt-3">
-              <h3 class="display-4 header text-center">Congratulations!</h3>
-            </div>
-            <div class="col-12 mb-5">
-              <p class="header text-center">
-                Your account has been successfully created!
-              </p>
-            </div>
+            <!--MESSAGE-->
+            <?php 
+
+            if (accDetailsTaken()) {
+              echo "
+              <div class='col-3'>
+                <img
+                  src='../icons/login/oh-no.png'
+                  class='img-fluid mx-auto d-block'
+                  style='wdith: 50px;'
+                  alt='...'
+                />
+              </div>
+              <div class='col-12 mt-3'>
+                <h3 class='display-4 header text-center'>Oh no!</h3>
+              </div>
+              <div class='col-12 mb-5'>
+                <p class='header text-center'>
+                  Your email add or username is already taken. <br> Kindly register again.
+                </p>
+              </div>
+              ";
+            } else {
+
+              if ($result == TRUE && $result_2 == TRUE) {
+                
+                  echo "
+                  <div class='col-12'>
+                    <img
+                      src='../icons/login/done.png'
+                      class='img-fluid mx-auto d-block'
+                      alt='...'
+                    />
+                  </div>
+                  <div class='col-12 mt-3'>
+                    <h3 class='display-4 header text-center'>One step closer!</h3>
+                  </div>
+                  <div class='col-12 mb-5'>
+                    <p class='header text-center'>
+                      Your laborer application is being reviewed! 
+                    </p>
+                  </div>
+                  ";
+                            
+                } else {
+
+                  echo "
+                  <div class='col-3'>
+                    <img
+                      src='../icons/login/oh-no.png'
+                      class='img-fluid mx-auto d-block'
+                      alt='...'
+                    />
+                  </div>
+                  <div class='col-12 mt-3'>
+                    <h3 class='display-4 header text-center'>Oh no!</h3>
+                  </div>
+                  <div class='col-12 mb-5'>
+                    <p class='header text-center'>
+                      SQL ERROR. Please try again!
+                    </p>
+                  </div>
+                  ";
+                                          
+                }
+            } 
+            
+            ?>
+            <!--BUTTONS-->
             <div class="col-5">
               <a
                 href="../index.html"
@@ -173,6 +273,15 @@
                 Login
               </a>
             </div>
+            <?php 
+              //clear post and session data and close connection
+              $_POST = array();
+              session_destroy();
+              
+              $conn->close();
+              exit;
+            ?>
+            <!--END OF BUTTONS-->
           </div>
         </div>
       </div>

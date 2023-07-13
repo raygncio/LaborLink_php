@@ -90,9 +90,8 @@
                 class="form-control"
                 id="middleName"
                 name="middleName"
-                required
               />
-              <div class="valid-feedback">Looks good!</div>
+              <div class="valid-feedback">This is optional :)</div>
             </div>
             <div class="col-md-6">
               <label for="suffixName" class="form-label">Suffix name</label>

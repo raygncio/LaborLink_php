@@ -15,11 +15,11 @@
 
   $_SESSION['valid_ID'] = $_POST['validID'];
 
-  $_SESSION['valid_ID_File'] = $_POST['validIDFile'];
+  //$_SESSION['valid_ID_File'] = $_POST['validIDFile'];
 
   $_SESSION['proof'] = $_POST['proof'];
 
-  $_SESSION['proof_file'] = $_POST['proofFile'];
+  //$_SESSION['proof_file'] = $_POST['proofFile'];
 
 ?>
 
