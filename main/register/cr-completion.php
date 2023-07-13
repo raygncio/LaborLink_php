@@ -3,8 +3,10 @@
   session_start();
       
   include "../config.php";
+  include "../register/verify-acc.php";
 
-  
+  if (!accDetailsTaken()) {
+
   //writing MySQL Query to insert the details
   $insert_query = "INSERT INTO users (
                   user_role,
@@ -44,6 +46,7 @@
 
   $result = $conn->query($insert_query);
   
+  }
 
 ?>
 
@@ -114,33 +117,14 @@
           <div class="row justify-content-center py-4">
             <!--MESSAGE-->
             <?php 
-            if ($result == TRUE) {
-               
-              echo "
-              <div class='col-12'>
-                <img
-                  src='../icons/login/done.png'
-                  class='img-fluid mx-auto d-block'
-                  alt='...'
-                />
-              </div>
-              <div class='col-12 mt-3'>
-                <h3 class='display-4 header text-center'>Congratulations!</h3>
-              </div>
-              <div class='col-12 mb-5'>
-                <p class='header text-center'>
-                  Your account has been successfully created! :)
-                </p>
-              </div>
-              ";
-                        
-            } else {
 
+            if (accDetailsTaken()) {
               echo "
-              <div class='col-12'>
+              <div class='col-3'>
                 <img
                   src='../icons/login/oh-no.png'
                   class='img-fluid mx-auto d-block'
+                  style='wdith: 50px;'
                   alt='...'
                 />
               </div>
@@ -149,14 +133,60 @@
               </div>
               <div class='col-12 mb-5'>
                 <p class='header text-center'>
-                  Error: . $sql . <br> . $conn->error;
+                  Your email add or username is already taken. <br> Kindly register again.
                 </p>
               </div>
               ";
-                               
-                        
+            } else {
+
+            if ($result == TRUE) {
+               
+                echo "
+                <div class='col-12'>
+                  <img
+                    src='../icons/login/done.png'
+                    class='img-fluid mx-auto d-block'
+                    alt='...'
+                  />
+                </div>
+                <div class='col-12 mt-3'>
+                  <h3 class='display-4 header text-center'>Congratulations!</h3>
+                </div>
+                <div class='col-12 mb-5'>
+                  <p class='header text-center'>
+                    Your account has been successfully created! :)
+                  </p>
+                </div>
+                ";
+                          
+              } else {
+
+                echo "
+                <div class='col-3'>
+                  <img
+                    src='../icons/login/oh-no.png'
+                    class='img-fluid mx-auto d-block'
+                    alt='...'
+                  />
+                </div>
+                <div class='col-12 mt-3'>
+                  <h3 class='display-4 header text-center'>Oh no!</h3>
+                </div>
+                <div class='col-12 mb-5'>
+                  <p class='header text-center'>
+                    Please try again!
+                  </p>
+                </div>
+                ";
+                                
+                          
+              }
             } 
-                        
+            
+            //clear post and session data
+            $_POST = array();
+            session_destroy();
+            
             $conn->close();
 
 

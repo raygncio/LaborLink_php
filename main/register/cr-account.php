@@ -28,7 +28,7 @@
     <title>Customer Registration</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,7 +50,7 @@
     <nav id="landingNav" class="navbar bg-light p-3">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
-          <img src="icons/LOGO.png" alt="logo" width="200" />
+          <img src="../icons/LOGO.png" alt="logo" width="200" />
         </a>
       </div>
     </nav>
@@ -93,6 +93,7 @@
             action="cr-completion.php"
             class="row g-3 needs-validation"
             method="POST"
+            onsubmit="validate_password();"
             novalidate
           >
             <div class="col-md-12">
@@ -135,10 +136,11 @@
               <input
                 type="password"
                 class="form-control"
-                id="password"
+                id="passwordConfirm"
+                name="passwordConfirm"
                 required
               />
-              <div class="invalid-feedback">Password doesn't match</div>
+              <div class="invalid-feedback">Re-enter password</div>
             </div>
 
             <div class="col-12">
@@ -160,7 +162,7 @@
             </div>
 
             <div class="col-12 text-end">
-              <button class="btn btn-primary orange-btn" type="submit">
+              <button id="submit" class="btn btn-primary orange-btn" type="submit">
                 Submit
               </button>
             </div>
@@ -192,6 +194,24 @@
           );
         });
       })();
+    </script>
+
+    <script type="text/javascript">
+        function validate_password() {
+ 
+            var pass = document.getElementById('password').value;
+            var confirm_pass = document.getElementById('passwordConfirm').value;
+            if (pass != confirm_pass) {
+              alert("Password doesn't match!");
+              event.preventDefault(); 
+              returnToPreviousPage();
+              return false;
+            }
+            return true;
+            
+        }
+
+ 
     </script>
 
     <script
