@@ -96,6 +96,25 @@
             method="POST"
             novalidate
           >
+          <div class="col-md-12">
+              <label for="specialization" class="form-label"
+                >Specialization</label
+              >
+              <select class="form-select" id="specialization" name="specialization" required>
+                <option selected disabled value="">Specialization</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="Roofing">Roofing</option>
+                <option value="Appliances">Appliances</option>
+                <option value="Welding">Welding</option>
+                <option value="Housekeeping">Housekeeping</option>
+                <option value="Painting">Painting</option>
+                <option value="Pest Control">Pest Control</option>
+                <option value="Tutoring">Tutoring</option>
+              </select>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
             <div class="col-md-6">
               <label for="employmentType" class="form-label"
                 >Type of Employment</label

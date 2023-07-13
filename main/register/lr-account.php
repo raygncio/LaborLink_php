@@ -7,6 +7,8 @@
     
   // Temporarily in $_POST structure
 
+  $_SESSION['specialization'] = $_POST['specialization'];
+
   $_SESSION['employment_type'] = $_POST['employmentType'];
 
   $_SESSION['employer'] = $_POST['employer'];
