@@ -1,118 +1,97 @@
 <?php
-  //Initializing the session
-  session_start();
-      
-  include "../config.php";
-  include "../register/verify-acc.php";
 
-  // prevent resubmission upon refresh
-  if (empty($_SESSION['first_name']) ||
-      empty($_SESSION['last_name']) ||
-      empty($_SESSION['dob']) ||
-      empty($_SESSION['sex']) ||
-      empty($_SESSION['street_add']) ||
-      empty($_SESSION['state']) ||
-      empty($_SESSION['city']) ||
-      empty($_SESSION['zipcode']) ||
-      empty($_SESSION['specialization']) ||
-      empty($_SESSION['employment_type']) ||
-      empty($_SESSION['valid_ID']) ||
-      empty($_SESSION['proof'])) {
-      
-        header("Location: ../index.html");
+  if (isset($_POST['submit'])) {
 
-        //clear post and session data
-        $_POST = array();
-        session_destroy();
-        
-        $conn->close();
-        exit;
+    //Initializing the session
+    session_start();
 
-  }
-
-  if (!accDetailsTaken()) {
-
-  //writing MySQL Query to insert the details
-  $insert_query = "INSERT INTO users (
-                  user_role,
-                  first_name,
-                  last_name,
-                  middle_name,
-                  suffix,
-                  dob,
-                  sex,
-                  street_address,
-                  state,
-                  city,
-                  zip_code,
-                  email_add,
-                  username,
-                  phone_number,
-                  password,
-                  status
-                  ) VALUES (
-                  'client',
-                  '$_SESSION[first_name]',
-                  '$_SESSION[last_name]',
-                  '$_SESSION[middle_name]',
-                  '$_SESSION[suffix_name]',
-                  '$_SESSION[dob]',
-                  '$_SESSION[sex]',
-                  '$_SESSION[street_add]',
-                  '$_SESSION[state]',
-                  '$_SESSION[city]',
-                  '$_SESSION[zipcode]',
-                  '$_POST[emailAdd]',
-                  '$_POST[userName]',
-                  '$_POST[phoneNumber]',
-                  '$_POST[password]',
-                  'active'
-                  )";
-
-  $result = $conn->query($insert_query);
-
-  //set file inputs to empty 
-  if(!isset($_SESSION['valid_ID_File']) && !isset($_SESSION['proof_file'])) {
-    $_SESSION['valid_ID_File'] = "";
-    $_SESSION['proof_file'] = "";
-  }
-
-  //get user id
-  $get_user_details = "SELECT username, user_id FROM users";
-  $get_user_result = $conn->query($get_user_details);
-  if ($get_user_result->num_rows > 0) {
-    while ($row = $get_user_result->fetch_assoc()) {
-      if ($row['username'] == $_POST['userName']) {
-        $user_id = $row['user_id'];
-      } 
+    //set middle and suffix to empty
+    if(!isset($_SESSION['middle_name']) || empty($_SESSION['middle_name'])) {
+      $middle_name = "";
     }
-  }
-    
 
-  $insert_query_2 = "INSERT INTO applications (
-    application_status,
-    specialization,
-    employment_type,
-    employer,
-    valid_id,
-    valid_id_proof,
-    certification,
-    certification_proof,
-    user_id
-    ) VALUES (
-    'pending',
-    '$_SESSION[specialization]',
-    '$_SESSION[employment_type]',
-    '$_SESSION[employer]',
-    '$_SESSION[valid_ID]',
-    '$_SESSION[valid_ID_File]',
-    '$_SESSION[proof]',
-    '$_SESSION[proof_file]',
-    '$user_id'
-    )";
+    if(!isset($_SESSION['suffix_name']) || empty($_SESSION['suffix_name'])) {
+      $suffix_name = "";
+    }
 
-  $result_2 = $conn->query($insert_query_2);
-  
+    //set file inputs to empty 
+    if(!isset($_SESSION['valid_ID_File']) && !isset($_SESSION['proof_file'])) {
+      $valid_id_proof = "";
+      $cert_proof = "";
+    }
+
+    //initialize session data
+    $first_name = $_SESSION['first_name'];
+    $last_name = $_SESSION['last_name'];
+    $middle_name = $_SESSION['middle_name']; //optional
+    $suffix_name = $_SESSION['suffix_name']; //optional
+    $dob = $_SESSION['dob'];
+    $sex = $_SESSION['sex'];
+    $street_add = $_SESSION['street_add'];
+    $state = $_SESSION['state'];
+    $city = $_SESSION['city'];
+    $zipcode = $_SESSION['zipcode'];
+    $specialization = $_SESSION['specialization'];
+    $employment_type = $_SESSION['employment_type'];
+    $employer = $_SESSION['employer'];
+    $valid_id = $_SESSION['valid_ID'];
+    $valid_id_proof = $_SESSION['valid_ID_File']; //optional
+    $cert = $_SESSION['proof'];
+    $cert_proof = $_SESSION['proof_file']; //optional
+
+    //initialize post data
+    $email_add = $_POST['emailAdd'];
+    $username = $_POST['userName'];
+    $phone_number = $_POST['phoneNumber'];
+    $password = $_POST['password'];
+
+    //others
+    $user_role = "laborer";
+    $status = "pending";
+    $application_status = "pending";
+
+
+    require_once "../includes/config.php";
+    require_once "../includes/functions.php";
+
+    //error handling found inside functions.php
+    if(emptyInputSignup($first_name, $last_name, $dob, $sex, $street_add,
+    $state, $city, $zipcode, $specialization, $employment_type, $employer,
+    $valid_id, $cert, $email_add, $username, $phone_number, $password) !== false ) {
+      header("Location: choose-roles.php?error=emptyinput");
+      exit();
+    }
+
+    if(invalidUid($username) !== false ) {
+      header("Location: choose-roles.php?error=invaliduid");
+      exit();
+    }
+
+    /*
+    $password_confirm = $_POST['passwordConfirm']
+    if(pwdMatch($password, $password_confirm) !== false ) {
+      header("Location: choose-roles.php?error=passwordsdontmatch");
+      exit();
+    }
+    */
+
+    if(uidExists($conn, $username, $email_add) !== false) {
+      header("Location: choose-roles.php?error=usernameoremailtaken");
+      exit();
+    }
+
+    createUser($conn, $user_role, $first_name, $last_name, $middle_name, $suffix_name, $dob, 
+    $sex, $street_add, $state, $city, $zipcode, $email_add, $username, $phone_number, $password, $status);
+
+    //get user id of newly created user
+    $user_id = getUserId($conn, $username);
+
+    createLaborer($conn, $application_status, $specialization, $employment_type,
+    $employer, $valid_id, $valid_id_proof, $cert, $cert_proof, $user_id);
+
+  } else {
+    header("Location: choose-roles.php");
+    exit();
   }
 
 ?>

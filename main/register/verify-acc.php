@@ -2,7 +2,7 @@
 
     function accDetailsTaken() {
     
-    include "../config.php";
+    include "../includes/config.php";
 
     $sql = "SELECT email_add, username FROM users";
 

@@ -2,7 +2,7 @@
   //Initializing the session
   session_start();
       
-  include "../config.php";
+  include "../includes/config.php";
   include "../register/verify-acc.php";
 
   // prevent resubmission upon refresh
