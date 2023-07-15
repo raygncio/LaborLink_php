@@ -2,71 +2,89 @@
   //Initializing the session
   session_start();
       
-  include "../includes/config.php";
-  include "../register/verify-acc.php";
+  if (isset($_POST['submit'])) {   
 
-  // prevent resubmission upon refresh
-  if (empty($_SESSION['first_name']) ||
-      empty($_SESSION['last_name']) ||
-      empty($_SESSION['dob']) ||
-      empty($_SESSION['sex']) ||
-      empty($_SESSION['street_add']) ||
-      empty($_SESSION['state']) ||
-      empty($_SESSION['city']) ||
-      empty($_SESSION['zipcode'])) {
+    //set middle and suffix to empty
+    if(!isset($_SESSION['middle_name']) || empty($_SESSION['middle_name'])) {
+      $middle_name = "";
+    }
+
+    if(!isset($_SESSION['suffix_name']) || empty($_SESSION['suffix_name'])) {
+      $suffix_name = "";
+    }
+
+    //initialize session data
+    $first_name = $_SESSION['first_name'];
+    $last_name = $_SESSION['last_name'];
+    $middle_name = $_SESSION['middle_name']; //optional
+    $suffix_name = $_SESSION['suffix_name']; //optional
+    $dob = $_SESSION['dob'];
+    $sex = $_SESSION['sex'];
+    $street_add = $_SESSION['street_add'];
+    $state = $_SESSION['state'];
+    $city = $_SESSION['city'];
+    $zipcode = $_SESSION['zipcode'];
+    
+    //set to n/a all unnecessary types 
+    //for emptyInputSignup()
+    $specialization = "n/a";
+    $employment_type = "n/a";
+    $employer = "n/a";
+    $valid_id = "n/a";
+    $valid_id_proof = "n/a";
+    $cert = "n/a";
+    $cert_proof = "n/a";
+
+    //initialize post data
+    $email_add = $_POST['emailAdd'];
+    $user_name = $_POST['userName'];
+    $phone_number = $_POST['phoneNumber'];
+    $pw = $_POST['password'];
+
+    //others
+    $user_role = "customer";
+    $status = "active";
+    //$application_status = "pending";
+
+    require_once "../includes/config.php";
+    require_once "../includes/functions.php";
+
+    //error handling found inside functions.php
+    if(emptyInputSignup($first_name, $last_name, $dob, $sex, $street_add,
+    $state, $city, $zipcode, $specialization, $employment_type, $employer,
+    $valid_id, $cert, $email_add, $user_name, $phone_number, $pw) !== false ) {
+      header("Location: choose-roles.php?error=missinginputs");
+      exit();
+    }
+
+    if(invalidUid($user_name) !== false ) {
+      header("Location: choose-roles.php?error=invaliduid");
+      exit();
+    }
+
+    
+    $password_confirm = $_POST['passwordConfirm'];
+    if(pwdMatch($pw, $password_confirm) !== false ) {
+      header("Location: choose-roles.php?error=passwordsdontmatch");
+      exit();
+    }
+    
+    //checks existing username first before main queries
+    $uidExists = false;
+    if(uidExists($conn, $user_name, $email_add) !== true) {
       
-        header("Location: ../index.html");
+      //main queries
 
-        //clear post and session data
-        $_POST = array();
-        session_destroy();
-        
-        $conn->close();
-        exit;
+      createUser($conn, $user_role, $first_name, $last_name, $middle_name, $suffix_name, $dob, 
+      $sex, $street_add, $state, $city, $zipcode, $email_add, $user_name, $phone_number, $pw, $status);    
 
-      }
+    } else {
+      $uidExists = true;
+    }
 
-  if (!accDetailsTaken()) {
-
-  //writing MySQL Query to insert the details
-  $insert_query = "INSERT INTO users (
-                  user_role,
-                  first_name,
-                  last_name,
-                  middle_name,
-                  suffix,
-                  dob,
-                  sex,
-                  street_address,
-                  state,
-                  city,
-                  zip_code,
-                  email_add,
-                  username,
-                  phone_number,
-                  password,
-                  status
-                  ) VALUES (
-                  'client',
-                  '$_SESSION[first_name]',
-                  '$_SESSION[last_name]',
-                  '$_SESSION[middle_name]',
-                  '$_SESSION[suffix_name]',
-                  '$_SESSION[dob]',
-                  '$_SESSION[sex]',
-                  '$_SESSION[street_add]',
-                  '$_SESSION[state]',
-                  '$_SESSION[city]',
-                  '$_SESSION[zipcode]',
-                  '$_POST[emailAdd]',
-                  '$_POST[userName]',
-                  '$_POST[phoneNumber]',
-                  '$_POST[password]',
-                  'active'
-                  )";
-
-  $result = $conn->query($insert_query);
-  
+  } else {
+    header("Location: choose-roles.php");
+    exit();
   }
 
 ?>
@@ -139,7 +157,7 @@
             <!--MESSAGE-->
             <?php 
 
-            if (accDetailsTaken()) {
+            if($uidExists) {
               echo "
               <div class='col-3'>
                 <img
@@ -158,81 +176,56 @@
                 </p>
               </div>
               ";
-            } else {
 
-            if ($result == TRUE) {
-               
-                echo "
-                <div class='col-12'>
-                  <img
-                    src='../icons/login/done.png'
-                    class='img-fluid mx-auto d-block'
-                    alt='...'
-                  />
-                </div>
-                <div class='col-12 mt-3'>
-                  <h3 class='display-4 header text-center'>Congratulations!</h3>
-                </div>
-                <div class='col-12 mb-5'>
-                  <p class='header text-center'>
-                    Your account has been successfully created! :)
-                  </p>
-                </div>
-                ";
-                          
-              } else {
+              header("Refresh:5; url= choose-roles.php?error=usernameoremailtaken");
+              exit();
 
-                echo "
-                <div class='col-3'>
-                  <img
-                    src='../icons/login/oh-no.png'
-                    class='img-fluid mx-auto d-block'
-                    alt='...'
-                  />
-                </div>
-                <div class='col-12 mt-3'>
-                  <h3 class='display-4 header text-center'>Oh no!</h3>
-                </div>
-                <div class='col-12 mb-5'>
-                  <p class='header text-center'>
-                    SQL ERROR. Please try again!
-                  </p>
-                </div>
-                ";
-                                
-                          
-              }
-            } 
-            
-            ?>
+            }
+            echo "
+            <div class='col-12'>
+              <img
+                src='../icons/login/done.png'
+                class='img-fluid mx-auto d-block'
+                alt='...'
+              />
+            </div>
+            <div class='col-12 mt-3'>
+              <h3 class='display-4 header text-center'>One step closer!</h3>
+            </div>
+            <div class='col-12 mb-5'>
+              <p class='header text-center'>
+                Your laborer application is being reviewed! 
+              </p>
+            </div>                                                                                  
             <!--BUTTONS-->
-            <div class="col-5">
+            <div class='col-5'>
               <a
-                href="../index.html"
-                class="btn btn-primary orange-btn"
-                type="button"
+                href='../index.php'
+                class='btn btn-primary orange-btn'
+                type='button'
               >
                 Home
               </a>
             </div>
-            <div class="col-5 text-end">
+            <div class='col-5 text-end'>
               <a
-                href="../login.html"
-                class="btn btn-primary orange-btn"
-                type="button"
+                href='../login.php'
+                class='btn btn-primary orange-btn'
+                type='button'
               >
                 Login
               </a>
             </div>
-            <?php 
+            ";           
               //clear post and session data and close connection
               $_POST = array();
               session_destroy();
               
-              $conn->close();
-              exit;
+              header("Refresh:10; url= ../index.php?error=none");
+              exit();
+              
             ?>
-            <!--END OF BUTTONS-->
+            <!--END OF BUTTONS-->           
           </div>
         </div>
       </div>

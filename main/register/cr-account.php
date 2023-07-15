@@ -161,7 +161,7 @@
             </div>
 
             <div class="col-12 text-end">
-              <button id="submit" class="btn btn-primary orange-btn" type="submit">
+              <button id="submit" class="btn btn-primary orange-btn" name="submit" type="submit">
                 Submit
               </button>
             </div>
