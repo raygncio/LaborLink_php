@@ -58,7 +58,7 @@
     if(emptyInputSignup($first_name, $last_name, $dob, $sex, $street_add,
     $state, $city, $zipcode, $specialization, $employment_type, $employer,
     $valid_id, $cert, $email_add, $username, $phone_number, $password) !== false ) {
-      header("Location: choose-roles.php?error=emptyinput");
+      header("Location: choose-roles.php?error=missinginputs");
       exit();
     }
 
@@ -67,27 +67,28 @@
       exit();
     }
 
-    /*
-    $password_confirm = $_POST['passwordConfirm']
+    
+    $password_confirm = $_POST['passwordConfirm'];
     if(pwdMatch($password, $password_confirm) !== false ) {
       header("Location: choose-roles.php?error=passwordsdontmatch");
       exit();
     }
-    */
+    
+    //checks existing username first before main queries
+    if(uidExists($conn, $username, $email_add) !== true) {
+      
+      //main queries
 
-    if(uidExists($conn, $username, $email_add) !== false) {
-      header("Location: choose-roles.php?error=usernameoremailtaken");
-      exit();
+      createUser($conn, $user_role, $first_name, $last_name, $middle_name, $suffix_name, $dob, 
+      $sex, $street_add, $state, $city, $zipcode, $email_add, $username, $phone_number, $password, $status);
+
+      //get user id of newly created user
+      $user_id = getUserId($conn, $username);
+
+      createLaborer($conn, $application_status, $specialization, $employment_type,
+      $employer, $valid_id, $valid_id_proof, $cert, $cert_proof, $user_id);
+
     }
-
-    createUser($conn, $user_role, $first_name, $last_name, $middle_name, $suffix_name, $dob, 
-    $sex, $street_add, $state, $city, $zipcode, $email_add, $username, $phone_number, $password, $status);
-
-    //get user id of newly created user
-    $user_id = getUserId($conn, $username);
-
-    createLaborer($conn, $application_status, $specialization, $employment_type,
-    $employer, $valid_id, $valid_id_proof, $cert, $cert_proof, $user_id);
 
   } else {
     header("Location: choose-roles.php");
@@ -168,7 +169,7 @@
             <!--MESSAGE-->
             <?php 
 
-            if (accDetailsTaken()) {
+            if(uidExists($conn, $username, $email_add) !== false) {
               echo "
               <div class='col-3'>
                 <img
@@ -187,52 +188,32 @@
                 </p>
               </div>
               ";
+
+              header("Refresh:5; url= choose-roles.php?error=usernameoremailtaken");
+              exit();
+
             } else {
-
-              if ($result == TRUE && $result_2 == TRUE) {
-                
-                  echo "
-                  <div class='col-12'>
-                    <img
-                      src='../icons/login/done.png'
-                      class='img-fluid mx-auto d-block'
-                      alt='...'
-                    />
-                  </div>
-                  <div class='col-12 mt-3'>
-                    <h3 class='display-4 header text-center'>One step closer!</h3>
-                  </div>
-                  <div class='col-12 mb-5'>
-                    <p class='header text-center'>
-                      Your laborer application is being reviewed! 
-                    </p>
-                  </div>
-                  ";
-                            
-                } else {
-
-                  echo "
-                  <div class='col-3'>
-                    <img
-                      src='../icons/login/oh-no.png'
-                      class='img-fluid mx-auto d-block'
-                      alt='...'
-                    />
-                  </div>
-                  <div class='col-12 mt-3'>
-                    <h3 class='display-4 header text-center'>Oh no!</h3>
-                  </div>
-                  <div class='col-12 mb-5'>
-                    <p class='header text-center'>
-                      SQL ERROR. Please try again!
-                    </p>
-                  </div>
-                  ";
-                                          
-                }
+                echo "
+                <div class='col-12'>
+                  <img
+                    src='../icons/login/done.png'
+                    class='img-fluid mx-auto d-block'
+                    alt='...'
+                  />
+                </div>
+                <div class='col-12 mt-3'>
+                  <h3 class='display-4 header text-center'>One step closer!</h3>
+                </div>
+                <div class='col-12 mb-5'>
+                  <p class='header text-center'>
+                    Your laborer application is being reviewed! 
+                  </p>
+                </div>
+                ";                                                            
             } 
             
             ?>
+
             <!--BUTTONS-->
             <div class="col-5">
               <a
@@ -257,8 +238,8 @@
               $_POST = array();
               session_destroy();
               
-              $conn->close();
-              exit;
+              header("Refresh:5; url=../index.php?error=none");
+              exit();
             ?>
             <!--END OF BUTTONS-->
           </div>

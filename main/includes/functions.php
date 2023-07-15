@@ -181,5 +181,8 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $user_id);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
+        
+        header("Refresh:5; url=../index.php?error=none");
+        exit();
     }
 ?>

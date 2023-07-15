@@ -208,7 +208,7 @@
         var pass = document.getElementById('password').value;
         var confirm_pass = document.getElementById('passwordConfirm').value;
         if (pass != confirm_pass) {
-          alert("Password doesn't match!");
+          alert("Passwords don't match!");
           event.preventDefault(); 
           returnToPreviousPage();
           return false;
