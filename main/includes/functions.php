@@ -2,13 +2,13 @@
 
 function emptyInputSignup($first_name, $last_name, $dob, $sex, $street_add,
     $state, $city, $zipcode, $specialization, $employment_type, $employer,
-    $valid_id, $cert, $email_add, $username, $phone_number, $password) {
+    $valid_id, $cert, $email_add, $user_name, $phone_number, $pw) {
        
         if(empty($first_name) || empty($last_name) || empty($dob) || empty($sex) ||
         empty($street_add) || empty($state) || empty($city) || empty($zipcode) ||
         empty($specialization) || empty($employment_type) || empty($employer) ||
-        empty($valid_id) || empty($cert) || empty($email_add) || empty($username) ||
-        empty($phone_number) || empty($password) ) {
+        empty($valid_id) || empty($cert) || empty($email_add) || empty($user_name) ||
+        empty($phone_number) || empty($pw) ) {
             $result = true;
         } else {
             $result = false;
@@ -16,9 +16,9 @@ function emptyInputSignup($first_name, $last_name, $dob, $sex, $street_add,
         return $result;
     }
 
-function invalidUid($username) {       
+function invalidUid($user_name) {       
         //preg_match is a search algo
-        if(!preg_match("/^[a-zA-Z0-9]*$/", $username)) {
+        if(!preg_match("/^[a-zA-Z0-9]*$/", $user_name)) {
             $result = true;
         } else {
             $result = false;
@@ -26,9 +26,9 @@ function invalidUid($username) {
         return $result;
     }
 
-function pwdMatch($password, $passwordConfirm) {       
+function pwdMatch($pw, $password_confirm) {       
         
-        if($password !== $passwordConfirm) {
+        if($pw !== $password_confirm) {
             $result = true;
         } else {
             $result = false;
@@ -36,7 +36,7 @@ function pwdMatch($password, $passwordConfirm) {
         return $result;
     }
 
-function uidExists($conn, $username, $email_add) {   
+function uidExists($conn, $user_name, $email_add) {   
 
         $sql = "SELECT * FROM users WHERE username = ? OR email_add = ?; ";
         $stmt = mysqli_stmt_init($conn); //initialize prep stmt
@@ -50,7 +50,7 @@ function uidExists($conn, $username, $email_add) {
         //to avoid sql injections!
         //ss means 2strings (e.g. sss means 3)
         //bind the data from the user to the statement (?, ?)
-        mysqli_stmt_bind_param($stmt, "ss", $username, $email_add);
+        mysqli_stmt_bind_param($stmt, "ss", $user_name, $email_add);
         mysqli_stmt_execute($stmt);
 
         //result set
@@ -60,8 +60,9 @@ function uidExists($conn, $username, $email_add) {
         //returns true if it gets any data
         //if true or username/email exists, 
         //it'll grab these data and redirect to login
-        if($row = mysqli_fetch_assoc($resultData)) {
-            return $row;
+        if(mysqli_num_rows($resultData) > 0) {
+            $result = true;
+            return $result;
 
         } else {
             $result = false;
@@ -71,14 +72,14 @@ function uidExists($conn, $username, $email_add) {
         mysqli_stmt_close($stmt);
     }
 
-function getUserId($conn, $username) {
+function getUserId($conn, $user_name) {
 
     //oop
     $sql = "SELECT username, user_id FROM users";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
       while ($row = $result->fetch_assoc()) {
-        if ($row['username'] == $username) {
+        if ($row['username'] == $user_name) {
           return $row['user_id'];
         } 
       }
@@ -87,7 +88,7 @@ function getUserId($conn, $username) {
 }
 
 function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $suffix_name, $dob, 
-    $sex, $street_add, $state, $city, $zipcode, $email_add, $username, $phone_number, $password, $status) {   
+    $sex, $street_add, $state, $city, $zipcode, $email_add, $user_name, $phone_number, $pw, $status) {   
 
         $sql = "INSERT INTO users (
                     user_role,
@@ -107,7 +108,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
                     password,
                     status
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    );";
+                    ;";
 
         $stmt = mysqli_stmt_init($conn); //initialize prep stmt
 
@@ -118,7 +119,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         }
 
         //encrypting or hashing
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $hashed_password = password_hash($pw, PASSWORD_DEFAULT);
 
         //to avoid sql injection!
         //bind the data from the user to the statement (?, ?)
@@ -135,9 +136,9 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $city,
         $zipcode,
         $email_add,
-        $username,
+        $user_name,
         $phone_number,
-        $hashedPassword,
+        $hashed_password,
         $status);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
@@ -157,7 +158,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             certification,
             certification_proof,
             user_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?); ";
 
         $stmt = mysqli_stmt_init($conn); //initialize prep stmt
 
@@ -182,7 +183,5 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
         
-        header("Refresh:5; url=../index.php?error=none");
-        exit();
     }
 ?>

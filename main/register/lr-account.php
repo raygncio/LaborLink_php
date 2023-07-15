@@ -99,7 +99,6 @@
             action="lr-completion.php"
             class="row g-3 needs-validation"
             method="POST"
-            onsubmit="validate_password();"
             novalidate
           >
             <div class="col-md-12">
@@ -202,6 +201,7 @@
       })();
     </script>
 
+    <!--
     <script type="text/javascript">
       function validate_password() {
     
@@ -217,6 +217,7 @@
                 
       }
     </script>
+    -->
 
 
     <script
