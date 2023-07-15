@@ -56,10 +56,7 @@ function uidExists($conn, $user_name, $email_add) {
         //result set
         $resultData = mysqli_stmt_get_result($stmt);
 
-        //fetch data as an associative array
-        //returns true if it gets any data
-        //if true or username/email exists, 
-        //it'll grab these data and redirect to login
+
         if(mysqli_num_rows($resultData) > 0) {
             $result = true;
             return $result;

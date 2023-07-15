@@ -21,9 +21,46 @@
     />
 
     <link rel="stylesheet" href="../app.css" />
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   </head>
 
   <body>
+
+  <?php
+    if (isset($_GET["error"])){
+
+    if($_GET["error"] == "missinginputs") {
+      $error_message = "Please fill in all fields!";
+    } else if ($_GET['error'] == "invaliduid") {
+      $error_message = "Kindly choose a proper username";
+    } else if ($_GET['error'] == "passwordsdontmatch") {
+      $error_message = "Your passwords don't match!";
+    } else if ($_GET['error'] == "stmtfailed") {
+      $error_message = "Something went wrong :(";
+    } else if ($_GET['error'] == "usernameoremailtaken") {
+      $error_message = "Kindly enter a different email or username";
+    }
+
+    /*
+    // alert
+    echo "
+    <div class='z-3 position-absolute alert alert-warning alert-dismissible fade show text-center' role='alert' style='width:1920px'>
+    <strong>Oh, no!</strong> <span class='font-normal text-normal'>" . $error_message . "</span>
+    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>
+    ";
+    */
+    echo '<script>
+        $(document).ready(function(){
+            $("#server-message").modal("show")
+        });
+        </script>';
+    } 
+    
+    ?>
+
+
     <section
       id="chooseForm"
       class="container-xs position-absolute top-50 start-50 translate-middle choose"
@@ -67,7 +104,7 @@
         <div class="col text-center">
           <p class="d-inline">
             Already have an account?
-            <a type="button" href="../login.html" class="btn btn-link btn-sm"
+            <a type="button" href="../login.php" class="btn btn-link btn-sm"
               >Login</a
             >
           </p>
@@ -77,6 +114,24 @@
 
     <div class="signup-graphics">
       <div id="signup-orange" class="oranges"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage">Oh, no!</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $error_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script

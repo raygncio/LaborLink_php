@@ -21,9 +21,26 @@
     />
 
     <link rel="stylesheet" href="app.css" />
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   </head>
 
   <body>
+    <?php
+        if (isset($_GET["error"])){
+
+        if($_GET["error"] == "none") {
+          $display_message = "You have been redirected to the landing page!";
+        }
+
+        echo '<script>
+            $(document).ready(function(){
+                $("#server-message").modal("show")
+            });
+            </script>';
+        } 
+        
+    ?>
     <nav
       id="landingNav"
       class="navbar navbar-light navbar-dark-lg navbar-expand-lg p-3 lp"
@@ -55,7 +72,7 @@
               <a class="nav-link lp" href="#">Contact Us</a>
             </li>
             <li class="nav-item me-3 me-xl-5">
-              <a class="nav-link lp" href="login.html">Log-in</a>
+              <a class="nav-link lp" href="login.php">Log-in</a>
             </li>
           </ul>
           <a
@@ -125,6 +142,24 @@
     <div id="white-bg" class="d-xl-none"></div>
 
     <div class="background oranges"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage">NOTICE</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $display_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
