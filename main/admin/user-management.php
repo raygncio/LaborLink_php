@@ -6,7 +6,7 @@
     <title>User Management</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,7 +25,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/main/app.css" />
+    <link rel="stylesheet" href="../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -41,7 +41,7 @@
         ></div>
         <script>
           $(function () {
-            $("#nav-placeholder").load("/main/admin/nav.html");
+            $("#nav-placeholder").load("nav.php");
           });
         </script>
         <!--end of Navigation bar-->

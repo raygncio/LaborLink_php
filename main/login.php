@@ -29,6 +29,8 @@
   <?php
     if (isset($_GET["error"])){
 
+      $modal_title = "Oh, no!";
+
     if($_GET["error"] == "missinginputs") {
       $error_message = "Please fill in all fields!";
     } else if ($_GET['error'] == "stmtfailed") {
@@ -37,8 +39,11 @@
       $error_message = "No account exists with this email!";
     } else if ($_GET['error'] == "wronglogin") {
       $error_message = "Wrong password!";
-    } else if ($_GET['error'] == "test") {
-      $error_message = "Logged in successfully!";
+    } else if ($_GET['error'] == "applicationrejected") {
+      $error_message = "Your application has been rejected <br> Kindly reach us at <i>annEscueta@gmail.com</i>";
+    } else if ($_GET['error'] == "applicationpending") {
+      $modal_title = "NOTICE";
+      $error_message = "Your application is still being reviewed";
     }
 
     /*
@@ -137,7 +142,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5 header" id="serverMessage">Oh, no!</h1>
+            <h1 class="modal-title fs-5 header" id="serverMessage"><?php echo $modal_title; ?></h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body font-normal text-normal">

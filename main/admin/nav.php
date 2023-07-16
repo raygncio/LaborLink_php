@@ -1,14 +1,14 @@
 <!--NAV-->
 
 <nav class="bg-light p-0 text-center">
-    <a href="/main/laborer/dashboard/find-labor.html" class="navbar-brand">
+    <a href="laborer-approval.php" class="navbar-brand">
       <img src="../icons/logo-2.png" alt="logo" class="img-fluid" />
       <span class="badge bg-secondary d-block mt-4">ADMIN</span>
     </a>
     <ul class="nav nav-pills nav-fill flex-column mt-5 mb-5 d-flex gap-4">
       <li class="nav-item py-2 py-sm-0 text-center">
         <a
-          href="/main/admin/user-management.html"
+          href="user-management.php"
           class="nav-link blue-font mt-4"
         >
           <i class="fs-1 fa-solid fa-users"></i>
@@ -18,7 +18,7 @@
       </li>
       <li class="nav-item py-2 py-sm-0 text-center">
         <a
-          href="/main/admin/laborer-approval.html"
+          href="laborer-approval.php"
           class="nav-link blue-font mt-4"
         >
           <i class="fs-1 fa-solid fa-person-circle-check"></i>
@@ -55,7 +55,7 @@
             </li>
             <li>
               <a
-                href="/main/index.html"
+                href="../index.php"
                 class="dropdown-item blue-font header"
                 type="button"
               >
