@@ -1,7 +1,7 @@
 <!--NAV-->
 
 <nav class="bg-light p-0 text-center">
-    <a href="laborer-approval.php" class="navbar-brand">
+    <a href="user-management.php" class="navbar-brand">
       <img src="../icons/logo-2.png" alt="logo" class="img-fluid" />
       <span class="badge bg-secondary d-block mt-4">ADMIN</span>
     </a>

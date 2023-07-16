@@ -232,15 +232,28 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             session_start();
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['user_role'] = $row['user_role'];
-            header("Location: ../index.php");
-            
 
-            exit();
+            switch($_SESSION['user_role']) {
+                case "admin";
+                    header("Location: ../admin/user-management.php");
+                    exit();
+                    break;
+                case "customer";
+                    header("Location: ../admin/user-management.php"); //to change
+                    exit();
+                    break;
+                case "laborer";
+                    header("Location: ../admin/user-management.php"); //to change
+                    exit();
+                    break;
+            }
         }
 
     }
 
-    //access control
+    // READ
+
+    // access control ---------------------------------------------------------
     function invalidAccess() {
         session_unset();
         session_destroy();
@@ -248,7 +261,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         exit();
     }
 
-    //admin
+    // admin ------------------------------------------------------------------
 
     function checkAdmin($user_role) {
         if($user_role !== "admin") {
@@ -256,21 +269,19 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         } 
     }
 
-    function checkCustomer($user_role) {
-        if($user_role !== "customer") {
-            invalidAccess();
-        }
-    }
-
+    //laborer ----------------------------------------------------------------
+    
     function checkLaborer($user_role) {
         if($user_role !== "admin") {
             invalidAccess();
         }
     }
 
-    //laborer
-    
-    //customer
+    //customer ---------------------------------------------------------------
 
-
+    function checkCustomer($user_role) {
+        if($user_role !== "customer") {
+            invalidAccess();
+        }
+    }
 ?>
