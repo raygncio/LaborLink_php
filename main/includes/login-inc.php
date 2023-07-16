@@ -7,7 +7,7 @@ if(isset($_POST['submit'])) {
     require_once "../includes/config.php";
     require_once "../includes/functions.php";
 
-    if(emptyInputLogin($user_name, $pw) !== false ) {
+    if(emptyInputLogin($email_add, $pw) !== false ) {
       header("Location: ../login.php?error=missinginputs");
       exit();
     }

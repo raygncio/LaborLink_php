@@ -76,7 +76,7 @@
           <p>Connect with credible labor workers conveniently</p>
         </div>
       </div>
-      <form action="#nowhere">
+      <form action="includes/login-inc.php" method="POST" validate>
         <div class="row align-items-center justify-content-start pt-3">
           <div class="col-7">
             <label for="loginEmailInput" class="form-label"
@@ -106,7 +106,7 @@
         <div class="row pt-5">
           <div class="col-7">
             <div class="d-grid gap-2 col-4 mx-auto">
-              <button class="btn btn-primary orange-btn" type="button">
+              <button class="btn btn-primary orange-btn" name="submit" type="submit">
                 Login
               </button>
             </div>
