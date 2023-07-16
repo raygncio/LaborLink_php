@@ -55,7 +55,7 @@
             </li>
             <li>
               <a
-                href="../index.php"
+                href="../includes/logout-inc.php"
                 class="dropdown-item blue-font header"
                 type="button"
               >

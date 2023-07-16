@@ -269,6 +269,14 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         } 
     }
 
+    function registerLaborer($conn, $applicant_id) {
+        $credit_balance = 0.00;
+        $addQuery = "INSERT INTO laborers (credit_balance, applicant_Id) VALUES ('$credit_balance', '$applicant_id');";
+        mysqli_query($conn, $addQuery);
+        $updateQuery = "UPDATE users AS U INNER JOIN applications AS A ON U.user_id = A.user_id SET U.status = 'active' WHERE A.applicant_id = '$applicant_id'";
+        mysqli_query($conn, $updateQuery);
+    }
+
     //laborer ----------------------------------------------------------------
     
     function checkLaborer($user_role) {

@@ -1,3 +1,40 @@
+<?php 
+  session_start();
+
+  require_once "../includes/config.php";
+  require_once "../includes/functions.php";
+
+  //check if user is logged in
+  if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+  
+    checkAdmin($_SESSION['user_role']);
+
+    if (isset($_POST['yesButton'])) {
+      $applicantId = $_POST['applicantId'];
+      $updateQuery = "UPDATE applications SET application_status = 'approved' WHERE applicant_id = '$applicantId'";
+      mysqli_query($conn, $updateQuery);
+      
+      //Register Laborer
+      registerLaborer($conn, $applicantId);
+      
+    }
+  
+    if (isset($_POST['noButton'])) {
+      $applicantId = $_POST['applicantId'];
+      $updateQuery = "UPDATE applications SET application_status = 'Rejected' WHERE applicant_id = '$applicantId'";
+      mysqli_query($conn, $updateQuery);
+    }
+
+    
+      
+  } else {
+    header("Location: ../index.php");
+    exit();
+  }
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -82,20 +119,80 @@
                             <tr>
                               <th scope="col">#</th>
                               <th scope="col">Applicant ID</th>
+                              <th scope="col">Status</th>
                               <th scope="col">Full Name</th>
                               <th scope="col">Specialization</th>
                               <th scope="col">Type of Employment</th>
                               <th scope="col">Employer</th>
                               <th scope="col">Valid ID</th>
                               <th scope="col">
-                                Proof/Certificates
+                                Proof/<br>Certificates
                               </th>
                               <th scope="col">Date of Application</th>
                               <th scope="col">Actions</th>
                             </tr>
                           </thead>
                           <tbody>
-                           
+                          <form method="POST">
+                            <?php 
+                            $num = 0; 
+                            $query = "SELECT A.applicant_id, A.application_status, concat(U.first_name, ' ' , U.last_name, ' ', U.suffix) AS fullName, A.specialization, A.employment_type, A.employer, A.valid_id, A.certification_proof, A.created_at FROM users AS U INNER JOIN applications AS A ON U.user_id = A.user_id WHERE application_status = 'pending';";
+                            $query_run = mysqli_query($conn, $query);                           
+                            foreach ($query_run as $row) {
+                              ++$num;
+                              $applicantId = $row["applicant_id"];
+                              $status = $row["application_status"];
+                              $fullName = $row["fullName"];
+                              $specialization = $row["specialization"];
+                              $employment_type = $row["employment_type"];
+                              $employer = $row["employer"];
+                              $valid_id = $row["valid_id"];
+                              $certification_proof = $row["certification_proof"];
+                              $created_at = $row["created_at"];
+
+                              echo "
+                              <tr class='text-normal font-normal'>
+                                <th scope='row'>$num</th>
+                                <td>$applicantId</td>
+                                <td>$status</td>
+                                <td>$fullName</td>
+                                <td>$specialization</td>
+                                <td>$employment_type</td>
+                                <td>$employer</td>
+                                <td>$valid_id</td>
+                                <td>$certification_proof</td>
+                                <td>$created_at</td>
+                                <td>
+                                  <input type='hidden' name='applicantId' value='$applicantId'>
+                                  <button
+                                  class='btn yesno'
+                                  type='submit'
+                                  name='yesButton'
+                                >
+                                  <img
+                                    class='img-fluid'
+                                    src='../icons/yesno/accept.png'
+                                    alt='yes'
+                                  />
+                                </button>
+                                <button
+                                  class='btn btn-link yesno'
+                                  type='submit'
+                                  name='noButton'
+                                >
+                                  <img
+                                    class='img-fluid'
+                                    src='../icons/yesno/decline.png'
+                                    alt='no'
+                                  />
+                                </button>
+                                </td>
+                              </tr>
+                              ";
+                            }
+
+                            ?>
+                            </form>
 
                             <!--BLANK-->
                             <tr>

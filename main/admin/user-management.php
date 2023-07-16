@@ -13,6 +13,29 @@
     header("Location: ../index.php");
     exit();
   }
+
+  if (isset($_POST['clientsAction'])) {
+    $selectedAction = $_POST['clientsAction']; 
+    $userId = $_POST['userId'];
+    if ($selectedAction == 'activate') {
+      $updateQuery = "UPDATE users SET status = 'active' WHERE user_id = '$userId'";
+    } else if ($selectedAction == 'blocked') {
+      $updateQuery = "UPDATE users SET status = 'blocked' WHERE user_id = '$userId'";
+    } 
+    $updateResult = mysqli_query($conn, $updateQuery);
+  }
+
+  if (isset($_POST['laborersAction'])) {
+    $selectedAction = $_POST['laborersAction']; 
+    $userId = $_POST['lr_userId'];
+    if ($selectedAction == 'activate') {
+      $updateQuery = "UPDATE users SET status = 'active' WHERE user_id = '$userId'";
+    } else if ($selectedAction == 'deactivate') {
+      $updateQuery = "UPDATE users SET status = 'blocked' WHERE user_id = '$userId'";
+    } 
+    $updateResult = mysqli_query($conn, $updateQuery);
+  }
+  
 ?>
 
 <!DOCTYPE html>
@@ -114,137 +137,94 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <tr class="text-normal font-normal">
-                              <th scope="row">01</th>
-                              <td>001</td>
-                              <td>user@gmail.com</td>
-                              <td>@username</td>
-                              <td>Thalia Anne Escueta</td>
-                              <td>Male</td>
-                              <td>04/29/2018</td>
-                              <td>22 Dreamland Subd. Mandaluyong</td>
-                              <td>04/29/2020</td>
-                              <td>
-                                <span class="badge bg-success fs-5">Active</span>
-                            </td>
-                              <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary orange-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <form method="POST">
+                            <?php 
+                            $num = 0; 
+                            $query = "SELECT user_id, email_add, username, concat(first_name, ' ' , middle_name, ' ' , last_name, ' ', suffix) AS fullName, sex, dob, street_address, created_at, status FROM users WHERE user_role = 'customer'";
+                            $query_run = mysqli_query($conn, $query);
+                            foreach ($query_run as $row) {
+                              ++$num;
+                              $userId = $row["user_id"];
+                              $email = $row["email_add"];
+                              $username = $row["username"];
+                              $fullName = $row["fullName"];
+                              $sex = $row["sex"];
+                              $dob = $row["dob"];
+                              $street_address = $row["street_address"];
+                              $created_at = $row["created_at"];
+                              $status = $row["status"];
+
+                              echo "
+                              <tr class='text-normal font-normal'>
+                                <th scope='row'>$num</th>
+                                <td>$userId</td>
+                                <td>$email</td>
+                                <td>$username</td>
+                                <td>$fullName</td>
+                                <td>$sex</td>
+                                <td>$dob</td>
+                                <td>$street_address</td>
+                                <td>$created_at</td>
+                                <td>";
+
+                                if($status === "active") {
+                                  echo "<span class='badge bg-success fs-6'>$status</span>";
+                                } else if ($status === "pending") {
+                                  echo "<span class='badge bg-secondary fs-6'>$status</span>";
+                                } else if ($status === "blocked") {
+                                  echo "<span class='badge bg-danger fs-6'>$status</span>";
+                                }
+                                
+                                echo "
+                                </td>
+                                <td>
+                                <input type='hidden' name='userId' value='$userId'>
+                                <div class='btn-group'>
+                                    <button class='btn btn-primary orange-btn dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
                                       Actions
                                     </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Activate</a></li>
-                                      <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                      <li><a class="dropdown-item" href="#">More details</a></li>
+                                    <ul class='dropdown-menu'>
+                                      <li><button class='dropdown-item' type='submit' name='clientsAction' value='activate'>Activate</button></li>
+                                      <li><button class='dropdown-item' type='submit' name='clientsAction' value='blocked'>Block</button></li>
                                     </ul>
                                   </div>
                               </td>
-                            </tr>
-                            <tr class="text-normal font-normal">
-                              <th scope="row">01</th>
-                              <td>001</td>
-                              <td>user@gmail.com</td>
-                              <td>@username</td>
-                              <td>Thalia Anne Escueta</td>
-                              <td>Male</td>
-                              <td>04/29/2018</td>
-                              <td>22 Dreamland Subd. Mandaluyong</td>
-                              <td>04/29/2020</td>
-                              <td>
-                                <span class="badge bg-success fs-5">Active</span>
-                            </td>
-                              <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary orange-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Actions
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Activate</a></li>
-                                      <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                      <li><a class="dropdown-item" href="#">More details</a></li>
-                                    </ul>
-                                  </div>
-                              </td>
-                            </tr>
-                            <tr class="text-normal font-normal">
-                              <th scope="row">01</th>
-                              <td>001</td>
-                              <td>user@gmail.com</td>
-                              <td>@username</td>
-                              <td>Thalia Anne Escueta</td>
-                              <td>Male</td>
-                              <td>04/29/2018</td>
-                              <td>22 Dreamland Subd. Mandaluyong</td>
-                              <td>04/29/2020</td>
-                              <td>
-                                <span class="badge bg-success fs-5">Active</span>
-                            </td>
-                              <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary orange-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Actions
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Activate</a></li>
-                                      <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                      <li><a class="dropdown-item" href="#">More details</a></li>
-                                    </ul>
-                                  </div>
-                              </td>
-                            </tr>
-                            <tr class="text-normal font-normal">
-                              <th scope="row">01</th>
-                              <td>001</td>
-                              <td>user@gmail.com</td>
-                              <td>@username</td>
-                              <td>Thalia Anne Escueta</td>
-                              <td>Male</td>
-                              <td>04/29/2018</td>
-                              <td>22 Dreamland Subd. Mandaluyong</td>
-                              <td>04/29/2020</td>
-                              <td>
-                                <span class="badge bg-success fs-5">Active</span>
-                            </td>
-                              <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary orange-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Actions
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Activate</a></li>
-                                      <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                      <li><a class="dropdown-item" href="#">More details</a></li>
-                                    </ul>
-                                  </div>
-                              </td>
-                            </tr>
-                            <tr class="text-normal font-normal">
-                              <th scope="row">01</th>
-                              <td>001</td>
-                              <td>user@gmail.com</td>
-                              <td>@username</td>
-                              <td>Thalia Anne Escueta</td>
-                              <td>Male</td>
-                              <td>04/29/2018</td>
-                              <td>22 Dreamland Subd. Mandaluyong</td>
-                              <td>04/29/2020</td>
-                              <td>
-                                <span class="badge bg-success fs-5">Active</span>
-                            </td>
-                              <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary orange-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Actions
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Activate</a></li>
-                                      <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                      <li><a class="dropdown-item" href="#">More details</a></li>
-                                    </ul>
-                                  </div>
-                              </td>
-                            </tr>
+                              </tr>
+                              ";
+                            }
+
+                            ?>
+                            </form>
+
                             <!--BLANK-->
+                            <tr>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                            </tr>
+
+                            <tr>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                                <td>&nbsp</td>
+                            </tr>
+
                             <tr>
                                 <td>&nbsp</td>
                                 <td>&nbsp</td>
@@ -298,34 +278,76 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <tr class="text-normal font-normal">
-                              <th scope="row">01</th>
-                              <td>001</td>
-                              <td>Plumbing</td>
-                              <td>user@gmail.com</td>
-                              <td>@username</td>
-                              <td>Thalia Anne Escueta</td>
-                              <td>Male</td>
-                              <td>04/29/2018</td>
-                              <td>22 Dreamland Subd. Mandaluyong</td>
-                              <td>04/29/2020</td>
-                              <td>Php 500</td>
-                              <td>
-                                <span class="badge bg-success fs-5">Active</span>
-                            </td>
-                              <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-primary orange-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <form method="POST">
+                              <?php 
+                              $num = 0; 
+                              $lr_query = "SELECT U.user_id, A.specialization, U.email_add, U.username,
+                              concat(U.first_name, ' ', U.middle_name, ' ', U.last_name, ' ', U.suffix) 
+                              AS fullName, U.sex, U.dob, concat(U.street_address, ' ', 
+                              U.state, ' ', U.city, ' ', U.zip_code) AS fullAddress, A.created_at, 
+                              L.credit_balance, U.status 
+                              FROM users AS U INNER JOIN applications AS A ON U.user_id = A.user_id 
+                              INNER JOIN laborers AS L ON A.applicant_id = L.applicant_id 
+                              WHERE U.user_role = 'laborer';";
+
+                              $lr_query_run = mysqli_query($conn, $lr_query);                           
+                              foreach ($lr_query_run as $row) {
+                                ++$num;
+                                $lr_user_id = $row["user_id"];
+                                $lr_specialization = $row["specialization"];
+                                $lr_email_add = $row["email_add"];
+                                $lr_username = $row["username"];
+                                $lr_full_name = $row["fullName"];
+                                $lr_sex = $row["sex"];
+                                $lr_dob = $row["dob"];
+                                $lr_address = $row["fullAddress"];
+                                $lr_datecreated = $row["created_at"];
+                                $lr_credit_bal = $row["credit_balance"];
+                                $lr_status = $row["status"];
+                                
+                                echo "
+                                <tr class='text-normal font-normal'>
+                                  <th scope='row'>$num</th>
+                                  <td>$lr_user_id</td>
+                                  <td>$lr_specialization</td>
+                                  <td>$lr_email_add</td>
+                                  <td>$lr_username</td>
+                                  <td>$lr_full_name</td>
+                                  <td>$lr_sex</td>
+                                  <td>$lr_dob</td>
+                                  <td>$lr_address</td>
+                                  <td>$lr_datecreated</td>
+                                  <td>₱ $lr_credit_bal</td>
+                                  <td>";
+
+                                  if($lr_status === "active") {
+                                    echo "<span class='badge bg-success fs-6'>$lr_status</span>";
+                                  } else if ($lr_status === "pending") {
+                                    echo "<span class='badge bg-secondary fs-6'>$lr_status</span>";
+                                  } else if ($lr_status === "blocked") {
+                                    echo "<span class='badge bg-danger fs-6'>$lr_status</span>";
+                                  }
+
+                                  echo "
+                                  </td>
+                                  <td>
+                                    <input type='hidden' name='lr_userId' value='$lr_user_id'>
+                                    <div class='btn-group'>
+                                    <button class='btn btn-primary orange-btn dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
                                       Actions
                                     </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Activate</a></li>
-                                      <li><a class="dropdown-item" href="#">Deactivate</a></li>
-                                      <li><a class="dropdown-item" href="#">More details</a></li>
+                                    <ul class='dropdown-menu'>
+                                    <li><button class='dropdown-item' type='submit' name='laborersAction' value='activate'>Activate</button></li>
+                                    <li><button class='dropdown-item' type='submit' name='laborersAction' value='deactivate'>Block</button></li>                                 
                                     </ul>
                                   </div>
-                              </td>
-                            </tr>
+                                  </td>
+                                </tr>
+                                ";
+                              }
+
+                              ?>
+                              </form>
 
                             <!--BLANK-->
                             <tr>
