@@ -21,9 +21,44 @@
     />
 
     <link rel="stylesheet" href="app.css" />
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   </head>
 
   <body>
+  <?php
+    if (isset($_GET["error"])){
+
+    if($_GET["error"] == "missinginputs") {
+      $error_message = "Please fill in all fields!";
+    } else if ($_GET['error'] == "stmtfailed") {
+      $error_message = "Something went wrong :(";
+    } else if ($_GET['error'] == "accountdoesntexist") {
+      $error_message = "No account exists with this email!";
+    } else if ($_GET['error'] == "wronglogin") {
+      $error_message = "Wrong password!";
+    } else if ($_GET['error'] == "test") {
+      $error_message = "Logged in successfully!";
+    }
+
+    /*
+    // alert
+    echo "
+    <div class='z-3 position-absolute alert alert-warning alert-dismissible fade show text-center' role='alert' style='width:1920px'>
+    <strong>Oh, no!</strong> <span class='font-normal text-normal'>" . $error_message . "</span>
+    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>
+    ";
+    */
+    echo '<script>
+        $(document).ready(function(){
+            $("#server-message").modal("show")
+        });
+        </script>';
+    } 
+    
+    ?>
+
     <nav id="landingNav" class="navbar navbar-dark navbar-expand-lg p-3">
       <div class="container-fluid">
         <a class="navbar-brand" href="index.php">
@@ -51,6 +86,7 @@
               type="email"
               class="form-control"
               id="loginEmailInput"
+              name="email"
               placeholder="name@example.com"
             />
           </div>
@@ -62,6 +98,7 @@
               type="password"
               class="form-control"
               id="loginPWInput"
+              name="password"
               placeholder=""
             />
           </div>
@@ -93,6 +130,24 @@
       <div class="background whites"></div>
       <div id="login-orange-1" class="oranges"></div>
       <div id="login-orange-2" class="oranges"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage">Oh, no!</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $error_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script

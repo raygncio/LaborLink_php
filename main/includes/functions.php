@@ -181,4 +181,67 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         mysqli_stmt_close($stmt);
         
     }
+
+    //login
+    function emptyInputLogin($email_add, $pw) {
+       
+        if(empty($email_add) || empty($pw) ) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+        return $result;
+    }
+
+    function loginUser($conn, $email_add, $pw) {
+
+        $sql = "SELECT * FROM users WHERE email_add = ?; ";
+        $stmt = mysqli_stmt_init($conn); //initialize prep stmt
+
+        //catch sql error
+        if(!mysqli_stmt_prepare($stmt, $sql)) {
+            header("Location: ../login.php?error=stmtfailed");
+            exit();
+        }
+
+        //to avoid sql injections!
+        //ss means 2strings (e.g. sss means 3)
+        //bind the data from the user to the statement (?, ?)
+        mysqli_stmt_bind_param($stmt, "s", $email_add);
+        mysqli_stmt_execute($stmt);
+
+        //result set
+        $resultData = mysqli_stmt_get_result($stmt);
+
+
+        if($row = mysqli_fetch_assoc($resultData)) {
+            $hashed_password = $row['password'];
+
+        } else {
+            header("Location: ../login.php?error=accountdoesntexist");
+            exit();
+        }
+
+        $checked_password = password_verify($pw, $hashed_password);
+
+        if($checked_password === false) {
+            header("Location: ../login.php?error=wronglogin");
+            exit();
+        } else if ($checked_password === true) {
+
+            /*
+            session_start();
+            $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['user_role'] = $row['user_role'];
+            header("Location: ../index.php");
+            */
+
+            //test
+            header("Location: ../login.php?error=test");
+
+            exit();
+        }
+
+    }
 ?>
