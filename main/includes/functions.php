@@ -228,20 +228,49 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             header("Location: ../login.php?error=wronglogin");
             exit();
         } else if ($checked_password === true) {
-
-            /*
+       
             session_start();
             $_SESSION['user_id'] = $row['user_id'];
-            $_SESSION['username'] = $row['username'];
             $_SESSION['user_role'] = $row['user_role'];
             header("Location: ../index.php");
-            */
-
-            //test
-            header("Location: ../login.php?error=test");
+            
 
             exit();
         }
 
     }
+
+    //access control
+    function invalidAccess() {
+        session_unset();
+        session_destroy();
+        header("Location: ../index.php?error=invalidaccess");
+        exit();
+    }
+
+    //admin
+
+    function checkAdmin($user_role) {
+        if($user_role !== "admin") {
+            invalidAccess();
+        } 
+    }
+
+    function checkCustomer($user_role) {
+        if($user_role !== "customer") {
+            invalidAccess();
+        }
+    }
+
+    function checkLaborer($user_role) {
+        if($user_role !== "admin") {
+            invalidAccess();
+        }
+    }
+
+    //laborer
+    
+    //customer
+
+
 ?>

@@ -31,6 +31,8 @@
 
         if($_GET["error"] == "none") {
           $display_message = "You have been redirected to the landing page!";
+        } else if ($_GET["error"] == "invalidaccess") {
+          $display_message = "Invalid access. You've been redirected to the landing page!";
         }
 
         echo '<script>
