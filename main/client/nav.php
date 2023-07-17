@@ -1,11 +1,25 @@
+<?php
+session_start();
+$url = $_SESSION['server_url'];
+$string = $_SESSION['first_name'];
+
+//gets the first word of the first name
+if(str_contains($string, " ")) {
+  $first_name = substr($string, 0, strpos($string, " ")+1);
+} else {
+  $first_name = $string;
+}
+
+?>
+
 <nav class="bg-light p-0 text-center">
-  <a href="../client/dashboard/find-laborer.php" class="navbar-brand">
-    <img src="../icons/logo-2.png" alt="logo" class="img-fluid" />
+  <a href="<?php echo $url."client/dashboard/find-laborer.php"; ?>" class="navbar-brand">
+    <img src="<?php echo $url."icons/logo-2.png"; ?>" alt="logo" class="img-fluid" />
   </a>
   <ul class="nav nav-pills nav-fill flex-column mt-5">
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="../client/dashboard/find-laborer.php"
+        href="<?php echo $url."client/dashboard/find-laborer.php"; ?>"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-house"></i>
@@ -13,14 +27,14 @@
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="../profile/user-profile.php" class="nav-link blue-font mt-4">
+      <a href="<?php echo $url."client/user-profile.php"; ?>" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-user"></i>
         <span class="fs-5 d-none d-sm-block">Profile</span>
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="../client/requests/on-going-requests.php"
+        href="<?php echo $url."client/requests/on-going-requests.php"; ?>"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-screwdriver-wrench"></i>
@@ -28,13 +42,13 @@
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="../messages/client-inbox.php" class="nav-link blue-font mt-4">
+      <a href="<?php echo $url."client/user-inbox.php"; ?>" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-message"></i>
         <span class="fs-5 d-none d-sm-block">Messages</span>
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="#" class="nav-link blue-font mt-4">
+      <a href="<?php echo $url."client/dashboard/find-laborer.php?error=comingsoon"; ?>" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-bell"></i>
         <span class="fs-5 d-none d-sm-block">Notifications</span>
       </a>
@@ -48,17 +62,17 @@
           aria-expanded="false"
         >
           <i class="fs-5 fa-solid fa-user"></i>
-          <p id="currentUser" class="align-middle d-none d-sm-inline">Nina</p>
+          <p id="currentUser" class="align-middle d-none d-sm-inline"><?php echo $first_name; ?></p>
         </button>
         <ul class="dropdown-menu">
           <li>
-            <a href="#" class="dropdown-item blue-font header" type="button"
+            <a href="<?php echo $url."client/dashboard/find-laborer.php?error=comingsoon"; ?>" class="dropdown-item blue-font header" type="button"
               >Settings</a
             >
           </li>
           <li>
             <a
-              href="../profile/user-profile.php"
+              href="<?php echo $url."client/user-profile.php"; ?>"
               class="dropdown-item blue-font header"
               type="button"
               >Profile</a
@@ -66,7 +80,7 @@
           </li>
           <li>
             <a
-              href="../includes/logout-inc.php"
+              href="<?php echo $url."includes/logout-inc.php"; ?>"
               class="dropdown-item blue-font header"
               type="button"
             >

@@ -1,3 +1,28 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkLaborer($_SESSION['user_role']);
+
+  $userProfile = getProfile($conn, $_SESSION['user_id'], $_SESSION['user_role']);
+  if ($userProfile) {
+    $first_name = $userProfile['first_name'];
+    
+  }
+    
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +31,7 @@
     <title>Laborer Dashboard</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,7 +50,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/main/app.css" />
+    <link rel="stylesheet" href="../../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -41,18 +66,14 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/laborer/nav.html");
+              $("#nav-placeholder").load("../../laborer/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
         <!--MAIN-->
         <div class="col p-4 orange-main">
-          <header class="col-12 rounded-4 p-3 whites orange-font">
-            <h2><span>June 4, 2023</span>&nbsp;&nbsp;<span>Sunday</span></h2>
-            <h1 class="display-1 header text-normal">
-              Good <span>morning</span>, <span>Marcus!</span>
-            </h1>
-          </header>
+          <!--WELCOME-->
+          <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
 
           <nav class="col-12 mt-3">
             <ul class="nav nav-tabs nav-fill z-1 fs-3">
@@ -60,14 +81,14 @@
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="/main/laborer/dashboard/find-labor.html"
+                  href="../laborer/dashboard/find-labor.php"
                   >Find Labor</a
                 >
               </li>
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
-                  href="/main/laborer/dashboard/find-labor-dr.html"
+                  href="../laborer/dashboard/find-labor-dr.php"
                   >Direct Request</a
                 >
               </li>
@@ -118,7 +139,7 @@
                       <div class="col-2">
                         <div class="col-11">
                           <img
-                            src="icons/blank-profile.png"
+                            src="../../icons/blank-profile.png"
                             class="img-fluid d-inline"
                             alt="..."
                           />
@@ -145,7 +166,7 @@
                         </a>
                         <button type="button" class="btn btn-danger red-btn mb-3">Reject</button>
                         <a
-                          href="/main/laborer/dashboard/find-labor-mo.html"
+                          href="../laborer/dashboard/find-labor-mo.php"
                           class="btn btn-primary yellow-btn"
                         >
                           Make Offer

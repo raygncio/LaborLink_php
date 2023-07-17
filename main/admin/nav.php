@@ -45,7 +45,7 @@
             aria-expanded="false"
           >
             <i class="fs-5 fa-solid fa-user"></i>
-            <p id="currentUser" class="align-middle d-none d-sm-inline">Nina</p>
+            <p id="currentUser" class="align-middle d-none d-sm-inline">Admin</p>
           </button>
           <ul class="dropdown-menu">
             <li>

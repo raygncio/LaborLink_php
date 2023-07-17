@@ -232,6 +232,8 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             session_start();
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['user_role'] = $row['user_role'];
+            $_SESSION['first_name'] = $row['first_name'];
+            $_SESSION['server_url'] = "http://".$_SERVER['HTTP_HOST']."/LaborLink_php/main/";
 
             switch($_SESSION['user_role']) {
                 case "admin";
@@ -251,13 +253,113 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
 
     }
 
-    // READ
+    // ALL
+
+    function getProfile($conn, $user_id, $user_role) {
+        if($user_role == "customer") {
+            $sql = "SELECT U.first_name, concat(first_name, ' ' , middle_name, ' ' , last_name, ' ', suffix) AS fullName,
+            username, phone_number, email_add
+            FROM users 
+            WHERE user_id = ?";
+            
+            $stmt = mysqli_stmt_init($conn); //initialize prep stmt
+
+            //catch sql error
+            if(!mysqli_stmt_prepare($stmt, $sql)) {
+                header("Location: ../profile/laborer-profile.php?error=stmtfailed");
+                exit();
+            }            
+            //to avoid sql injections!
+            //ss means 2strings (e.g. sss means 3)
+            //bind the data from the user to the statement (?, ?)
+            mysqli_stmt_bind_param($stmt, "s", $user_id);
+            mysqli_stmt_execute($stmt);
+
+            //result set
+            $resultData = mysqli_stmt_get_result($stmt);
+
+            if($row = mysqli_fetch_assoc($resultData)) {
+                return $row;
+    
+            } else {
+                header("Location: ../login.php?error=accountdoesntexist");
+                exit();
+            }
+            
+        } else if($user_role =="laborer") {
+            $sql = "SELECT U.first_name, concat(U.first_name, ' ' , U.middle_name, ' ' , U.last_name, ' ', U.suffix) AS fullName,
+            U.username, U.phone_number, U.email_add, A.specialization 
+            FROM users AS U INNER JOIN applications AS A  ON U.user_id = A.user_id
+            WHERE U.user_id = ?";
+            
+            $stmt = mysqli_stmt_init($conn); //initialize prep stmt
+
+            //catch sql error
+            if(!mysqli_stmt_prepare($stmt, $sql)) {
+                header("Location: ../profile/laborer-profile.php?error=stmtfailed");
+                exit();
+            }            
+            //to avoid sql injections!
+            //ss means 2strings (e.g. sss means 3)
+            //bind the data from the user to the statement (?, ?)
+            mysqli_stmt_bind_param($stmt, "s", $user_id);
+            mysqli_stmt_execute($stmt);
+
+            //result set
+            $resultData = mysqli_stmt_get_result($stmt);
+
+            if($row = mysqli_fetch_assoc($resultData)) {
+                return $row;
+    
+            } else {
+                header("Location: ../login.php?error=accountdoesntexist");
+                exit();
+            }
+            
+        } 
+    }
+
+    function printWelcomeMessage($first_name, $user_role) {
+        date_default_timezone_set('Asia/Manila');
+        $current_date = date("m-d-Y");
+        $current_day = date("l");
+        $time = date("H");
+
+        
+        if ($time < "12") {
+            $current_time = "morning";
+        } else if ($time >= "12" && $time < "17") {
+            $current_time = "afternoon";
+        } else {
+            $current_time = "evening";
+        } 
+
+        if($user_role == "customer") {
+            echo "
+            <header class='col-12 rounded-4 p-3 oranges white-font'>
+                <h2><span>" . $current_date . "</span>&nbsp;&nbsp;<span>". $current_day ."</span></h2>
+                <h1 class='display-1 header text-normal'>
+                Good <span>". $current_time ."</span>, <span>" . $first_name . "</span>
+                </h1>
+            </header>
+            ";
+        } else if ($user_role == "laborer") {
+            echo "
+            <header class='col-12 rounded-4 p-3 whites orange-font'>
+                <h2><span>" . $current_date . "</span>&nbsp;&nbsp;<span>". $current_day ."</span></h2>
+                <h1 class='display-1 header text-normal'>
+                Good <span>". $current_time ."</span>, <span>" . $first_name . "</span>
+                </h1>
+            </header>
+            ";
+        }
+    }
 
     // access control ---------------------------------------------------------
     function invalidAccess() {
         session_unset();
         session_destroy();
-        header("Location: ../index.php?error=invalidaccess");
+        header("Location: http://".$_SERVER['HTTP_HOST']."/LaborLink_php/main/index.php?error=invalidaccess");
         exit();
     }
 
@@ -280,10 +382,15 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
     //laborer ----------------------------------------------------------------
     
     function checkLaborer($user_role) {
-        if($user_role !== "admin") {
+        if($user_role !== "laborer") {
             invalidAccess();
         }
     }
+
+    
+
+
+
 
     //customer ---------------------------------------------------------------
 

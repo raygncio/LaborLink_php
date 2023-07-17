@@ -1,3 +1,27 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkCustomer($_SESSION['user_role']);
+
+  $userProfile = getProfile($conn, $_SESSION['user_id'], $_SESSION['user_role']);
+    foreach ($userProfile as $row) {
+      $first_name = $row["first_name"];
+  }
+    
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +30,7 @@
     <title>Client Dashboard</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,7 +49,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/main/app.css" />
+    <link rel="stylesheet" href="../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -41,18 +65,14 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/client/nav.html");
+              $("#nav-placeholder").load("../client/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
         <!--MAIN-->
         <div class="col p-4">
-          <header class="col-12 rounded-4 p-3 oranges white-font">
-            <h2><span>June 4, 2023</span>&nbsp;&nbsp;<span>Sunday</span></h2>
-            <h1 class="display-1 header text-normal">
-              Good <span>morning</span>, <span>Nina!</span>
-            </h1>
-          </header>
+          <!--WELCOME-->
+          <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
 
           <nav class="col-12 mt-3">
             <ul class="nav nav-tabs nav-fill z-1 fs-3">
@@ -60,12 +80,12 @@
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="/main/client/dashboard/find-laborer.html"
+                  href="../client/dashboard/find-laborer.php"
                   >Find Laborer</a
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link text-start" href="/main/client/dashboard/open-request.html">Open Request</a>
+                <a class="nav-link text-start" href="../client/dashboard/open-request.php">Open Request</a>
               </li>
             </ul>
           </nav>
@@ -113,7 +133,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/plumbing 1.png"
+                    src="../icons/labors/plumbing 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="plumbing"
                   />
@@ -124,7 +144,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/electric 1.png"
+                    src="../icons/labors/electric 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="electrical"
                   />
@@ -135,7 +155,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/carp 1.png"
+                    src="../icons/labors/carp 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="carpentry"
                   />
@@ -146,7 +166,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/roofer 1.png"
+                    src="../icons/labors/roofer 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="roofing"
                   />
@@ -157,7 +177,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/maint 1.png"
+                    src="../icons/labors/maint 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="appliances"
                   />
@@ -168,7 +188,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/weld 1.png"
+                    src="../icons/labors/weld 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="welding"
                   />
@@ -179,7 +199,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/housekeep 1.png"
+                    src="../icons/labors/housekeep 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="housekeep"
                   />
@@ -190,7 +210,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/paint 1.png"
+                    src="../icons/labors/paint 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="paint"
                   />
@@ -201,7 +221,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/pest 1.png"
+                    src="../icons/labors/pest 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="pest"
                   />
@@ -212,7 +232,7 @@
                   class="col-2 text-decoration-none blue-link labor-icons"
                 >
                   <img
-                    src="icons/labors/tutor 1.png"
+                    src="../icons/labors/tutor 1.png"
                     class="img-fluid d-inline mb-3"
                     alt="tutoring"
                   />

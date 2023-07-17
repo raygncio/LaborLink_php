@@ -1,5 +1,31 @@
 <?php
+  session_start();
 
+  require_once "../includes/config.php";
+  require_once "../includes/functions.php";
+
+  //check if user is logged in
+  if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+  
+    checkLaborer($_SESSION['user_role']);
+
+    $userProfile = getProfile($conn, $_SESSION['user_id'], $_SESSION['user_role']);
+    if ($userProfile) {
+      $fullName = $userProfile["fullName"];
+      $username = $userProfile["username"];
+      $phone_number = $userProfile["phone_number"];
+      $email_add = $userProfile["email_add"];
+      $specialization = $userProfile["specialization"];
+    }
+
+    
+      
+  } else {
+    header("Location: ../index.php");
+    exit();
+  }
+
+  
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +62,25 @@
   </head>
 
   <body>
+  <?php
+    if (isset($_GET["error"])){
+
+      $modal_title = "Oh, no!";
+
+    if($_GET['error'] == "stmtfailed") {
+      $error_message = "Something went wrong (SQL error)";
+    } else if ($_GET['error'] == "accountdoesntexist") {
+      $error_message = "Something went wrong :(";
+    } 
+
+    echo '<script>
+        $(document).ready(function(){
+            $("#server-message").modal("show")
+        });
+        </script>';
+    } 
+    
+    ?>
     <div class="container-fluid main-pages">
       <div class="row">
         <!--Navigation bar-->
@@ -70,23 +115,23 @@
                   </div>
                   <div class="col ms-4">
                     <h1 class="display-3 blue-font header">
-                      Marcus Ray Ignacio
+                     <?php echo $fullName; ?>
                     </h1>
                     <h2 class="header text-normal">
-                      @thaliaanne
+                      @<?php echo $username; ?>
                       <span class="ms-1 blue-font font-normal"
-                        >| Specialization</span
+                        >|<?php echo $specialization; ?></span
                       >
                     </h2>
                   </div>
                   <div class="col-3 me-4">
                     <p>
                       <img class="me-2" src="../icons/profile/phone.png" alt="" />
-                      <span>09221113333</span>
+                      <span><?php echo $phone_number; ?></span>
                     </p>
                     <p>
                       <img class="me-2" src="../icons/profile/email.png" alt="" />
-                      <span>customer@gmail.com</span>
+                      <span><?php echo $email_add; ?></span>
                     </p>
                   </div>
                 </header>
@@ -164,6 +209,24 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage"><?php echo $modal_title; ?></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $error_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
+    </div>       
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
