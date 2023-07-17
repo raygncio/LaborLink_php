@@ -265,7 +265,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
 
     function getProfile($conn, $user_id, $user_role) {
         if($user_role == "customer") {
-            $sql = "SELECT U.first_name, concat(first_name, ' ' , middle_name, ' ' , last_name, ' ', suffix) AS fullName,
+            $sql = "SELECT first_name, concat(first_name, ' ' , middle_name, ' ' , last_name, ' ', suffix) AS fullName,
             username, phone_number, email_add
             FROM users 
             WHERE user_id = ?";
