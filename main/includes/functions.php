@@ -239,11 +239,11 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
                     exit();
                     break;
                 case "customer";
-                    header("Location: ../admin/user-management.php"); //to change
+                    header("Location: ../client/dashboard/find-laborer.php"); 
                     exit();
                     break;
                 case "laborer";
-                    header("Location: ../admin/user-management.php"); //to change
+                    header("Location: ../laborer/dashboard/find-labor.php"); 
                     exit();
                     break;
             }
