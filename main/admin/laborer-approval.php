@@ -21,7 +21,13 @@
   
     if (isset($_POST['noButton'])) {
       $applicantId = $_POST['applicantId'];
-      $updateQuery = "UPDATE applications SET application_status = 'Rejected' WHERE applicant_id = '$applicantId'";
+      $updateQuery = "UPDATE applications SET application_status = 'rejected' WHERE applicant_id = '$applicantId'";
+      mysqli_query($conn, $updateQuery);
+      
+      $updateQuery = "UPDATE users AS U 
+      INNER JOIN applications AS A 
+      ON U.user_id = A.user_id 
+      SET U.status = 'rejected' WHERE A.applicant_id = '$applicantId'";
       mysqli_query($conn, $updateQuery);
     }
 

@@ -228,6 +228,14 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             header("Location: ../login.php?error=wronglogin");
             exit();
         } else if ($checked_password === true) {
+
+            if ($row['status']=="pending"){
+                header("Location: ../login.php?error=applicationpending");
+                exit();
+            } else if ($row['status']=="rejected") {
+                header("Location: ../login.php?error=applicationrejected");
+                exit();
+            }
        
             session_start();
             $_SESSION['user_id'] = $row['user_id'];
