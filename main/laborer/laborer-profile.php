@@ -120,7 +120,7 @@
                     <h2 class="header text-normal">
                       @<?php echo $username; ?>
                       <span class="ms-1 blue-font font-normal"
-                        >|<?php echo $specialization; ?></span
+                        >| <?php echo $specialization; ?></span
                       >
                     </h2>
                   </div>
