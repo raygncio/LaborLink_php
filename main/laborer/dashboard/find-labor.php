@@ -9,12 +9,7 @@ require_once "../../includes/functions.php";
 if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
   checkLaborer($_SESSION['user_role']);
-
-  $userProfile = getProfile($conn, $_SESSION['user_id'], $_SESSION['user_role']);
-  if ($userProfile) {
-    $first_name = $userProfile['first_name'];
-    
-  }
+  $first_name = $_SESSION['first_name'];
     
 } else {
   header("Location: ../../index.php");
