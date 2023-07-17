@@ -26,7 +26,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     <title>Client Dashboard</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="../icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -45,7 +45,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="../app.css" />
+    <link rel="stylesheet" href="../../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -61,7 +61,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("../client/nav.php");
+              $("#nav-placeholder").load("../../client/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
@@ -76,12 +76,12 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="../client/dashboard/find-laborer.php"
+                  href="find-laborer.php"
                   >Find Laborer</a
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link text-start" href="../client/dashboard/open-request.php">Open Request</a>
+                <a class="nav-link text-start" href="open-request.php">Open Request</a>
               </li>
             </ul>
           </nav>
@@ -89,152 +89,156 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           <main
             class="col-12 rounded-4 rounded-top-0 whites orange-font orange-content g-0 z-0"
           >
-            <div class="row p-3">
-              <header class="col-7 mt-2">
-                <h2 class="display-4 header text-normal">
-                  Looking for a Labor Worker?
-                </h2>
-                <p class="fs-4 font-normal text-normal">
-                  Find the best laborer you need!
-                </p>
-              </header>
-              <header class="col-5 mt-4 text-end">
-                <form class="d-flex" role="search">
-                  <input
-                    class="form-control me-2"
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                  />
+            <div class="row p-3">   
+                <header class="col-7 mt-2">
+                  <h2 class="display-4 header text-normal">
+                    Looking for a Labor Worker?
+                  </h2>
+                  <p class="fs-4 font-normal text-normal">
+                    Find the best laborer you need!
+                  </p>
+                </header>
+                <header class="col-5 mt-4 text-end">
+                  <form 
+                  action="find-laborer-search.php"
+                  method="POST"
+                  class="d-flex" role="search">
+                    <input
+                      class="form-control me-2"
+                      type="search"
+                      placeholder="Search"
+                      aria-label="Search"
+                    />
+                    <button
+                      class="btn btn-outline-success blue-outline-btn"
+                      name="search-submit"
+                      type="submit"
+                    >
+                      Search
+                    </button>
+                  </form>
                   <button
-                    class="btn btn-outline-success blue-outline-btn"
-                    type="submit"
+                    type="button"
+                    class="fs-5 btn btn-link orange-link text-normal font-normal"
                   >
-                    Search
+                    What do you need help with?
                   </button>
-                </form>
-                <button
-                  type="button"
-                  class="fs-5 btn btn-link orange-link text-normal font-normal"
+                </header>
+                
+                <div
+                  class="row blue-font text-center justify-content-center align-items-end p-3 my-4"
                 >
-                  What do you need help with?
-                </button>
-              </header>
-              
-              <div
-                class="row blue-font text-center justify-content-center align-items-end p-3 my-4"
-              >
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/plumbing 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="plumbing"
-                  />
-                  <p>Plumbing</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/electric 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="electrical"
-                  />
-                  <p>Electrical</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/carp 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="carpentry"
-                  />
-                  <p>Carpentry</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/roofer 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="roofing"
-                  />
-                  <p>Roofing</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/maint 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="appliances"
-                  />
-                  <p>Appliances</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/weld 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="welding"
-                  />
-                  <p>Welding</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/housekeep 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="housekeep"
-                  />
-                  <p>Housekeeping</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/paint 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="paint"
-                  />
-                  <p>Painting</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/pest 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="pest"
-                  />
-                  <p>Pest Control</p>
-                </a>
-                <a
-                  href="#"
-                  class="col-2 text-decoration-none blue-link labor-icons"
-                >
-                  <img
-                    src="../icons/labors/tutor 1.png"
-                    class="img-fluid d-inline mb-3"
-                    alt="tutoring"
-                  />
-                  <p>Tutoring</p>
-                </a>
-              </div>
+                  <a
+                    href="find-laborer-search.php?q=plumbing"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/plumbing 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="plumbing"
+                    />
+                    <p>Plumbing</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=electrical"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/electric 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="electrical"
+                    />
+                    <p>Electrical</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=carpentry"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/carp 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="carpentry"
+                    />
+                    <p>Carpentry</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=roofing"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/roofer 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="roofing"
+                    />
+                    <p>Roofing</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=appliances"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/maint 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="appliances"
+                    />
+                    <p>Appliances</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=welding"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/weld 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="welding"
+                    />
+                    <p>Welding</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=housekeeping"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/housekeep 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="housekeep"
+                    />
+                    <p>Housekeeping</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=painting"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/paint 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="paint"
+                    />
+                    <p>Painting</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=pest-control"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/pest 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="pest"
+                    />
+                    <p>Pest Control</p>
+                  </a>
+                  <a
+                    href="find-laborer-search.php?q=tutoring"
+                    class="col-2 text-decoration-none blue-link labor-icons"
+                  >
+                    <img
+                      src="../../icons/labors/tutor 1.png"
+                      class="img-fluid d-inline mb-3"
+                      alt="tutoring"
+                    />
+                    <p>Tutoring</p>
+                  </a>
+                </div>
             </div>
           </main>
         </div>
