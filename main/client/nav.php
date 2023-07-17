@@ -1,11 +1,11 @@
 <nav class="bg-light p-0 text-center">
-  <a href="/main/client/dashboard/find-laborer.html" class="navbar-brand">
-    <img src="icons/logo-2.png" alt="logo" class="img-fluid" />
+  <a href="../client/dashboard/find-laborer.php" class="navbar-brand">
+    <img src="../icons/logo-2.png" alt="logo" class="img-fluid" />
   </a>
   <ul class="nav nav-pills nav-fill flex-column mt-5">
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="/main/client/dashboard/find-laborer.html"
+        href="../client/dashboard/find-laborer.php"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-house"></i>
@@ -13,14 +13,14 @@
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="/main/profile/user-profile.html" class="nav-link blue-font mt-4">
+      <a href="../profile/user-profile.php" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-user"></i>
         <span class="fs-5 d-none d-sm-block">Profile</span>
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="/main/client/requests/on-going-requests.html"
+        href="../client/requests/on-going-requests.php"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-screwdriver-wrench"></i>
@@ -28,7 +28,7 @@
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="/main/messages/client-inbox.html" class="nav-link blue-font mt-4">
+      <a href="../messages/client-inbox.php" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-message"></i>
         <span class="fs-5 d-none d-sm-block">Messages</span>
       </a>
@@ -58,7 +58,7 @@
           </li>
           <li>
             <a
-              href="/main/profile/user-profile.html"
+              href="../profile/user-profile.php"
               class="dropdown-item blue-font header"
               type="button"
               >Profile</a
@@ -66,7 +66,7 @@
           </li>
           <li>
             <a
-              href="/main/index.html"
+              href="../includes/logout-inc.php"
               class="dropdown-item blue-font header"
               type="button"
             >

@@ -6,7 +6,7 @@
     <title>Profile</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,7 +25,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/main/app.css" />
+    <link rel="stylesheet" href="../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -41,7 +41,7 @@
         ></div>
         <script>
           $(function () {
-            $("#nav-placeholder").load("/main/laborer/nav.html");
+            $("#nav-placeholder").load("../client/nav.php");
           });
         </script>
         <!--end of Navigation bar-->
@@ -59,29 +59,24 @@
                   <div class="col-1">
                     <img
                       class="img-fluid"
-                      src="icons/blank-profile.png"
+                      src="../icons/blank-profile.png"
                       alt="profpic"
                       style="max-width: 140px"
                     />
                   </div>
                   <div class="col ms-4">
                     <h1 class="display-3 blue-font header">
-                      Marcus Ray Ignacio
+                      Thalia Anne Escueta
                     </h1>
-                    <h2 class="header text-normal">
-                      @thaliaanne
-                      <span class="ms-1 blue-font font-normal"
-                        >| Specialization</span
-                      >
-                    </h2>
+                    <h2 class="header text-normal">@thaliaanne</h2>
                   </div>
                   <div class="col-3 me-4">
                     <p>
-                      <img class="me-2" src="icons/profile/phone.png" alt="" />
+                      <img class="me-2" src="../icons/profile/phone.png" alt="" />
                       <span>09221113333</span>
                     </p>
                     <p>
-                      <img class="me-2" src="icons/profile/email.png" alt="" />
+                      <img class="me-2" src="../icons/profile/email.png" alt="" />
                       <span>customer@gmail.com</span>
                     </p>
                   </div>
@@ -103,14 +98,14 @@
                           <div class="col-1">
                             <div class="col-12">
                               <img
-                                src="icons/blank-profile.png"
+                                src="../icons/blank-profile.png"
                                 class="img-fluid d-inline"
                                 alt="..."
                               />
                             </div>
                           </div>
                           <div class="col-3">
-                            <h4 class="fs-2 header blue-font">Client Name</h4>
+                            <h4 class="fs-2 header blue-font">Laborer Name</h4>
                             <h4 class="fs-4 orange-font">Labor Needed</h4>
                             <div class="laborer-rating orange-font">
                               <i class="fa-solid fa-star"></i>

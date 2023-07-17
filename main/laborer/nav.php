@@ -1,14 +1,14 @@
 <!--NAV-->
 
 <nav class="bg-light p-0 text-center">
-  <a href="/main/laborer/dashboard/find-labor.html" class="navbar-brand">
-    <img src="icons/logo-2.png" alt="logo" class="img-fluid" />
+  <a href="../laborer/dashboard/find-labor.php" class="navbar-brand">
+    <img src="../icons/logo-2.png" alt="logo" class="img-fluid" />
     <span class="badge bg-secondary d-block mt-4">Laborer</span>
   </a>
   <ul class="nav nav-pills nav-fill flex-column mt-3">
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="/main/laborer/dashboard/find-labor.html"
+        href="../laborer/dashboard/find-labor.php"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-house"></i>
@@ -17,7 +17,7 @@
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="/main/profile/laborer-profile.html"
+        href="../profile/laborer-profile.php"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-user"></i>
@@ -26,7 +26,7 @@
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="/main/laborer/services/on-going-services.html"
+        href="../laborer/services/on-going-services.php"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-screwdriver-wrench"></i>
@@ -35,7 +35,7 @@
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="/main/messages/laborer-inbox.html"
+        href="../messages/laborer-inbox.php"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-message"></i>
@@ -49,7 +49,7 @@
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="/main/laborer/credit-balance.html" class="nav-link blue-font mt-4">
+      <a href="../laborer/credit-balance.php" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-credit-card"></i>
         <span class="fs-5 d-none d-sm-block">Credit Balance</span>
       </a>
@@ -73,7 +73,7 @@
           </li>
           <li>
             <a
-              href="/main/profile/laborer-profile.html"
+              href="../profile/laborer-profile.php"
               class="dropdown-item blue-font header"
               type="button"
               >Profile</a
@@ -81,7 +81,7 @@
           </li>
           <li>
             <a
-              href="/main/index.html"
+              href="../includes/logout-inc.php"
               class="dropdown-item blue-font header"
               type="button"
             >
