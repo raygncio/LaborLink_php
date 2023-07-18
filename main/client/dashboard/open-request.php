@@ -1,7 +1,65 @@
 <?php 
 
-?>
+session_start();
 
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkCustomer($_SESSION['user_role']);
+  $first_name = $_SESSION['first_name'];
+  $fee = 0; 
+  $convenience_fee = 0; 
+  $total = 0;
+  //post button
+  if (isset($_POST['postButton'])) {
+    
+    if(isset($_POST['checkbox'])) {
+      $query = "SELECT concat(street_address, city, state, zip_code) as address 
+      FROM users WHERE user_id = '$_SESSION[user_id]'";
+      $query_run = mysqli_query($conn, $query);
+      foreach($query_run as $row) {
+        $add = $row['address'];
+      }
+    } else {
+      $add = $_POST['requestAdd'];
+    }
+    
+    $title = $_POST['requestTitle'];
+    $category = $_POST['requestCateg'];
+    $desc = $_POST['requestDesc'];
+    $time = $_POST['requestTime'];
+    $fee = $_POST['suggestedFee'];
+
+    $breakdown_array = getBreakdown($fee);
+    $convenience_fee = $breakdown_array[0];
+    $total = $breakdown_array[1];
+
+    $request_update = "INSERT INTO requests (title, category, description, address, date_time, progress, user_id) VALUES ('$title', '$category',  '$desc', '$add', '$time', 'pending', '$_SESSION[user_id]')";
+    $query_run = mysqli_query($conn, $request_update);
+
+    $get_request_id= "SELECT LAST_INSERT_ID() AS request_id FROM requests";
+    $query_run = mysqli_query($conn, $get_request_id);
+
+    foreach($query_run as $row){
+      $request_id = $row['request_id'];
+    }
+
+    $offer_update = "INSERT INTO offers (suggested_fee, status, user_id, request_id) 
+    VALUES ('$total', 'pending',  '$_SESSION[user_id]', '$request_id')";
+
+    $query_run = mysqli_query($conn, $offer_update);
+    
+  } 
+
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +92,8 @@
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <!--Ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   </head>
 
   <body>
@@ -89,7 +149,10 @@
               </header>
 
               <div class="col-12 rounded-4 border border-5 p-3 whites">
-                <form action="#" class="row">
+                <form 
+                
+                method="POST" 
+                class="row">
                   <div class="col-6">
                     <div class="row mb-3">
                       <label
@@ -102,6 +165,7 @@
                           type="text"
                           class="form-control"
                           id="requestTitle"
+                          name="requestTitle"
                           required
                         />
                       </div>
@@ -117,6 +181,7 @@
                           id="requestCateg"
                           class="form-select"
                           aria-label="Default select example"
+                          name="requestCateg"
                           required
                         >
                           <option selected disabled>Select Category</option>
@@ -144,6 +209,7 @@
                           id="requestDesc"
                           rows="7"
                           style="resize: none"
+                          name="requestDesc"
                           required
                         ></textarea>
                       </div>
@@ -159,6 +225,7 @@
                           type="file"
                           class="form-control"
                           id="requestAttachment"
+                          name="requestAttachment"
                           disabled
                         />
                       </div>
@@ -166,8 +233,14 @@
                   </div>
                   <div class="col-6">
                     <div class="row mb-3">
+                      <script>
+                      $('#checkbox').change(function() {
+                          $('#requestAdd').prop('disabled',!this.checked)
+                      });
+                      </script>
+                 
                       <label
-                        for="requestStreet"
+                        for="requestAdd"
                         class="col-2 col-form-label text-end"
                         >Address:
                       </label>
@@ -175,13 +248,14 @@
                         <input
                           type="text"
                           class="form-control"
-                          id="requestStreet"
-                          required
+                          id="requestAdd"
+                          name="requestAdd"                         
                         />
                       </div>
+
                       <div class="col mt-2">
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                          <input class="form-check-input" type="checkbox" name="checkbox" value="homeAddress" id="flexCheckDefault">
                           <label class="form-check-label" for="flexCheckDefault">
                             Home address
                           </label>
@@ -196,15 +270,16 @@
                       </label>
                       <div class="col-4">
                         <input
-                          type="time"
+                          type="datetime-local"
                           class="form-control"
                           id="requestTime"
+                          name="requestTime"
                           required
                         />
                       </div>
                       <div class="col-2">
                         <label
-                          for="suggestServiceFee"
+                          for="suggestedFee"
                           class="col-form-label text-end"
                           >Suggest Service Fee:
                         </label>
@@ -214,13 +289,14 @@
                           <input
                             type="text"
                             class="form-control"
-                            id="suggestServiceFee"
+                            id="suggestedFee"
+                            name="suggestedFee"
                             placeholder="100.00"
                             required
                           />
                           <label
                             class="blue-font font-normal"
-                            for="suggestServiceFee"
+                            for="suggestedFee"
                             >Php</label
                           >
                         </div>
@@ -233,24 +309,25 @@
                         <div class="row font-normal">
                           <p class="col-2 fs-5 header">Breakdown:</p>
                           <p class="col-5 text-end">Labor Fee</p>
-                          <p class="col-5 text-center">Php 500</p>
+                          <p class="col-5 text-center"><?php echo $fee?></p>
                           <p class="col-7 text-end">Convenience Fee</p>
-                          <p class="col-5 text-center">Php 50</p>
+                          <p class="col-5 text-center"><?php echo $convenience_fee?></p>
                           <p></p>
                           <hr />
                           <p class="fs-5 col-7 text-end header">Total:</p>
-                          <p class="fs-5 col-5 text-center header">Php 550</p>
+                          <p class="fs-5 col-5 text-center header">Php <?php echo $total?></p>
                         </div>
                       </div>
                       <div class="col-12 mt-4 text-end">
                         <button
                           type="submit"
                           class="btn btn-primary green-btn me-3"
+                          name="postButton"
                         >
                           Post
                         </button>
                         <a
-                          href="/main/client/dashboard/open-request.html"
+                          href="find-laborer.php"
                           class="btn btn-primary red-btn"
                         >
                           Cancel

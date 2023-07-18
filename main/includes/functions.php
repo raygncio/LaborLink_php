@@ -420,4 +420,11 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $query_run = mysqli_query($conn, $query); 
         return $query_run;
     }
+
+    function getBreakdown($fee) {
+        $convenience_fee = $fee*0.10;
+        $total = $convenience_fee + $fee;
+        $breakdown_array = array($convenience_fee, $total);
+        return $breakdown_array;
+    }
 ?>
