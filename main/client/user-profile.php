@@ -7,14 +7,14 @@
   //check if user is logged in
   if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   
-    checkLaborer($_SESSION['user_role']);
+    checkCustomer($_SESSION['user_role']);
 
     $userProfile = getProfile($conn, $_SESSION['user_id'], $_SESSION['user_role']);
     if ($userProfile) {
-      $fullName = $row["fullName"];
-      $username = $row["username"];
-      $phone_number = $row["phone_number"];
-      $email_add = $row["email_add"];
+      $fullName = $userProfile["fullName"];
+      $username = $userProfile["username"];
+      $phone_number = $userProfile["phone_number"];
+      $email_add = $userProfile["email_add"];
     }
 
     
@@ -116,7 +116,7 @@
                     <h1 class="display-3 blue-font header">
                     <?php echo $fullName; ?>
                     </h1>
-                    <h2 class="header text-normal"><?php echo $username; ?>/h2>
+                    <h2 class="header text-normal">@<?php echo $username; ?></h2>
                   </div>
                   <div class="col-3 me-4">
                     <p>
