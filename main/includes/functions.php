@@ -407,4 +407,17 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             invalidAccess();
         }
     }
+
+    function searchGet($conn, $specialization) {
+        $query = "SELECT concat(U.first_name, ' ' , U.middle_name, ' ' , U.last_name, ' ', U.suffix) AS full_name, 
+        A.specialization, A.employment_type, A.employer, 
+        A.certification, U.email_add, U.sex, U.phone_number, 
+        U.city FROM users AS U INNER JOIN applications AS A 
+        ON U.user_id = A.user_id 
+        WHERE U.user_role = 'laborer' AND 
+        A.specialization = '$specialization';";
+
+        $query_run = mysqli_query($conn, $query); 
+        return $query_run;
+    }
 ?>

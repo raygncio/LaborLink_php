@@ -126,12 +126,14 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                     <input
                       class="form-control me-2"
                       type="search"
+                      name="search"
                       placeholder="Search"
                       aria-label="Search"
+                      
                     />
                     <button
                       class="btn btn-outline-success blue-outline-btn"
-                      name="search-submit"
+                      name="submit-search"
                       type="submit"
                     >
                       Search

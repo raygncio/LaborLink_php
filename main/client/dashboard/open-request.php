@@ -1,3 +1,8 @@
+<?php 
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +11,7 @@
     <title>Client Dashboard</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,7 +30,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/main/app.css" />
+    <link rel="stylesheet" href="../../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -41,25 +46,21 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/client/nav.html");
+              $("#nav-placeholder").load("../../client/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
         <!--MAIN-->
         <div class="col p-4 orange-main">
-          <header class="col-12 rounded-4 p-3 whites orange-font">
-            <h2><span>June 4, 2023</span>&nbsp;&nbsp;<span>Sunday</span></h2>
-            <h1 class="display-1 header text-normal">
-              Good <span>morning</span>, <span>Nina!</span>
-            </h1>
-          </header>
+          <!--WELCOME-->
+          <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
 
           <nav class="col-12 mt-3">
             <ul class="nav nav-tabs nav-fill z-1 fs-3">
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
-                  href="/main/client/dashboard/find-laborer.html"
+                  href="find-laborer.php"
                   >Find Laborer</a
                 >
               </li>
@@ -67,7 +68,7 @@
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="/main/client/dashboard/open-request.html"
+                  href="open-request.php"
                   >Open Request</a
                 >
               </li>
