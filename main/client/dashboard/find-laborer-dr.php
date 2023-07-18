@@ -12,32 +12,67 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $first_name = $_SESSION['first_name'];
 
   //search
-  if (isset($_POST['submit-search'])) {
-    $search = mysqli_real_escape_string($conn, $_POST['search']);
+  $laborer = mysqli_real_escape_string($conn, $_GET['laborer']);
 
-    $sql = "SELECT U.user_role, A.application_status, concat(U.first_name, ' ', U.middle_name, ' ', 
-    U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
-    U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
-    A.employer, A.certification
-    FROM users AS U
-    INNER JOIN applications AS A
-    ON U.user_id = A.user_id
-    WHERE (U.user_role = 'laborer' AND A.application_status = 'approved') AND 
-    (concat(U.first_name, ' ', U.middle_name, ' ', 
-    U.last_name, ' ', U.suffix) LIKE '%$search%' OR
-    A.specialization LIKE '%$search%' OR
-    U.email_add LIKE '%$search%' OR
-    U.city LIKE '%$search%' OR
-    A.employment_type LIKE '%$search%')";
+  $sql = "SELECT U.user_role, A.application_status, concat(U.first_name, ' ', U.middle_name, ' ', 
+  U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
+  U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
+  A.employer, A.certification
+  FROM users AS U
+  INNER JOIN applications AS A
+  ON U.user_id = A.user_id
+  WHERE U.username = '$laborer'";
 
-    $result = mysqli_query($conn, $sql);
-    $query_result = mysqli_num_rows($result);
+  $result = mysqli_query($conn, $sql);
+  $query_result = mysqli_num_rows($result);
     
-    if($query_result == 0){
-      header("Location: find-laborer-search.php?error=noresults");
-      exit();    
+  if($query_result == 0){
+    header("Location: find-laborer-search.php?error=noresults");
+    exit();    
+  }
+
+  $fee = 0; 
+  $convenience_fee = 0; 
+  $total = 0;
+  //post button
+  if (isset($_POST['postButton'])) {
+    
+    if(isset($_POST['checkbox'])) {
+      $query = "SELECT concat(street_address, city, state, zip_code) as address 
+      FROM users WHERE user_id = '$_SESSION[user_id]'";
+      $query_run = mysqli_query($conn, $query);
+      foreach($query_run as $row) {
+        $add = $row['address'];
+      }
+    } else {
+      $add = $_POST['requestAdd'];
+    }
+    
+    $title = $_POST['requestTitle'];
+    $category = $_POST['requestCateg'];
+    $desc = $_POST['requestDesc'];
+    $time = $_POST['requestTime'];
+    $fee = $_POST['suggestedFee'];
+
+    $breakdown_array = getBreakdown($fee);
+    $convenience_fee = $breakdown_array[0];
+    $total = $breakdown_array[1];
+
+    $request_update = "INSERT INTO requests (title, category, description, address, date_time, progress, user_id) VALUES ('$title', '$category',  '$desc', '$add', '$time', 'pending', '$_SESSION[user_id]')";
+    $query_run = mysqli_query($conn, $request_update);
+
+    $get_request_id= "SELECT LAST_INSERT_ID() AS request_id FROM requests";
+    $query_run = mysqli_query($conn, $get_request_id);
+
+    foreach($query_run as $row){
+      $request_id = $row['request_id'];
     }
 
+    $offer_update = "INSERT INTO offers (suggested_fee, status, user_id, request_id) 
+    VALUES ('$total', 'pending',  '$_SESSION[user_id]', '$request_id')";
+
+    $query_run = mysqli_query($conn, $offer_update);
+    
   } 
   
 } else {
@@ -105,14 +140,14 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="/main/client/dashboard/find-laborer.html"
+                  href="find-laborer.php"
                   >Find Laborer</a
                 >
               </li>
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
-                  href="/main/client/dashboard/open-request.html"
+                  href="open-request.php"
                   >Open Request</a
                 >
               </li>
@@ -151,6 +186,20 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
               <div class="col-12 rounded-4 border border-5 p-3 whites">
                 <div class="row">
+                  <!--Laborer-->
+                  <?php
+                  foreach ($result as $row) {
+                    $name = $row["full_name"];
+                    $specialization = $row["specialization"];
+                    $type = $row["employment_type"];
+                    $employer = $row["employer"];
+                    $certification = $row["certification"];
+                    $email_add = $row["email_add"];
+                    $gender = $row["sex"];
+                    $phone_number = $row["phone_number"];
+                    $city = $row["city"];
+                  }
+                  echo '
                   <div class="col-4">
                     <div class="row orange-font p-3 mb-2">
                       <header class="col-12">
@@ -165,8 +214,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             </div>
                           </div>
                           <div class="col-7">
-                            <h4 class="fs-2 header">Laborer Name</h4>
-                            <p class="lead blue-font">Specialization</p>
+                            <h4 class="fs-2 header">'.$name.'</h4>
+                            <p class="lead blue-font">'.$specialization.'</p>
                             <div class="laborer-rating">
                               <i class="fa-solid fa-star"></i>
                               <i class="fa-solid fa-star"></i>
@@ -178,34 +227,43 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         </div>
                       </header>
                       <article
-                        class="col-12 mt-4 font-normal text-black description overflow-auto"
+                        class="col-12 mt-4 font-normal text-normal text-black description overflow-auto"
                       >
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Error vitae ut doloremque quis eos tempora
-                          libero maiores sed, voluptas quidem natus perspiciatis
-                          deserunt expedita aspernatur facere voluptatum quasi
-                          obcaecati corrupti?
-                        </p>
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Error vitae ut doloremque quis eos tempora
-                          libero maiores sed, voluptas quidem natus perspiciatis
-                          deserunt expedita aspernatur facere voluptatum quasi
-                          obcaecati corrupti?
-                        </p>
-                        <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Error vitae ut doloremque quis eos tempora
-                          libero maiores sed, voluptas quidem natus perspiciatis
-                          deserunt expedita aspernatur facere voluptatum quasi
-                          obcaecati corrupti?
-                        </p>
+                      <div class="row">
+                      <p>
+                        Email add: ' . $email_add .'
+                      </p>
+                      <p>
+                        Phone Number: ' .$phone_number .'
+                      </p>
+                      <p>
+                        Gender: ' . $gender .'
+                      </p>
+                      <p>
+                        City: ' . $city .'
+                      </p>
+                      
+                      <p>
+                        Employment Type: ' . $type .'
+                      </p>
+                      <p>
+                        Employer: ' . $employer .'
+                      </p>
+                      <p>
+                        Certification: ' . $certification .'
+                      </p>
+                      </div>  
                       </article>
                     </div>
                   </div>
+                  ';
+                  ?>
+                  <!--End ofLaborer-->
                   <div class="col">
-                    <form action="#" class="row align-items-center">
+                    <form 
+                   
+                    method="POST"
+                    class="row align-items-center">
                       <div class="col-8 orange-font">
                         <div class="row mb-3">
                           <label for="requestTitle" class="col-1 col-form-label"
@@ -216,6 +274,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                               type="text"
                               class="form-control"
                               id="requestTitle"
+                              name="requestTitle"
                               required
                             />
                           </div>
@@ -229,6 +288,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                               type="text"
                               class="form-control"
                               id="requestCateg"
+                              name="requestCateg"
+                              value="<?php echo "$specialization"; ?>"
                               readonly
                             />
                           </div>
@@ -243,6 +304,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             <textarea
                               class="form-control"
                               id="requestDesc"
+                              name="requestDesc"
                               rows="5"
                               style="resize: none"
                               required
@@ -259,8 +321,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             <input
                               type="text"
                               class="form-control"
-                              id="requestStreet"
-                              required
+                              id="requestAdd"
+                              name="requestAdd"
+                              
                             />
                           </div>
                           <div class="col mt-2">
@@ -286,7 +349,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             class="col-2 col-form-label text-end me-3"
                             >Attachment:
                           </label>
-                          <div class="col-5">
+                          <div class="col-4">
                             <input
                               type="file"
                               class="form-control"
@@ -299,11 +362,12 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             class="col-1 col-form-label ms-4"
                             >Time:
                           </label>
-                          <div class="col-3">
+                          <div class="col-4">
                             <input
-                              type="time"
+                              type="datetime-local"
                               class="form-control"
                               id="requestTime"
+                              name="requestTime"
                               required
                             />
                           </div>
@@ -323,7 +387,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                               <input
                                 type="text"
                                 class="form-control"
-                                id="suggestServiceFee"
+                                id="suggestedFee"
+                                name="suggestedFee"
                                 placeholder="100.00"
                               />
                               <label
@@ -339,14 +404,14 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             <p class="fs-4 text-center">Breakdown:</p>
                             <div class="row font-normal">
                               <p class="col-5 text-end">Labor Fee</p>
-                              <p class="col-6 text-center">Php 500</p>
+                              <p id="textFee" class="col-6 text-center">Php </p>
                               <p class="col-5 text-end">Convenience Fee</p>
-                              <p class="col-6 text-center">Php 50</p>
+                              <p id="textConFee" class="col-6 text-center">Php </p>
                               <p></p>
                               <hr />
                               <p class="fs-5 col-5 text-end header">Total:</p>
-                              <p class="fs-5 col-6 text-center header">
-                                Php 550
+                              <p id="textTotal" class="fs-5 col-6 text-center header">
+                                Php 
                               </p>
                             </div>
                           </div>
@@ -459,6 +524,22 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         </div>
       </div>
     </div>
+
+    <script>
+      var suggestedFee = document.getElementById('suggestedFee');
+      var laborFee = document.getElementById('textFee');
+      var convenienceFee = document.getElementById('textConFee');
+      var totalFee = document.getElementById('textTotal');
+
+      function getBreakdown() {
+        laborFee.innerHTML = parseInt(suggestedFee.value);
+        convenienceFee.innerHTML = parseInt(suggestedFee.value*0.10);
+        totalFee.innerHTML = parseInt(suggestedFee.value) + parseInt(suggestedFee.value*0.10);
+      }
+      
+      suggestedFee.addEventListener('keyup', getBreakdown);
+
+    </script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"

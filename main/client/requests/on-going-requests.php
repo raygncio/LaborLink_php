@@ -41,7 +41,7 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/client/nav.html");
+              $("#nav-placeholder").load("../../client/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
@@ -119,7 +119,7 @@
                       <div class="col-2">
                         <div class="col-11">
                           <img
-                            src="icons/blank-profile.png"
+                            src="../../icons/blank-profile.png"
                             class="img-fluid d-inline"
                             alt="..."
                           />
@@ -140,14 +140,14 @@
                         <button type="submit" class="btn btn-link yesno mb-3">
                           <img
                             class="img-fluid"
-                            src="icons/yesno/accept.png"
+                            src="../../icons/yesno/accept.png"
                             alt=""
                           />
                         </button>
                         <button type="submit" class="btn btn-link yesno mb-3">
                           <img
                             class="img-fluid"
-                            src="icons/yesno/decline.png"
+                            src="../../icons/yesno/decline.png"
                             alt=""
                           />
                         </button>

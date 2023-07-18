@@ -41,7 +41,7 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/client/nav.html");
+              $("#nav-placeholder").load("../../client/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
