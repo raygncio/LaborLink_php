@@ -1,3 +1,29 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkCustomer($_SESSION['user_role']);
+  $first_name = $_SESSION['first_name'];
+
+  //search
+  if (isset($_POST['submit-search'])) {
+    $search = mysqli_real_escape_string($conn, $_POST['']);
+  }
+
+    
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +32,7 @@
     <title>Client Dashboard</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,7 +67,7 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/client/nav.html");
+              $("#nav-placeholder").load("../../client/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
@@ -60,12 +86,12 @@
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="/main/client/dashboard/find-laborer.html"
+                  href="find-laborer.php"
                   >Find Laborer</a
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link text-start" href="/main/client/dashboard/open-request.html">Open Request</a>
+                <a class="nav-link text-start" href="../client/dashboard/open-request.php">Open Request</a>
               </li>
             </ul>
           </nav>
@@ -118,7 +144,7 @@
                       <div class="col-2">
                         <div class="col-11">
                           <img
-                            src="icons/blank-profile.png"
+                            src="../../icons/blank-profile.png"
                             class="img-fluid d-inline"
                             alt="..."
                           />
@@ -136,7 +162,7 @@
                         </div>
                       </div>
                       <div class="col text-end">
-                        <a href="/main/client/dashboard/find-laborer-dr.html" class="btn btn-primary green-btn mb-3">
+                        <a href="find-laborer-dr.php" class="btn btn-primary green-btn mb-3">
                           Direct Request
                         </a>
                         <a href="#" class="btn btn-primary blue-btn">
@@ -173,135 +199,8 @@
                       </p>
                     </div>
                   </article>
-                </div>
-                <div
-                  class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
-                >
-                  <header class="col-12">
-                    <div class="row align-items-start g-0">
-                      <div class="col-2">
-                        <div class="col-11">
-                          <img
-                            src="icons/blank-profile.png"
-                            class="img-fluid d-inline"
-                            alt="..."
-                          />
-                        </div>
-                      </div>
-                      <div class="col-6">
-                        <h4 class="fs-2 header">Laborer Name</h4>
-                        <p class="lead blue-font">Specialization</p>
-                        <div class="laborer-rating">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="col text-end">
-                        <a href="/main/client/dashboard/find-laborer-dr.html" class="btn btn-primary green-btn mb-3">
-                          Direct Request
-                        </a>
-                        <a href="#" class="btn btn-primary blue-btn">
-                          <i class="fa-solid fa-message"></i>
-                          Message
-                        </a>
-                      </div>
-                    </div>
-                  </header>
-                  <article
-                    class="col-12 mt-4 font-normal text-black overflow-auto"
-                  >
-                    <div class="description">
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                    </div>
-                  </article>
-                </div>
-                <div
-                  class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
-                >
-                  <header class="col-12">
-                    <div class="row align-items-start g-0">
-                      <div class="col-2">
-                        <div class="col-11">
-                          <img
-                            src="icons/blank-profile.png"
-                            class="img-fluid d-inline"
-                            alt="..."
-                          />
-                        </div>
-                      </div>
-                      <div class="col-6">
-                        <h4 class="fs-2 header">Laborer Name</h4>
-                        <p class="lead blue-font">Specialization</p>
-                        <div class="laborer-rating">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="col text-end">
-                        <a href="/main/client/dashboard/find-laborer-dr.html" class="btn btn-primary green-btn mb-3">
-                          Direct Request
-                        </a>
-                        <a href="#" class="btn btn-primary blue-btn">
-                          <i class="fa-solid fa-message"></i>
-                          Message
-                        </a>
-                      </div>
-                    </div>
-                  </header>
-                  <article
-                    class="col-12 mt-4 font-normal text-black overflow-auto"
-                  >
-                    <div class="description">
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                    </div>
-                  </article>
-                </div>
+                </div>    
+                <!--End of Laborers-->                   
                 
               </div>
             </div>
