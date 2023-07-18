@@ -113,7 +113,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         <!--MAIN-->
         <div class="col p-4 orange-main">
           <!--WELCOME-->
-          <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
+          <?php printWelcomeMessage($first_name, "orange"); ?>
 
           <nav class="col-12 mt-3">
             <ul class="nav nav-tabs nav-fill z-1 fs-3">

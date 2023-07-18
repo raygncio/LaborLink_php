@@ -89,8 +89,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         <div class="col p-4">
           <!--WELCOME-->
           <?php 
-          $envelope = "white";
-          printWelcomeMessage($first_name, $envelope); 
+          printWelcomeMessage($first_name, "white"); 
           ?>
 
           <nav class="col-12 mt-3">
