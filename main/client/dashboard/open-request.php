@@ -309,13 +309,13 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         <div class="row font-normal">
                           <p class="col-2 fs-5 header">Breakdown:</p>
                           <p class="col-5 text-end">Labor Fee</p>
-                          <p class="col-5 text-center"><?php echo $fee?></p>
+                          <p id="textFee" class="col-5 text-center"></p>
                           <p class="col-7 text-end">Convenience Fee</p>
-                          <p class="col-5 text-center"><?php echo $convenience_fee?></p>
+                          <p id="textConFee" class="col-5 text-center"></p>
                           <p></p>
                           <hr />
                           <p class="fs-5 col-7 text-end header">Total:</p>
-                          <p class="fs-5 col-5 text-center header">Php <?php echo $total?></p>
+                          <p id="textTotal" class="fs-5 col-5 text-center header"></p>
                         </div>
                       </div>
                       <div class="col-12 mt-4 text-end">
@@ -342,6 +342,22 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         </div>
       </div>
     </div>
+
+    <script>
+      var suggestedFee = document.getElementById('suggestedFee');
+      var laborFee = document.getElementById('textFee');
+      var convenienceFee = document.getElementById('textConFee');
+      var totalFee = document.getElementById('textTotal');
+
+      function getBreakdown() {
+        laborFee.innerHTML = parseInt(suggestedFee.value);
+        convenienceFee.innerHTML = parseInt(suggestedFee.value*0.10);
+        totalFee.innerHTML = parseInt(suggestedFee.value) + parseInt(suggestedFee.value*0.10);
+      }
+      
+      suggestedFee.addEventListener('keyup', getBreakdown);
+
+    </script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
