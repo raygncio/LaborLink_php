@@ -96,12 +96,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         <!--end of Navigation bar-->
         <!--MAIN-->
         <div class="col p-4 orange-main">
-          <header class="col-12 rounded-4 p-3 whites orange-font">
-            <h2><span>June 4, 2023</span>&nbsp;&nbsp;<span>Sunday</span></h2>
-            <h1 class="display-1 header text-normal">
-              Good <span>morning</span>, <span>Nina!</span>
-            </h1>
-          </header>
+          <!--WELCOME-->
+          <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
 
           <nav class="col-12 mt-3">
             <ul class="nav nav-tabs nav-fill z-1 fs-3">

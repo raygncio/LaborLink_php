@@ -327,7 +327,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         } 
     }
 
-    function printWelcomeMessage($first_name, $user_role) {
+    function printWelcomeMessage($first_name, $envelope) {
         date_default_timezone_set('Asia/Manila');
         $current_date = date("m-d-Y");
         $current_day = date("l");
@@ -342,7 +342,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             $current_time = "evening";
         } 
 
-        if($user_role == "customer") {
+        if($envelope == "white") {
             echo "
             <header class='col-12 rounded-4 p-3 oranges white-font'>
                 <h2><span>" . $current_date . "</span>&nbsp;&nbsp;<span>". $current_day ."</span></h2>
@@ -351,7 +351,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
                 </h1>
             </header>
             ";
-        } else if ($user_role == "laborer") {
+        } else {
             echo "
             <header class='col-12 rounded-4 p-3 whites orange-font'>
                 <h2><span>" . $current_date . "</span>&nbsp;&nbsp;<span>". $current_day ."</span></h2>
