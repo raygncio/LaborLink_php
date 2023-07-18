@@ -72,6 +72,11 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     VALUES ('$total', 'pending',  '$_SESSION[user_id]', '$request_id')";
 
     $query_run = mysqli_query($conn, $offer_update);
+
+    if(mysqli_affected_rows($conn)>0) {
+      header("Location: ../../client/requests/on-going-requests.php?message=requestsuccessful");
+      exit();
+    }
     
   } 
   

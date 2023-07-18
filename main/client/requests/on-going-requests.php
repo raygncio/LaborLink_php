@@ -29,6 +29,8 @@
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <!--Ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   </head>
 
   <body>
@@ -45,6 +47,22 @@
             });
         </script>
         <!--end of Navigation bar-->
+        <?php
+          if (isset($_GET["message"])){
+
+            $modal_title = "Congratulations!";
+
+          if($_GET["message"] == "requestsuccessful") {
+            $modal_message = "Your request has been posted successfully!";
+          } 
+
+          echo '<script>
+              $(document).ready(function(){
+                  $("#server-message").modal("show")
+              });
+              </script>';
+          }  
+        ?>
         <!--MAIN-->
         <div class="col p-4 orange-main">
           <nav class="col-12 mt-3">
@@ -188,6 +206,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage"><?php echo $modal_title; ?></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $modal_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
