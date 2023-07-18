@@ -15,7 +15,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   if (isset($_POST['submit-search'])) {
     $search = mysqli_real_escape_string($conn, $_POST['search']);
 
-    $sql = "SELECT U.user_role, A.application_status, concat(U.first_name, ' ', U.middle_name, ' ', 
+    $sql = "SELECT U.username, U.user_role, A.application_status, concat(U.first_name, ' ', U.middle_name, ' ', 
     U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
     U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
     A.employer, A.certification
@@ -256,7 +256,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             </div>
                           </div>
                           <div class="col text-end">
-                            <a href="find-laborer-dr.php" class="btn btn-primary green-btn mb-3">
+                            <a href="find-laborer-dr.php?laborer='.$row['username'].'" class="btn btn-primary green-btn mb-3">
                               Direct Request
                             </a>
                             <a href="#" class="btn btn-primary blue-btn">

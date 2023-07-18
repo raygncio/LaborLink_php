@@ -1,3 +1,52 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkCustomer($_SESSION['user_role']);
+  $first_name = $_SESSION['first_name'];
+
+  //search
+  if (isset($_POST['submit-search'])) {
+    $search = mysqli_real_escape_string($conn, $_POST['search']);
+
+    $sql = "SELECT U.user_role, A.application_status, concat(U.first_name, ' ', U.middle_name, ' ', 
+    U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
+    U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
+    A.employer, A.certification
+    FROM users AS U
+    INNER JOIN applications AS A
+    ON U.user_id = A.user_id
+    WHERE (U.user_role = 'laborer' AND A.application_status = 'approved') AND 
+    (concat(U.first_name, ' ', U.middle_name, ' ', 
+    U.last_name, ' ', U.suffix) LIKE '%$search%' OR
+    A.specialization LIKE '%$search%' OR
+    U.email_add LIKE '%$search%' OR
+    U.city LIKE '%$search%' OR
+    A.employment_type LIKE '%$search%')";
+
+    $result = mysqli_query($conn, $sql);
+    $query_result = mysqli_num_rows($result);
+    
+    if($query_result == 0){
+      header("Location: find-laborer-search.php?error=noresults");
+      exit();    
+    }
+
+  } 
+  
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -41,7 +90,7 @@
         ></div>
         <script>
           $(function () {
-            $("#nav-placeholder").load("/main/client/nav.html");
+            $("#nav-placeholder").load("../../client/nav.php");
           });
         </script>
         <!--end of Navigation bar-->
@@ -79,14 +128,20 @@
           >
             <div class="row p-3 g-1">
               <header class="col-6 mt-4">
-                <form class="d-flex" role="search">
-                  <input
+                <form 
+                action="find-laborer-search.php"
+                method="POST"
+                class="d-flex" role="search">
+                  <input                 
                     class="form-control me-2"
                     type="search"
+                    name="search"
                     placeholder="Search"
                     aria-label="Search"
                   />
-                  <button class="btn btn-primary blue-btn" type="submit">
+                  <button class="btn btn-primary blue-btn"
+                  name="submit-search"
+                  type="submit">
                     Search
                   </button>
                 </form>
@@ -107,7 +162,7 @@
                           <div class="col-2">
                             <div class="col-11">
                               <img
-                                src="icons/blank-profile.png"
+                                src="../../icons/blank-profile.png"
                                 class="img-fluid d-inline"
                                 alt="..."
                               />
@@ -363,7 +418,7 @@
                                     <div class="col-2">
                                       <img
                                         class="img-fluid"
-                                        src="icons/payment/direct.png"
+                                        src="../../icons/payment/direct.png"
                                         alt=""
                                       />
                                     </div>
@@ -385,7 +440,7 @@
                                     <div class="col-2">
                                       <img
                                         class="img-fluid"
-                                        src="icons/payment/cash.png"
+                                        src="../../icons/payment/cash.png"
                                         alt=""
                                       />
                                     </div>
