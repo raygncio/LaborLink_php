@@ -437,9 +437,19 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
         if ($query_result > 0) {
-            return true;
+            return $query_run;
         } else {
             return false;
         }
+    }
+
+    function getSuggestedFee($conn, $request_id) {
+        $sql = "SELECT * FROM offers
+        WHERE request_id = '$request_id'";
+        $query_run = mysqli_query($conn, $sql);
+        $query_result = mysqli_num_rows($query_run);
+        if ($query_result > 0) {
+            return $query_run;
+        } 
     }
 ?>

@@ -81,7 +81,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     //first request for approval (direct request)
     $for_approval = "INSERT INTO approved_requests (status, laborer_id, request_id) 
-    VALUES ('pending',
+    VALUES ('direct req',
     (SELECT L.laborer_id FROM laborers AS L
     INNER JOIN applications AS A ON A.applicant_id = L.applicant_id
     INNER JOIN users AS U ON U.user_id = A.user_id
