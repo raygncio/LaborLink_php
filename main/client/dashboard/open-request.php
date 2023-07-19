@@ -17,7 +17,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   if (isset($_POST['postButton'])) {
     
     if(isset($_POST['checkbox'])) {
-      $query = "SELECT concat(street_address, city, state, zip_code) as address 
+      $query = "SELECT concat(street_address, ', ', city, ' ', state, ' ', zip_code) as address 
       FROM users WHERE user_id = '$_SESSION[user_id]'";
       $query_run = mysqli_query($conn, $query);
       foreach($query_run as $row) {
@@ -47,6 +47,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       $request_id = $row['request_id'];
     }
 
+    //first offer
     $offer_update = "INSERT INTO offers (suggested_fee, status, user_id, request_id) 
     VALUES ('$total', 'pending',  '$_SESSION[user_id]', '$request_id')";
 

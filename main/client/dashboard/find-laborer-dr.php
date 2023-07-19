@@ -12,7 +12,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $first_name = $_SESSION['first_name'];
 
   //search
-  $laborer = mysqli_real_escape_string($conn, $_GET['laborer']);
+  $laborer_username = mysqli_real_escape_string($conn, $_GET['laborer']);
 
   $sql = "SELECT U.user_role, A.application_status, concat(U.first_name, ' ', U.middle_name, ' ', 
   U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
@@ -21,7 +21,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   FROM users AS U
   INNER JOIN applications AS A
   ON U.user_id = A.user_id
-  WHERE U.username = '$laborer'";
+  WHERE U.username = '$laborer_username'";
 
   $result = mysqli_query($conn, $sql);
   $query_result = mysqli_num_rows($result);
@@ -35,10 +35,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $convenience_fee = 0; 
   $total = 0;
   //post button
-  if (isset($_POST['postButton'])) {
+  if (isset($_POST['dr-submit'])) {
     
     if(isset($_POST['checkbox'])) {
-      $query = "SELECT concat(street_address, city, state, zip_code) as address 
+      $query = "SELECT concat(street_address, ', ', city, ' ', state, ' ', zip_code) as address 
       FROM users WHERE user_id = '$_SESSION[user_id]'";
       $query_run = mysqli_query($conn, $query);
       foreach($query_run as $row) {
@@ -68,13 +68,27 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       $request_id = $row['request_id'];
     }
 
+    //first offer
     $offer_update = "INSERT INTO offers (suggested_fee, status, user_id, request_id) 
     VALUES ('$total', 'pending',  '$_SESSION[user_id]', '$request_id')";
 
     $query_run = mysqli_query($conn, $offer_update);
 
+    //first request for approval (direct request)
+    $for_approval = "INSERT INTO approved_requests (status, laborer_id, request_id) 
+    VALUES ('pending',
+    (SELECT L.laborer_id FROM laborers AS L
+    INNER JOIN applications AS A ON A.applicant_id = L.applicant_id
+    INNER JOIN users AS U ON U.user_id = A.user_id
+    WHERE U.username = '$laborer_username'),
+    '$request_id')";
+    $query_run = mysqli_query($conn, $for_approval);
+
     if(mysqli_affected_rows($conn)>0) {
       header("Location: ../../client/requests/on-going-requests.php?message=requestsuccessful");
+      exit();
+    } else {
+      header("Location: ../../client/dashboard/find-laborer.php?message=requestfailed");
       exit();
     }
     
@@ -336,6 +350,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                               <input
                                 class="form-check-input"
                                 type="checkbox"
+                                name="checkbox"
                                 value=""
                                 id="flexCheckDefault"
                               />
@@ -496,7 +511,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                 <button
                                   id="cashp-submit"
                                   type="submit"
-                                  name="submit"
+                                  name="dr-submit"
                                   class="btn btn-primary orange-btn mt-3"
                                   value="cash"
                                 >
