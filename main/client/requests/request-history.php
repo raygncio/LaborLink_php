@@ -1,3 +1,24 @@
+<?php 
+  session_start();
+
+  require_once "../includes/config.php";
+  require_once "../includes/functions.php";
+
+  //check if user is logged in
+  if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+  
+    checkCustomer($_SESSION['user_role']);
+    
+      
+  } else {
+    header("Location: ../index.php");
+    exit();
+  }
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -104,33 +125,64 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr class="font-normal">
-                          <th scope="row">01</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>John A. Doe</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">02</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>John A. Doe</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>John A. Doe</td>
-                          <td>Php 150.00</td>
-                        </tr>
+                        <?php 
+                            $num = 0; 
+                            $query = "SELECT A.applicant_id, A.application_status, concat(U.first_name, ' ' , U.middle_name, ' ' , U.last_name, ' ', U.suffix) AS fullName, A.specialization, A.employment_type, A.employer, A.valid_id, A.certification_proof, A.created_at FROM users AS U INNER JOIN applications AS A ON U.user_id = A.user_id WHERE application_status = 'pending';";
+                            $query_run = mysqli_query($conn, $query);                           
+                            foreach ($query_run as $row) {
+                              ++$num;
+                              $applicantId = $row["applicant_id"];
+                              $status = $row["application_status"];
+                              $fullName = $row["fullName"];
+                              $specialization = $row["specialization"];
+                              $employment_type = $row["employment_type"];
+                              $employer = $row["employer"];
+                              $valid_id = $row["valid_id"];
+                              $certification_proof = $row["certification_proof"];
+                              $created_at = $row["created_at"];
+
+                              echo "
+                              <tr class='text-normal font-normal'>
+                                <th scope='row'>$num</th>
+                                <td>$applicantId</td>
+                                <td>$status</td>
+                                <td>$fullName</td>
+                                <td>$specialization</td>
+                                <td>$employment_type</td>
+                                <td>$employer</td>
+                                <td>$valid_id</td>
+                                <td>$certification_proof</td>
+                                <td>$created_at</td>
+                                <td>
+                                  <input type='hidden' name='applicantId' value='$applicantId'>
+                                  <button
+                                  class='btn yesno'
+                                  type='submit'
+                                  name='yesButton'
+                                >
+                                  <img
+                                    class='img-fluid'
+                                    src='../icons/yesno/accept.png'
+                                    alt='yes'
+                                  />
+                                </button>
+                                <button
+                                  class='btn btn-link yesno'
+                                  type='submit'
+                                  name='noButton'
+                                >
+                                  <img
+                                    class='img-fluid'
+                                    src='../icons/yesno/decline.png'
+                                    alt='no'
+                                  />
+                                </button>
+                                </td>
+                              </tr>
+                              ";
+                            }
+
+                            ?>
                       </tbody>
                     </table>
                   </div>

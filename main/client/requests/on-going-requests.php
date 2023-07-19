@@ -202,53 +202,51 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                   Check your posted/pending requests here
                 </p>
               </header>
-              <header
-                class="col-6 ms-auto mt-2 rounded rounded-4 border border-4 whites p-3"
-              >
-                <div class="row justify-content-center">
-                  <?php 
-                  if($hasRequests) {
-                    echo '
-                    <div class="col-6">
-                      <h2 class="display-5 header">
-                        <span id="laborTitle" class="d-inline-block text-truncate" style="max-width: 400px;">'.$labor_title.'</span>
-                      </h2>
-                      <p class="fs-5 font-normal text-normal d-inline">
-                        Request ID: <span id="requestID">'.$request_id.'</span>
-                      </p>
-                        <form
-                        class="d-inline"
-                        action="on-going-requests.php?message=cancelsuccessful"
-                        method="POST">
-                        <button type="submit" name="cancel-button" class="btn btn-danger red-btn btn-sm ms-2">Cancel Booking</button>
-                        </form>         
+              <?php 
+              if($hasRequests) {
+                echo '
+                  <header
+                    class="col-6 ms-auto mt-2 rounded rounded-4 border border-4 whites p-3"
+                  >
+                    <div class="row justify-content-center">                
+                        <div class="col-6">
+                          <h2 class="display-5 header">
+                            <span id="laborTitle" class="d-inline-block text-truncate" style="max-width: 400px;">'.$labor_title.'</span>
+                          </h2>
+                          <p class="fs-5 font-normal text-normal d-inline">
+                            Request ID: <span id="requestID">'.$request_id.'</span>
+                          </p>
+                            <form
+                            class="d-inline"
+                            action="on-going-requests.php?message=cancelsuccessful"
+                            method="POST">
+                            <button type="submit" name="cancel-button" class="btn btn-danger red-btn btn-sm ms-2">Cancel Booking</button>
+                            </form>         
+                        </div>
+                        <div class="col-5 blue-font">
+                          <p>
+                            <i class="fa-solid fa-location-dot me-3"></i>
+                            <span id="requestAddress" style="max-height: 50px;">'.$request_address.'</span>
+                          </p>
+                          <p>
+                              <i class="fa-solid fa-tag me-3"></i>
+                              <span id="requestTime">Php '.$suggested_fee.'</span>
+                            </p> 
+                            <p>
+                              <i class="fa-solid fa-clock me-3"></i>
+                              <span id="requestTime">'.$request_time.'</span>
+                            </p>             
+                        </div>                            
                     </div>
-                    <div class="col-5 blue-font">
-                      <p>
-                        <i class="fa-solid fa-location-dot me-3"></i>
-                        <span id="requestAddress" style="max-height: 50px;">'.$request_address.'</span>
-                      </p>
-                      <p>
-                          <i class="fa-solid fa-tag me-3"></i>
-                          <span id="requestTime">Php '.$suggested_fee.'</span>
-                        </p> 
-                        <p>
-                          <i class="fa-solid fa-clock me-3"></i>
-                          <span id="requestTime">'.$request_time.'</span>
-                        </p>             
-                    </div>
-                    ';
-                  }                   
-                  ?>
-                  
-                </div>
-              </header>
-
-              <div
-                class="col-12 scrollable-x mt-5 mx-auto rounded-4 p-4 whites d-flex flex-nowrap"
-              >
-              <?php
-                  if($hasRequests) {
+                  </header>
+                ';
+                 
+                // ------- interested laborers
+                echo '
+                  <div
+                      class="col-12 scrollable-x mt-5 mx-auto rounded-4 p-4 whites d-flex flex-nowrap"
+                    >
+                ';
                     if($hasInterestedLaborers) {
                       foreach ($result as $row) {
                         $name = $row["full_name"];
@@ -260,95 +258,17 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         $gender = $row["sex"];
                         $phone_number = $row["phone_number"];
                         $city = $row["city"];
-
-                        echo '
-                    <!--Laborers-->
-                    <div
-                      class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
-                    >
-                      <header class="col-12">
-                        <div class="row align-items-start g-0">
-                          <div class="col-2">
-                            <div class="col-11">
-                              <img
-                                src="../../icons/blank-profile.png"
-                                class="img-fluid d-inline"
-                                alt="..."
-                              />
-                            </div>
-                          </div>
-                          <div class="col-6">
-                            <h4 class="fs-2 header">' . $name .'</h4>
-                            <p class="lead blue-font">' . $specialization .'</p>
-                            <div class="laborer-rating">
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                            </div>
-                          </div>
-                          <div class="col text-end">
-                          <form
-                          action=""
-                          method="POST"
+    
+                        echo '  
+                                   
+                          <!--Laborers-->
+                          <div
+                            class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
                           >
-                            <button type="submit" name="accept" class="btn btn-link yesno mb-3">
-                              <img
-                                class="img-fluid"
-                                src="../../icons/yesno/accept.png"
-                                alt=""
-                              />
-                            </button>
-                            <button type="submit" name="reject" class="btn btn-link yesno mb-3">
-                              <img
-                                class="img-fluid"
-                                src="../../icons/yesno/decline.png"
-                                alt=""
-                              />
-                            </button>
-                          </form>
-                          </div>
-                        </div>
-                      </header>
-                      <article
-                        class="col-12 mt-4 font-normal text-normal text-black overflow-auto"
-                      >
-                        <div class="row description">
-                          <div class="col-6">
-                          <p>
-                            Email add: ' . $email_add .'
-                          </p>
-                          <p>
-                            Phone Number: ' .$phone_number .'
-                          </p>
-                          <p>
-                            Gender: ' . $gender .'
-                          </p>
-                          <p>
-                            City: ' . $city .'
-                          </p>
-                          </div>
-                          <div class="col-6">
-                          <p>
-                            Employment Type: ' . $type .'
-                          </p>
-                          <p>
-                            Employer: ' . $employer .'
-                          </p>
-                          <p>
-                            Certification: ' . $certification .'
-                          </p>
-                          </div>    
-                          <!--Reviews-->
-                        <article
-                          class="row border border-2 rounded rounded-4 mx-auto"
-                        >
-                          <div class="col-12 mt-4">
-                            <header class="row">
-                              <div class="row align-items-start">
+                            <header class="col-12">
+                              <div class="row align-items-start g-0">
                                 <div class="col-2">
-                                  <div class="col-12">
+                                  <div class="col-11">
                                     <img
                                       src="../../icons/blank-profile.png"
                                       class="img-fluid d-inline"
@@ -356,10 +276,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                     />
                                   </div>
                                 </div>
-                                <div class="col-3">
-                                  <h4 class="fs-4 header blue-font">Client Name</h4>
-                                  <h4 class="fs-5 orange-font">Labor Needed</h4>
-                                  <div class="laborer-rating orange-font">
+                                <div class="col-6">
+                                  <h4 class="fs-2 header">' . $name .'</h4>
+                                  <p class="lead blue-font">' . $specialization .'</p>
+                                  <div class="laborer-rating">
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
                                     <i class="fa-solid fa-star"></i>
@@ -367,55 +287,171 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                     <i class="fa-solid fa-star"></i>
                                   </div>
                                 </div>
-                                <div class="col">
-                                  <div class="laborer-rating blue-font fs-1 text-end">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                  </div>
+                                <div class="col text-end">
+                                <form
+                                action=""
+                                method="POST"
+                                >
+                                  <button type="submit" name="accept" class="btn btn-link yesno mb-3">
+                                    <img
+                                      class="img-fluid"
+                                      src="../../icons/yesno/accept.png"
+                                      alt=""
+                                    />
+                                  </button>
+                                  <button type="submit" name="reject" class="btn btn-link yesno mb-3">
+                                    <img
+                                      class="img-fluid"
+                                      src="../../icons/yesno/decline.png"
+                                      alt=""
+                                    />
+                                  </button>
+                                </form>
                                 </div>
                               </div>
                             </header>
-                            <section
-                              class="fs-5 text-normal font-normal text-black mt-3"
+                            <article
+                              class="col-12 mt-4 font-normal text-normal text-black overflow-auto"
                             >
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing
-                                elit. Repellendus dolor provident rem cum. Corporis
-                                illo minima voluptatibus alias corrupti culpa aliquam
-                                laudantium. Rerum a fuga non, accusamus dolores soluta
-                                exercitationem?
-                              </p>
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing
-                                elit. Repellendus dolor provident rem cum. Corporis
-                                illo minima voluptatibus alias corrupti culpa aliquam
-                                laudantium. Rerum a fuga non, accusamus dolores soluta
-                                exercitationem?
-                              </p>
-                            </section>
-                            <hr class="orange-font" />
-                          </div>
-                        </article>
-                        <!--End of Reviews-->                         
-                        </div>                     
-                        
-                        
-                      </article>
-                    </div>    
-                    <!--End of Laborers-->'; 
-
+                              <div class="row description">
+                                <div class="col-6">
+                                <p>
+                                  Email add: ' . $email_add .'
+                                </p>
+                                <p>
+                                  Phone Number: ' .$phone_number .'
+                                </p>
+                                <p>
+                                  Gender: ' . $gender .'
+                                </p>
+                                <p>
+                                  City: ' . $city .'
+                                </p>
+                                </div>
+                                <div class="col-6">
+                                <p>
+                                  Employment Type: ' . $type .'
+                                </p>
+                                <p>
+                                  Employer: ' . $employer .'
+                                </p>
+                                <p>
+                                  Certification: ' . $certification .'
+                                </p>
+                                </div>    
+                                <!--Reviews-->
+                                <!--Filler 1-->
+                                <article
+                                  class="row border border-2 rounded rounded-4 mx-auto"
+                                >
+                                  <div class="col-12 mt-4">
+                                    <header class="row">
+                                      <div class="row align-items-start">
+                                        <div class="col-2">
+                                          <div class="col-12">
+                                            <img
+                                              src="../../icons/blank-profile.png"
+                                              class="img-fluid d-inline"
+                                              alt="..."
+                                            />
+                                          </div>
+                                        </div>
+                                        <div class="col">
+                                          <h4 class="fs-4 header blue-font">Sebastian Wilder</h4>
+                                          <h4 class="fs-5 orange-font">Pest Control</h4>
+                                          <div class="laborer-rating orange-font">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                          </div>
+                                        </div>
+                                        <div class="col-3">
+                                          <div class="laborer-rating blue-font fs-5 text-end">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </header>
+                                    <section
+                                      class="fs-5 text-normal font-normal text-black mt-3"
+                                    >
+                                      <p>
+                                        Very kind and accommodating!! :))
+                                      </p>
+                                    </section>
+                                    <hr class="orange-font" />
+                                  </div>
+                                </article>
+                                <!--Filler 2-->
+                                <article
+                                  class="row border border-2 rounded rounded-4 mx-auto"
+                                >
+                                  <div class="col-12 mt-4">
+                                    <header class="row">
+                                      <div class="row align-items-start">
+                                        <div class="col-2">
+                                          <div class="col-12">
+                                            <img
+                                              src="../../icons/blank-profile.png"
+                                              class="img-fluid d-inline"
+                                              alt="..."
+                                            />
+                                          </div>
+                                        </div>
+                                        <div class="col">
+                                          <h4 class="fs-4 header blue-font">Mia Dolan</h4>
+                                          <h4 class="fs-5 orange-font">Tutoring</h4>
+                                          <div class="laborer-rating orange-font">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                          </div>
+                                        </div>
+                                        <div class="col-3">
+                                          <div class="laborer-rating blue-font fs-5 text-end">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </header>
+                                    <section
+                                      class="fs-5 text-normal font-normal text-black mt-3"
+                                    >
+                                      <p>
+                                        Super smooth transaction!! What a pleasure to have you!
+                                      </p>
+                                    </section>
+                                    <hr class="orange-font" />
+                                  </div>
+                                </article>
+                                <!--End of Reviews-->                        
+                              </div>                     
+                                                            
+                            </article>
+                          </div>    
+                          <!--End of Laborers--> 
+                        '; 
+                        }                             
                       }
-                      
-                    }
-                    
-                  }
-                ?>   
-                <!--Laborers-->
-                
-              </div>
+                  echo '                        
+                  </div> 
+                  '; 
+                // -------- end of interested laborers                
+              }                                
+              ?>   
+              <!---->
             </div>
           </main>
         </div>
