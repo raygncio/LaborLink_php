@@ -178,14 +178,14 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 <a
                   class="nav-link text-start active"
                   aria-current="page"
-                  href="/main/client/requests/on-going-requests.html"
+                  href="on-going-requests.php"
                   >On-going Request</a
                 >
               </li>
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
-                  href="/main/client/requests/request-history.html"
+                  href="request-history.php"
                   >Request History</a
                 >
               </li>
