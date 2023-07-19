@@ -443,8 +443,12 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $sql = "SELECT * FROM requests AS R
         INNER JOIN users AS U
         ON U.user_id = R.user_id
+        INNER JOIN approved_requests AS AR
+        ON R.request_id = AR.request_id
         WHERE R.user_id = '$user_id'
-        && R.progress = 'pending'";
+        AND R.progress = 'pending'
+        AND AR.status != 'accepted'
+        ";
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
         if ($query_result > 0) {
@@ -471,11 +475,13 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         INNER JOIN approved_requests AS AR
         ON AR.request_id = R.request_id
         WHERE R.user_id = '$user_id'
-        && AR.status = 'accepted'";
+        AND AR.status = 'accepted'
+        AND (R.progress = 'pending' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
+        ";
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
         if ($query_result > 0) {
-            return true;
+            return $query_run;
         } else {
             return false;
         }

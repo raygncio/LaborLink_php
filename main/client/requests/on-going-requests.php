@@ -108,13 +108,18 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     // APPROVED REQUESTS
     if((isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer']))
-    || hasAcceptedRequest($conn, $_SESSION['user_id']) === true) {
+    || $result = hasAcceptedRequest($conn, $_SESSION['user_id'])) {
       $hasAcceptedRequest = true;
       $isPartiallyComplete = false;
 
       if(isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer'])) {
         $request_id = $_SESSION['acceptedRequest'];
         $laborer_id = $_SESSION['acceptedLaborer'];
+      } else {
+        foreach($result as $row) {
+          $request_id = $row['request_id'];
+          $laborer_id = $row['laborer_id'];
+        }
       }
 
       //check if the request is partially completed by customer
@@ -142,8 +147,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       ON A.user_id = U.user_id
       WHERE AR.request_id = '$request_id'
       AND AR.laborer_id = '$laborer_id'
-      AND R.progress = 'pending'
       AND AR.status = 'accepted'
+      AND (R.progress = 'pending' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
       ";
       $query_run = mysqli_query($conn, $sql);
       foreach($query_run as $row) {
@@ -179,6 +184,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           WHERE request_id = '$request_id'
           ";
         }
+        mysqli_query($conn, $sql);
         
       }
 
@@ -611,7 +617,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                           <div class="col-1">
                             <div class="col-12">
                               <img
-                                src="icons/blank-profile.png"
+                                src="../../icons/blank-profile.png"
                                 class="img-fluid d-inline"
                                 alt="..."
                               />
@@ -634,30 +640,34 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         if($isPartiallyComplete){
                           
                           echo '
-                            <form
-                            method="POST"
-                            >
+                            
                             <div class="col text-end">
-                              <h3><span class="badge bg-secondary">Waiting for laborer</span></h3>
-                              <button
-                              type="button"
-                              class="btn yellow-btn mb-3"
-                              data-bs-toggle="modal"
-                              data-bs-target="#rateModal"
-                            >
-                              Rate
-                            </button>
+                              <form
+                              class="d-inline"
+                              method="POST"
+                              >
+                                <h3><span class="badge bg-secondary">Waiting for laborer&apos;s response</span></h3>
+                                <button
+                                type="button"
+                                class="btn yellow-btn mb-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#rateModal"
+                              >
+                                Rate
+                              </button>
+                              </form>
                             </div>
-                            </form>
+                            
                           ';
                           
                         } else {
 
-                          echo '
+                          echo '                         
+                            <div class="col text-end">
                             <form
+                            class="d-inline"
                             method="POST"
                             >
-                            <div class="col text-end">
                               <button
                                 type="submit"
                                 name="complete"
@@ -673,8 +683,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             >
                               Rate
                             </button>
-                            </div>
                             </form>
+                            </div>                        
                           ';
 
                         }                      
@@ -682,31 +692,31 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         echo '                  
                         </div>
                       </header>
-                      <article class="fs-5 text-normal font-normal text-black mt-3">
+                      <article class="row fs-5 text-normal font-normal text-black mt-3">
                         <div class="col-6">
-                        <p>
-                          Email add: ' . $email_add .'
-                        </p>
-                        <p>
-                          Phone Number: ' .$phone_number .'
-                        </p>
-                        <p>
-                          Gender: ' . $gender .'
-                        </p>
-                        <p>
-                          City: ' . $city .'
-                        </p>
+                          <p>
+                            Email add: ' . $email_add .'
+                          </p>
+                          <p>
+                            Phone Number: ' .$phone_number .'
+                          </p>
+                          <p>
+                            Gender: ' . $gender .'
+                          </p>
+                          <p>
+                            City: ' . $city .'
+                          </p>
                         </div>
                         <div class="col-6">
-                        <p>
-                          Employment Type: ' . $type .'
-                        </p>
-                        <p>
-                          Employer: ' . $employer .'
-                        </p>
-                        <p>
-                          Certification: ' . $certification .'
-                        </p>
+                          <p>
+                            Employment Type: ' . $type .'
+                          </p>
+                          <p>
+                            Employer: ' . $employer .'
+                          </p>
+                          <p>
+                            Certification: ' . $certification .'
+                          </p>
                         </div>
                       </article>
                       <hr class="orange-font" />
