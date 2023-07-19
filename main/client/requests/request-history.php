@@ -1,8 +1,8 @@
 <?php 
   session_start();
 
-  require_once "../includes/config.php";
-  require_once "../includes/functions.php";
+  require_once "../../includes/config.php";
+  require_once "../../includes/functions.php";
 
   //check if user is logged in
   if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
@@ -127,57 +127,40 @@
                       <tbody>
                         <?php 
                             $num = 0; 
-                            $query = "SELECT A.applicant_id, A.application_status, concat(U.first_name, ' ' , U.middle_name, ' ' , U.last_name, ' ', U.suffix) AS fullName, A.specialization, A.employment_type, A.employer, A.valid_id, A.certification_proof, A.created_at FROM users AS U INNER JOIN applications AS A ON U.user_id = A.user_id WHERE application_status = 'pending';";
+                            $query = "SELECT R.request_id, R.created_at, R.description, L.laborer_id, concat(U.first_name, ' ' , U.middle_name, ' ' , U.last_name, ' ', U.suffix) AS fullName, O.suggested_fee 
+                            FROM requests AS R
+                            INNER JOIN offers AS O 
+                            ON R.request_id = O.request_id
+                            INNER JOIN approved_requests AS AR
+                            ON AR.request_id = R.request_id
+                            INNER JOIN laborers AS L
+                            ON AR.laborer_id = L.laborer_id
+                            INNER JOIN applications AS A
+                            ON A.applicant_id = L.applicant_id
+                            INNER JOIN users AS U
+                            ON A.user_id = U.user_id                          
+                            WHERE R.progress = 'completed' AND
+                            R.user_id = '$_SESSION[user_id]';";
+
                             $query_run = mysqli_query($conn, $query);                           
                             foreach ($query_run as $row) {
                               ++$num;
-                              $applicantId = $row["applicant_id"];
-                              $status = $row["application_status"];
+                              $request_id = $row["request_id"];
+                              $date = $row["created_at"];
+                              $description = $row["description"];
+                              $laborer_id = $row["laborer_id"];
                               $fullName = $row["fullName"];
-                              $specialization = $row["specialization"];
-                              $employment_type = $row["employment_type"];
-                              $employer = $row["employer"];
-                              $valid_id = $row["valid_id"];
-                              $certification_proof = $row["certification_proof"];
-                              $created_at = $row["created_at"];
+                              $suggested_fee = $row["suggested_fee"];
 
                               echo "
                               <tr class='text-normal font-normal'>
                                 <th scope='row'>$num</th>
-                                <td>$applicantId</td>
-                                <td>$status</td>
+                                <td>$request_id</td>
+                                <td>$date</td>
+                                <td>$description</td>
+                                <td>$laborer_id</td>
                                 <td>$fullName</td>
-                                <td>$specialization</td>
-                                <td>$employment_type</td>
-                                <td>$employer</td>
-                                <td>$valid_id</td>
-                                <td>$certification_proof</td>
-                                <td>$created_at</td>
-                                <td>
-                                  <input type='hidden' name='applicantId' value='$applicantId'>
-                                  <button
-                                  class='btn yesno'
-                                  type='submit'
-                                  name='yesButton'
-                                >
-                                  <img
-                                    class='img-fluid'
-                                    src='../icons/yesno/accept.png'
-                                    alt='yes'
-                                  />
-                                </button>
-                                <button
-                                  class='btn btn-link yesno'
-                                  type='submit'
-                                  name='noButton'
-                                >
-                                  <img
-                                    class='img-fluid'
-                                    src='../icons/yesno/decline.png'
-                                    alt='no'
-                                  />
-                                </button>
-                                </td>
+                                <td>$suggested_fee</td>
                               </tr>
                               ";
                             }
