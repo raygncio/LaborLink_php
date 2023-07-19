@@ -8,6 +8,10 @@
   if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   
     checkCustomer($_SESSION['user_role']);
+
+    $query_run = getHistory($conn, $_SESSION['user_id'], $_SESSION['user_role']);
+    $query_result = mysqli_num_rows($query_run);
+    $num = 0; // for table numbers
     
       
   } else {
@@ -102,11 +106,16 @@
               <div
                 class="col-12 ms-auto mt-2 rounded rounded-4 border border-4 whites table-content overflow-auto p-3"
               >
-                
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                  <strong>No records found yet...</strong> <hr> <p class="font-normal">Make your first request today!</p>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                <?php
+                if($query_result == 0) {
+                  echo '
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                      <strong>No records found yet...</strong> <hr> <p class="font-normal">Make your first request today!</p>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                ';
+                }
+                ?>
 
                 <hr />
 
@@ -117,38 +126,21 @@
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Request ID</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Description</th>
-                          <th scope="col">Laborer ID</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Date Created</th>
+                          <th scope="col">Title</th>
                           <th scope="col">Laborer Name</th>
-                          <th scope="col">Amount</th>
+                          <th scope="col">Fee</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <?php 
-                            $num = 0; 
-                            $query = "SELECT R.request_id, R.created_at, R.description, L.laborer_id, concat(U.first_name, ' ' , U.middle_name, ' ' , U.last_name, ' ', U.suffix) AS fullName, O.suggested_fee 
-                            FROM requests AS R
-                            INNER JOIN offers AS O 
-                            ON R.request_id = O.request_id
-                            INNER JOIN approved_requests AS AR
-                            ON AR.request_id = R.request_id
-                            INNER JOIN laborers AS L
-                            ON AR.laborer_id = L.laborer_id
-                            INNER JOIN applications AS A
-                            ON A.applicant_id = L.applicant_id
-                            INNER JOIN users AS U
-                            ON A.user_id = U.user_id                          
-                            WHERE R.progress = 'completed' AND
-                            R.user_id = '$_SESSION[user_id]';";
-
-                            $query_run = mysqli_query($conn, $query);                           
+                        <?php                                                  
                             foreach ($query_run as $row) {
                               ++$num;
                               $request_id = $row["request_id"];
+                              $category = $row["category"];
                               $date = $row["created_at"];
-                              $description = $row["description"];
-                              $laborer_id = $row["laborer_id"];
+                              $title = $row["title"];
                               $fullName = $row["fullName"];
                               $suggested_fee = $row["suggested_fee"];
 
@@ -156,9 +148,9 @@
                               <tr class='text-normal font-normal'>
                                 <th scope='row'>$num</th>
                                 <td>$request_id</td>
+                                <td>$category</td>
                                 <td>$date</td>
-                                <td>$description</td>
-                                <td>$laborer_id</td>
+                                <td>$title</td>
                                 <td>$fullName</td>
                                 <td>$suggested_fee</td>
                               </tr>

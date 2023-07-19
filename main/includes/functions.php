@@ -374,6 +374,58 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         return $progress;
     }
 
+
+    function getHistory($conn, $user_id, $user_role){
+        if($user_role == "customer") { 
+            $query = "SELECT R.request_id, R.category, R.created_at, 
+            R.title, concat(U.first_name, ' ' , U.middle_name, 
+            ' ' , U.last_name, ' ', U.suffix) AS fullName, O.suggested_fee 
+            FROM requests AS R
+            INNER JOIN offers AS O 
+            ON R.request_id = O.request_id
+            INNER JOIN approved_requests AS AR
+            ON AR.request_id = R.request_id
+            INNER JOIN laborers AS L
+            ON AR.laborer_id = L.laborer_id
+            INNER JOIN applications AS A
+            ON A.applicant_id = L.applicant_id
+            INNER JOIN users AS U
+            ON A.user_id = U.user_id                          
+            WHERE R.progress = 'completed' AND
+            R.user_id = '$user_id';";
+            $query_run = mysqli_query($conn, $query); 
+
+        } else if ($user_role == "laborer") {
+            $query = "SELECT R.request_id, R.category, R.created_at, 
+            R.title, concat(U.first_name, ' ' , U.middle_name, 
+            ' ' , U.last_name, ' ', U.suffix) AS fullName, O.suggested_fee 
+            FROM requests AS R
+            INNER JOIN users AS U
+            ON R.user_id = U.user_id
+            INNER JOIN offers AS O 
+            ON R.request_id = O.request_id
+            INNER JOIN approved_requests AS AR
+            ON R.request_id = AR.request_id
+            INNER JOIN laborers AS L
+            ON AR.laborer_id = L.laborer_id                        
+            WHERE R.progress = 'completed' 
+            AND AR.laborer_id = 
+                (SELECT L.laborer_id FROM laborers AS L
+                INNER JOIN applications AS A
+                ON L.applicant_id = A.applicant_id
+                INNER JOIN users AS U
+                ON A.user_id = U.user_id
+                WHERE U.user_id = '$user_id')
+            ";
+            $query_run = mysqli_query($conn, $query); 
+        }
+
+        return $query_run;
+
+    }
+
+
+
     // access control ---------------------------------------------------------
     function invalidAccess() {
         session_unset();
