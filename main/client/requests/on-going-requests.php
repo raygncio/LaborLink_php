@@ -12,6 +12,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $first_name = $_SESSION['first_name'];
   $hasRequests = false; // for showing cancel button 
   $hasInterestedLaborers = false; // for showing interested laborers
+  $hasAcceptedRequest = false; // for showing accepted requests and laborers
   
 
     $result = hasPendingRequest($conn, $_SESSION['user_id']);
@@ -33,7 +34,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       }
          
       //get interested laborers for approval
-      $sql = "SELECT R.status, concat(U.first_name, ' ', U.middle_name, ' ', 
+      $sql = "SELECT L.laborer_id, R.status, concat(U.first_name, ' ', U.middle_name, ' ', 
       U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
       U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
       A.employer, A.certification
@@ -79,11 +80,109 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
       // accept laborer for the on-going request
       if(isset($_POST['accept'])){
+        $laborer_id = $_POST['accept'];
+        $sql = "UPDATE approved_requests
+        SET status = 'accepted'
+        WHERE request_id = '$request_id' 
+        AND laborer_id = '$laborer_id'
+        ";
+        $_SESSION['acceptedRequest'] = $request_id;
+        $_SESSION['acceptedLaborer'] = $laborer_id;
 
-
+        header("Location: on-going-requests.php");
+        exit();
+      }
+      
+      if(isset($_POST['reject'])){
+        $laborer_id = $_POST['reject'];
+        $sql = "UPDATE approved_requests
+        SET status = 'rejected'
+        WHERE request_id = '$request_id' 
+        AND laborer_id = '$laborer_id'
+        ";
+        header("Location: on-going-requests.php");
+        exit();
       }
 
     } 
+
+    // APPROVED REQUESTS
+    if((isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer']))
+    || hasAcceptedRequest($conn, $_SESSION['user_id']) === true) {
+      $hasAcceptedRequest = true;
+      $isPartiallyComplete = false;
+
+      if(isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer'])) {
+        $request_id = $_SESSION['acceptedRequest'];
+        $laborer_id = $_SESSION['acceptedLaborer'];
+      }
+
+      //check if the request is partially completed by customer
+      $progress = getRequestProgress($conn, $request_id);
+      if($progress == 'partial-cr') {
+        $isPartiallyComplete = true;
+      }
+
+      //get all necessary details
+      $sql = "SELECT O.offer_id, AR.approval_id, 
+      R.title, R.request_id, R.address, R.date_time, O.suggested_fee,
+      concat(U.first_name, ' ', U.middle_name, ' ', U.last_name, ' ', U.suffix) AS full_name,
+      A.specialization, A.employment_type, A.employer, A.certification, U.email_add,
+      U.sex, U.phone_number, U.city
+      FROM requests AS R
+      INNER JOIN offers AS O
+      ON R.request_id = O.request_id
+      INNER JOIN approved_requests AS AR
+      ON R.request_id = AR.request_id
+      INNER JOIN laborers AS L
+      ON AR.laborer_id = L.laborer_id
+      INNER JOIN applications AS A
+      ON L.applicant_id = A.applicant_id
+      INNER JOIN users AS U
+      ON A.user_id = U.user_id
+      WHERE AR.request_id = '$request_id'
+      AND AR.laborer_id = '$laborer_id'
+      AND R.progress = 'pending'
+      AND AR.status = 'accepted'
+      ";
+      $query_run = mysqli_query($conn, $sql);
+      foreach($query_run as $row) {
+        $request_title = $row['title'];
+        $request_id = $row['request_id'];
+        $request_address = $row['address'];
+        $request_time = $row['date_time'];
+        $suggested_fee = $row['suggested_fee'];
+        $name = $row["full_name"];
+        $specialization = $row["specialization"];
+        $type = $row["employment_type"];
+        $employer = $row["employer"];
+        $certification = $row["certification"];
+        $email_add = $row["email_add"];
+        $gender = $row["sex"];
+        $phone_number = $row["phone_number"];
+        $city = $row["city"];
+        $offer_id = $row["offer_id"];
+        $approval_id = $row["approval_id"];
+      }
+
+      if(isset($_POST['complete'])) {
+
+        //check if partially completed by laborer
+        if($progress == 'partial-lr') {
+          //set to fully complete         
+          $sql = "UPDATE requests SET progress = 'completed'
+          WHERE request_id = '$request_id'
+          ";
+        } else if($progress == 'pending') {
+          //set to partially complete by customer
+          $sql = "UPDATE requests SET progress = 'partial-cr'
+          WHERE request_id = '$request_id'
+          ";
+        }
+        
+      }
+
+    }
   
 } else {
   header("Location: ../../index.php");
@@ -259,6 +358,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         $phone_number = $row["phone_number"];
                         $city = $row["city"];
                         $for_approval_status = $row["status"];
+                        $laborer_id = $row["laborer_id"];
     
                         echo '  
                                    
@@ -294,25 +394,25 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         if($for_approval_status == 'direct req') {
                           echo '
                             <div class="col text-end">
-                              <h5><span class="badge text-bg-warning">Waiting for response</span></h5>
+                              <h5><span class="badge text-bg-warning">Direct Request</span></h5>
+                              <p class="text-normal">Waiting for laborer...</p>
                             </div>
                           ';
 
                         } else {
                           echo '
                                   <div class="col text-end">
-                                  <form
-                                  action="on-going-requests.php"
+                                  <form                                
                                   method="POST"
                                   >
-                                    <button type="submit" name="accept" class="btn btn-link yesno mb-3">
+                                    <button type="submit" value="'.$laborer_id.'" name="accept" class="btn btn-link yesno mb-3">
                                       <img
                                         class="img-fluid"
                                         src="../../icons/yesno/accept.png"
                                         alt=""
                                       />
                                     </button>
-                                    <button type="submit" name="reject" class="btn btn-link yesno mb-3">
+                                    <button type="submit" value="'.$laborer_id.'" name="reject" class="btn btn-link yesno mb-3">
                                       <img
                                         class="img-fluid"
                                         src="../../icons/yesno/decline.png"
@@ -467,7 +567,264 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                   </div> 
                   '; 
                 // -------- end of interested laborers                
-              }                                
+              }
+              
+              // ACCEPTED / APPROVED REQUESTS ONGOING
+              if($hasAcceptedRequest) {
+                echo'
+                  <div
+                  class="col-12 ms-auto mt-2 rounded rounded-4 border border-4 whites p-3"
+                >
+                    <div class="row align-items-center">
+                      <div class="col-12 blue-font">
+                        <h2 class="display-5 header">
+                          '.$request_title.'
+                        </h2>
+                        <p class="fs-3 font-normal text-normal">
+                          Request ID: '.$request_id.'
+                        </p>
+                      </div>
+                      <div class="col-6 blue-font fs-4">
+                        <p>
+                          <i class="fa-solid fa-location-dot me-3"></i>
+                          <span id="requestAddress">'.$request_address.'</span>
+                        </p>
+                      </div>
+                      <div class="col-4 blue-font fs-4">
+                        <p>
+                          <i class="fa-solid fa-clock me-3"></i>
+                          '.$request_time.'
+                        </p>
+                      </div>
+                      <div class="col-2 blue-font fs-4">
+                        <p>
+                          <i class="fa-solid fa-tag me-3"></i>
+                          '.$suggested_fee.'
+                        </p>
+                      </div>
+                    </div>
+                    <hr />
+
+                    <article class="col-12 mt-4">
+                      <header class="row">
+                        <div class="row align-items-start">
+                          <div class="col-1">
+                            <div class="col-12">
+                              <img
+                                src="icons/blank-profile.png"
+                                class="img-fluid d-inline"
+                                alt="..."
+                              />
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <h4 class="fs-2 header blue-font">'.$name.'</h4>
+                            <h5>'.$specialization.'</h5>
+                            <div class="laborer-rating orange-font">
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                            </div>
+                          </div>
+
+                        ';
+
+                        if($isPartiallyComplete){
+                          
+                          echo '
+                            <form
+                            method="POST"
+                            >
+                            <div class="col text-end">
+                              <h3><span class="badge bg-secondary">Waiting for laborer</span></h3>
+                              <button
+                              type="button"
+                              class="btn yellow-btn mb-3"
+                              data-bs-toggle="modal"
+                              data-bs-target="#rateModal"
+                            >
+                              Rate
+                            </button>
+                            </div>
+                            </form>
+                          ';
+                          
+                        } else {
+
+                          echo '
+                            <form
+                            method="POST"
+                            >
+                            <div class="col text-end">
+                              <button
+                                type="submit"
+                                name="complete"
+                                class="btn text-white green-btn me-3 mb-3"
+                              >
+                                Complete
+                              </button>
+                              <button
+                              type="button"
+                              class="btn yellow-btn mb-3"
+                              data-bs-toggle="modal"
+                              data-bs-target="#rateModal"
+                            >
+                              Rate
+                            </button>
+                            </div>
+                            </form>
+                          ';
+
+                        }                      
+                        
+                        echo '                  
+                        </div>
+                      </header>
+                      <article class="fs-5 text-normal font-normal text-black mt-3">
+                        <div class="col-6">
+                        <p>
+                          Email add: ' . $email_add .'
+                        </p>
+                        <p>
+                          Phone Number: ' .$phone_number .'
+                        </p>
+                        <p>
+                          Gender: ' . $gender .'
+                        </p>
+                        <p>
+                          City: ' . $city .'
+                        </p>
+                        </div>
+                        <div class="col-6">
+                        <p>
+                          Employment Type: ' . $type .'
+                        </p>
+                        <p>
+                          Employer: ' . $employer .'
+                        </p>
+                        <p>
+                          Certification: ' . $certification .'
+                        </p>
+                        </div>
+                      </article>
+                      <hr class="orange-font" />
+                    </article>
+
+                    <!-- Rate Modal -->
+                    <div
+                      class="modal fade"
+                      id="rateModal"
+                      tabindex="-1"
+                      aria-labelledby="exampleModalLabel"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                              Rate your Laborer!
+                            </h1>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="#" class="row">
+                              <div class="col-5 mx-auto">
+                                <img
+                                  class="img-fluid"
+                                  src="icons/blank-profile.png"
+                                  alt="profpic"
+                                />
+                              </div>
+                              <div class="col-12 text-center mt-4">
+                                <p class="fs-4 blue-font">
+                                  How was the labor service?
+                                </p>
+                              </div>
+                              <div class="col-12 text-center">
+                                <div class="fs-3 laborer-rating orange-font">
+                                  <button
+                                    type="submit"
+                                    id="1star"
+                                    name="1star"
+                                    value="1"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="2star"
+                                    name="2star"
+                                    value="2"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="3star"
+                                    name="3star"
+                                    value="3"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="4star"
+                                    name="4star"
+                                    value="4"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="5star"
+                                    name="5star"
+                                    value="5"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="col-8 mt-4 mx-auto">
+                                <textarea
+                                  class="form-control"
+                                  id="rateComment"
+                                  rows="5"
+                                  style="resize: none"
+                                  placeholder="Comment"
+                                ></textarea>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn text-white red-btn"
+                              data-bs-dismiss="modal"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End of Rate Modal -->
+                  </div>
+                ';
+              }
+              
+
               ?>   
               <!---->
             </div>

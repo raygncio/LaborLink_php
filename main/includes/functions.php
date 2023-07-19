@@ -363,6 +363,17 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         }
     }
 
+    function getRequestProgress($conn, $request_id){
+        $sql = "SELECT progress FROM requests
+        WHERE request_id = '$request_id'
+        ";
+        $query_run = mysqli_query($conn, $sql);
+        foreach($query_run as $row){
+            $progress = $row['progress'];
+        }
+        return $progress;
+    }
+
     // access control ---------------------------------------------------------
     function invalidAccess() {
         session_unset();
@@ -451,5 +462,22 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         if ($query_result > 0) {
             return $query_run;
         } 
+    }
+
+    function hasAcceptedRequest($conn, $user_id)  {
+        $sql = "SELECT * FROM requests AS R
+        INNER JOIN users AS U
+        ON U.user_id = R.user_id
+        INNER JOIN approved_requests AS AR
+        ON AR.request_id = R.request_id
+        WHERE R.user_id = '$user_id'
+        && AR.status = 'accepted'";
+        $query_run = mysqli_query($conn, $sql);
+        $query_result = mysqli_num_rows($query_run);
+        if ($query_result > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 ?>
