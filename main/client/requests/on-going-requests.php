@@ -14,11 +14,11 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $hasInterestedLaborers = false; // for showing interested laborers
   
 
-  //get on-going request details
     $result = hasPendingRequest($conn, $_SESSION['user_id']);
     if($result) {
       $hasRequests = true; // for showing cancel button 
       
+      //get on-going request details
       foreach($result as $row){
         $labor_title = $row['title'];
         $request_id = $row['request_id'];
@@ -32,7 +32,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         $suggested_fee = $row['suggested_fee'];
       }
          
-      $sql = "SELECT concat(U.first_name, ' ', U.middle_name, ' ', 
+      //get interested laborers for approval
+      $sql = "SELECT R.status, concat(U.first_name, ' ', U.middle_name, ' ', 
       U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
       U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
       A.employer, A.certification
@@ -51,17 +52,6 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         $hasInterestedLaborers = false;
       } else {
         $hasInterestedLaborers = true;
-        foreach ($result as $row) {
-          $name = $row["full_name"];
-          $specialization = $row["specialization"];
-          $email_add = $row["email_add"];
-          $phone_number = $row["phone_number"];
-          $sex = $row["sex"];
-          $city = $row["city"];
-          $employment_type = $row["employment_type"];
-          $employer = $row["employer"];
-          $certification = $row["certification"];
-        }
       }
   
       if(isset($_POST['cancel-button'])){
@@ -85,6 +75,12 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           WHERE request_id = '$request_id'";
           $query_run = mysqli_query($conn, $sql);
         }  
+      }
+
+      // accept laborer for the on-going request
+      if(isset($_POST['accept'])){
+
+
       }
 
     } 
@@ -204,6 +200,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
               </header>
               <?php 
               if($hasRequests) {
+
+                // ----------- ONGOING REQUEST DETAILS
                 echo '
                   <header
                     class="col-6 ms-auto mt-2 rounded rounded-4 border border-4 whites p-3"
@@ -240,6 +238,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                     </div>
                   </header>
                 ';
+                // --------- END OF ONGOING REQUEST DETAILS
+
                  
                 // ------- interested laborers
                 echo '
@@ -258,6 +258,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         $gender = $row["sex"];
                         $phone_number = $row["phone_number"];
                         $city = $row["city"];
+                        $for_approval_status = $row["status"];
     
                         echo '  
                                    
@@ -287,27 +288,44 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                     <i class="fa-solid fa-star"></i>
                                   </div>
                                 </div>
-                                <div class="col text-end">
-                                <form
-                                action=""
-                                method="POST"
-                                >
-                                  <button type="submit" name="accept" class="btn btn-link yesno mb-3">
-                                    <img
-                                      class="img-fluid"
-                                      src="../../icons/yesno/accept.png"
-                                      alt=""
-                                    />
-                                  </button>
-                                  <button type="submit" name="reject" class="btn btn-link yesno mb-3">
-                                    <img
-                                      class="img-fluid"
-                                      src="../../icons/yesno/decline.png"
-                                      alt=""
-                                    />
-                                  </button>
-                                </form>
-                                </div>
+                        ';
+
+                        // ACCEPT AND REJECT APPROVAL
+                        if($for_approval_status == 'direct req') {
+                          echo '
+                            <div class="col text-end">
+                              <h5><span class="badge text-bg-warning">Waiting for response</span></h5>
+                            </div>
+                          ';
+
+                        } else {
+                          echo '
+                                  <div class="col text-end">
+                                  <form
+                                  action="on-going-requests.php"
+                                  method="POST"
+                                  >
+                                    <button type="submit" name="accept" class="btn btn-link yesno mb-3">
+                                      <img
+                                        class="img-fluid"
+                                        src="../../icons/yesno/accept.png"
+                                        alt=""
+                                      />
+                                    </button>
+                                    <button type="submit" name="reject" class="btn btn-link yesno mb-3">
+                                      <img
+                                        class="img-fluid"
+                                        src="../../icons/yesno/decline.png"
+                                        alt=""
+                                      />
+                                    </button>
+                                  </form>
+                                  </div>
+                          ';
+                        }
+                        
+                        // for the rest
+                        echo '
                               </div>
                             </header>
                             <article
