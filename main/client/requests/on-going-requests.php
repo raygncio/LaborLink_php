@@ -54,6 +54,8 @@
 
           if($_GET["message"] == "requestsuccessful") {
             $modal_message = "Your request has been posted successfully!";
+          } else if ($_GET["message"] == "haspendingrequest") {
+            $modal_message = "You can only make 1 request at a time!";
           } 
 
           echo '<script>

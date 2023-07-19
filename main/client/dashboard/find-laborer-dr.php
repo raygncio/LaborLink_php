@@ -35,7 +35,12 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $convenience_fee = 0; 
   $total = 0;
   //post button
+
   if (isset($_POST['dr-submit'])) {
+    if(hasPendingRequest($conn, $_SESSION['user_id'])) {
+      header("Location: ../../client/requests/on-going-requests.php?message=haspendingrequest");
+      exit();
+    }
     
     if(isset($_POST['checkbox'])) {
       $query = "SELECT concat(street_address, ', ', city, ' ', state, ' ', zip_code) as address 
@@ -410,6 +415,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                 id="suggestedFee"
                                 name="suggestedFee"
                                 placeholder="100.00"
+                                required
                               />
                               <label
                                 class="blue-font font-normal"

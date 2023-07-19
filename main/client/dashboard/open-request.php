@@ -15,6 +15,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   $total = 0;
   //post button
   if (isset($_POST['postButton'])) {
+    if(hasPendingRequest($conn, $_SESSION['user_id'])) {
+      header("Location: ../../client/requests/on-going-requests.php?message=haspendingrequest");
+      exit(); 
+    }
     
     if(isset($_POST['checkbox'])) {
       $query = "SELECT concat(street_address, ', ', city, ' ', state, ' ', zip_code) as address 
@@ -55,6 +59,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     if(mysqli_affected_rows($conn)>0) {
       header("Location: ../../client/requests/on-going-requests.php?message=requestsuccessful");
+      exit();
+    } else {
+      header("Location: ../../client/dashboard/find-laborer.php?message=requestfailed");
       exit();
     }
     

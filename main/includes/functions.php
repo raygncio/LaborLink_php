@@ -427,4 +427,19 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $breakdown_array = array($convenience_fee, $total);
         return $breakdown_array;
     }
+
+    function hasPendingRequest($conn, $user_id)  {
+        $sql = "SELECT * FROM requests AS R
+        INNER JOIN users AS U
+        ON U.user_id = R.user_id
+        WHERE R.user_id = '$user_id'
+        && R.progress = 'pending'";
+        $query_run = mysqli_query($conn, $sql);
+        $query_result = mysqli_num_rows($query_run);
+        if ($query_result > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 ?>
