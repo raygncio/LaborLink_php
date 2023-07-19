@@ -294,67 +294,107 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                           <p>
                             Certification: ' . $certification .'
                           </p>
-                          </div>    
+                          </div>   
+
                           <!--Reviews-->
-                        <article
-                          class="row border border-2 rounded rounded-4 mx-auto"
-                        >
-                          <div class="col-12 mt-4">
-                            <header class="row">
-                              <div class="row align-items-start">
-                                <div class="col-2">
-                                  <div class="col-12">
-                                    <img
-                                      src="../../icons/blank-profile.png"
-                                      class="img-fluid d-inline"
-                                      alt="..."
-                                    />
+                          <!--Filler 1-->
+                          <article
+                            class="row border border-2 rounded rounded-4 mx-auto"
+                          >
+                            <div class="col-12 mt-4">
+                              <header class="row">
+                                <div class="row align-items-start">
+                                  <div class="col-2">
+                                    <div class="col-12">
+                                      <img
+                                        src="../../icons/blank-profile.png"
+                                        class="img-fluid d-inline"
+                                        alt="..."
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="col">
+                                    <h4 class="fs-4 header blue-font">Sebastian Wilder</h4>
+                                    <h4 class="fs-5 orange-font">Pest Control</h4>
+                                    <div class="laborer-rating orange-font">
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <div class="laborer-rating blue-font fs-5 text-end">
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                    </div>
                                   </div>
                                 </div>
-                                <div class="col-3">
-                                  <h4 class="fs-4 header blue-font">Client Name</h4>
-                                  <h4 class="fs-5 orange-font">Labor Needed</h4>
-                                  <div class="laborer-rating orange-font">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
+                              </header>
+                              <section
+                                class="fs-5 text-normal font-normal text-black mt-3"
+                              >
+                                <p>
+                                  Very kind and accommodating!! :))
+                                </p>
+                              </section>
+                              <hr class="orange-font" />
+                            </div>
+                          </article>
+                          <!--Filler 2-->
+                          <article
+                            class="row border border-2 rounded rounded-4 mx-auto"
+                          >
+                            <div class="col-12 mt-4">
+                              <header class="row">
+                                <div class="row align-items-start">
+                                  <div class="col-2">
+                                    <div class="col-12">
+                                      <img
+                                        src="../../icons/blank-profile.png"
+                                        class="img-fluid d-inline"
+                                        alt="..."
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="col">
+                                    <h4 class="fs-4 header blue-font">Mia Dolan</h4>
+                                    <h4 class="fs-5 orange-font">Tutoring</h4>
+                                    <div class="laborer-rating orange-font">
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <div class="laborer-rating blue-font fs-5 text-end">
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                      <i class="fa-solid fa-star"></i>
+                                    </div>
                                   </div>
                                 </div>
-                                <div class="col">
-                                  <div class="laborer-rating blue-font fs-1 text-end">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                  </div>
-                                </div>
-                              </div>
-                            </header>
-                            <section
-                              class="fs-5 text-normal font-normal text-black mt-3"
-                            >
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing
-                                elit. Repellendus dolor provident rem cum. Corporis
-                                illo minima voluptatibus alias corrupti culpa aliquam
-                                laudantium. Rerum a fuga non, accusamus dolores soluta
-                                exercitationem?
-                              </p>
-                              <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing
-                                elit. Repellendus dolor provident rem cum. Corporis
-                                illo minima voluptatibus alias corrupti culpa aliquam
-                                laudantium. Rerum a fuga non, accusamus dolores soluta
-                                exercitationem?
-                              </p>
-                            </section>
-                            <hr class="orange-font" />
-                          </div>
-                        </article>
-                        <!--End of Reviews-->                         
+                              </header>
+                              <section
+                                class="fs-5 text-normal font-normal text-black mt-3"
+                              >
+                                <p>
+                                  Super smooth transaction!! What a pleasure to have you!
+                                </p>
+                              </section>
+                              <hr class="orange-font" />
+                            </div>
+                          </article>
+                          <!--End of Reviews-->     
+
                         </div>                     
                         
                         

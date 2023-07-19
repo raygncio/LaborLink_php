@@ -137,6 +137,7 @@
                   </header>
 
                   <!--Reviews-->
+                  <!--Filler 1-->
                   <article
                     class="row border border-4 rounded rounded-4 mx-auto"
                   >
@@ -152,9 +153,9 @@
                               />
                             </div>
                           </div>
-                          <div class="col-3">
-                            <h4 class="fs-2 header blue-font">Laborer Name</h4>
-                            <h4 class="fs-4 orange-font">Labor Needed</h4>
+                          <div class="col">
+                            <h4 class="fs-2 header blue-font">John Mayer</h4>
+                            <h4 class="fs-4 orange-font">Electrical</h4>
                             <div class="laborer-rating orange-font">
                               <i class="fa-solid fa-star"></i>
                               <i class="fa-solid fa-star"></i>
@@ -163,7 +164,7 @@
                               <i class="fa-solid fa-star"></i>
                             </div>
                           </div>
-                          <div class="col">
+                          <div class="col-3">
                             <div class="laborer-rating blue-font fs-1 text-end">
                               <i class="fa-solid fa-star"></i>
                               <i class="fa-solid fa-star"></i>
@@ -178,18 +179,55 @@
                         class="fs-5 text-normal font-normal text-black mt-3"
                       >
                         <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Repellendus dolor provident rem cum. Corporis
-                          illo minima voluptatibus alias corrupti culpa aliquam
-                          laudantium. Rerum a fuga non, accusamus dolores soluta
-                          exercitationem?
+                          CUSTOMER IS REALLY NICE! SUPER SMOOTH TRANSACTION :D RECOMMEND!!!
                         </p>
+                      </section>
+                      <hr class="orange-font" />
+                    </div>
+                  </article>
+                  <!--Filler 2-->
+                  <article
+                    class="row border border-4 rounded rounded-4 mx-auto"
+                  >
+                    <div class="col-12 mt-4">
+                      <header class="row">
+                        <div class="row align-items-start">
+                          <div class="col-1">
+                            <div class="col-12">
+                              <img
+                                src="../icons/blank-profile.png"
+                                class="img-fluid d-inline"
+                                alt="..."
+                              />
+                            </div>
+                          </div>
+                          <div class="col">
+                            <h4 class="fs-2 header blue-font">Ed Sheeran</h4>
+                            <h4 class="fs-4 orange-font">Roofing</h4>
+                            <div class="laborer-rating orange-font">
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="laborer-rating blue-font fs-1 text-end">
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </header>
+                      <section
+                        class="fs-5 text-normal font-normal text-black mt-3"
+                      >
                         <p>
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Repellendus dolor provident rem cum. Corporis
-                          illo minima voluptatibus alias corrupti culpa aliquam
-                          laudantium. Rerum a fuga non, accusamus dolores soluta
-                          exercitationem?
+                          Very kind and accommodating customer! Thank you so much! :D
                         </p>
                       </section>
                       <hr class="orange-font" />
