@@ -42,7 +42,7 @@ if(str_contains($string, " ")) {
       </a>
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
-      <a href="<?php echo $url."client/user-inbox.php"; ?>" class="nav-link blue-font mt-4">
+      <a href="<?php echo $url."client/user-inbox.php?error=comingsoon"; ?>" class="nav-link blue-font mt-4">
         <i class="fs-1 fa-solid fa-message"></i>
         <span class="fs-5 d-none d-sm-block">Messages</span>
       </a>

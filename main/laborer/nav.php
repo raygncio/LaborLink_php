@@ -49,7 +49,7 @@ if(str_contains($string, " ")) {
     </li>
     <li class="nav-item py-2 py-sm-0 text-center">
       <a
-        href="<?php echo $url."laborer/laborer-inbox.php"; ?>"
+        href="<?php echo $url."laborer/laborer-inbox.php?error=comingsoon"; ?>"
         class="nav-link blue-font mt-4"
       >
         <i class="fs-1 fa-solid fa-message"></i>
