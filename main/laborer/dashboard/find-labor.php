@@ -96,14 +96,14 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="../laborer/dashboard/find-labor.php"
+                  href="find-labor.php"
                   >Find Labor</a
                 >
               </li>
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
-                  href="../laborer/dashboard/find-labor-dr.php"
+                  href="find-labor-dr.php"
                   >Direct Request</a
                 >
               </li>
@@ -181,7 +181,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         </a>
                         <button type="button" class="btn btn-danger red-btn mb-3">Reject</button>
                         <a
-                          href="../laborer/dashboard/find-labor-mo.php"
+                          href="find-labor-mo.php"
                           class="btn btn-primary yellow-btn"
                         >
                           Make Offer

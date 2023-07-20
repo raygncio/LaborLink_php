@@ -6,7 +6,7 @@
     <title>Laborer Dashboard</title>
 
     <!--default-->
-    <link rel="icon" type="favicon" href="icons/favicon.ico" />
+    <link rel="icon" type="favicon" href="../../icons/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,7 +25,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="/main/app.css" />
+    <link rel="stylesheet" href="../../app.css" />
 
     <!--For navbar-->
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -43,7 +43,7 @@
         ></div>
         <script>
             $(function(){
-              $("#nav-placeholder").load("/main/laborer/nav.html");
+              $("#nav-placeholder").load("../../laborer/nav.php");
             });
         </script>
         <!--end of Navigation bar-->
@@ -62,14 +62,14 @@
                 <a
                   class="nav-link active text-start"
                   aria-current="page"
-                  href="/main/laborer/dashboard/find-labor.html"
+                  href="find-labor.php"
                   >Find Labor</a
                 >
               </li>
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
-                  href="/main/laborer/dashboard/find-labor-dr.html"
+                  href="find-labor-dr.php"
                   >Direct Request</a
                 >
               </li>
@@ -112,7 +112,7 @@
                           <div class="col-2">
                             <div class="col-11">
                               <img
-                                src="icons/blank-profile.png"
+                                src="../../icons/blank-profile.png"
                                 class="img-fluid d-inline"
                                 alt="..."
                               />
@@ -223,7 +223,7 @@
                           Proceed
                         </button>
                         <a
-                          href="/main/laborer/dashboard/find-labor.html"
+                          href="find-labor.php"
                           class="btn btn-primary red-btn"
                         >
                           Cancel
@@ -243,7 +243,7 @@
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-body text-center mb-2">
-                              <img class="img-fluid" src="icons/on-going/done.png" alt="done">
+                              <img class="img-fluid" src="../../icons/on-going/done.png" alt="done">
                               <p class="fs-1 blue-font text-center">
                                 Offer sent to client!
                               </p>
