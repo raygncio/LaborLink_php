@@ -8,6 +8,7 @@
   if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   
     checkCustomer($_SESSION['user_role']);
+    checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
 
     $userProfile = getProfile($conn, $_SESSION['user_id'], $_SESSION['user_role']);
     if ($userProfile) {

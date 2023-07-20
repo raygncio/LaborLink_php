@@ -41,6 +41,8 @@
       $error_message = "Wrong password!";
     } else if ($_GET['error'] == "applicationrejected") {
       $error_message = "Your application has been rejected <br> Kindly reach us at <i>annEscueta@gmail.com</i>";
+    } else if ($_GET['error'] == "accountblocked") {
+      $error_message = "Your account has been temporarily blocked <br> For concerns, kindly reach us at <i>annEscueta@gmail.com</i>";
     } else if ($_GET['error'] == "applicationpending") {
       $modal_title = "NOTICE";
       $error_message = "Your application is still being reviewed";

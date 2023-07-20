@@ -8,6 +8,7 @@
   if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   
     checkCustomer($_SESSION['user_role']);
+    checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
 
     $query_run = getHistory($conn, $_SESSION['user_id'], $_SESSION['user_role']);
     $query_result = mysqli_num_rows($query_run);

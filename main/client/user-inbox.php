@@ -1,3 +1,23 @@
+<?php
+  session_start();
+
+  require_once "../includes/config.php";
+  require_once "../includes/functions.php";
+
+  //check if user is logged in
+  if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+  
+    checkCustomer($_SESSION['user_role']);
+    checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked   
+      
+  } else {
+    header("Location: ../index.php");
+    exit();
+  }
+
+  
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>

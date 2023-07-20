@@ -425,6 +425,17 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
     }
 
     function checkUserStatus($conn, $user_id) {
+        $sql = "SELECT status FROM users WHERE user_id = '$user_id'";
+        $query_run = mysqli_query($conn, $sql);
+        foreach($query_run as $row) {
+            $user_status = $row['status'];
+        }
+        if($user_status == 'blocked') {
+            header("Location: ../login.php?error=accountblocked");
+            session_unset();
+            session_destroy();
+            exit();
+        }
         
     }
 

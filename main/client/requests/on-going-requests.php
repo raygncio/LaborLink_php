@@ -9,6 +9,7 @@ require_once "../../includes/functions.php";
 if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
   checkCustomer($_SESSION['user_role']);
+  checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
   $first_name = $_SESSION['first_name'];
   $hasRequests = false; // for showing cancel button 
   $hasInterestedLaborers = false; // for showing interested laborers
