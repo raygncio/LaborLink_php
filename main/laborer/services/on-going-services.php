@@ -45,12 +45,12 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     concat(U.first_name, ' ', U.middle_name, ' ', U.last_name, ' ', 
     U.suffix) AS full_name, R.description
     FROM requests AS R
+    INNER JOIN users AS U
+    ON R.user_id = U.user_id
     INNER JOIN offers AS O
     ON R.request_id = O.request_id
     INNER JOIN approved_requests AS AR
     ON R.request_id = AR.request_id
-    INNER JOIN users AS U
-    ON R.request_id = U.user_id
     WHERE AR.request_id = '$request_id'
     AND AR.laborer_id = '$laborer_id'
     AND (AR.status = 'accepted' OR AR.status = 'pending')
