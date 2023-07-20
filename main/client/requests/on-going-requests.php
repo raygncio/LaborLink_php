@@ -46,7 +46,11 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       ON L.applicant_id =  A.applicant_id
       INNER JOIN approved_requests AS AR
       ON L.laborer_id = AR.laborer_id
-      WHERE AR.status = 'direct req' OR AR.status = 'pending'";
+      INNER JOIN requests AS R
+      ON AR.request_id = R.request_id
+      WHERE (AR.status = 'direct req' OR AR.status = 'pending')
+      AND R.user_id = '$_SESSION[user_id]'
+      ";
   
       $result = mysqli_query($conn, $sql);
       $query_result = mysqli_num_rows($result);

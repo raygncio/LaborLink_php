@@ -10,7 +10,13 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
   checkLaborer($_SESSION['user_role']);
   checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
-  $specialization = getSpecialization($conn, $_SESSION['user_id']);
+  $laborer_details = getLaborerDetails($conn, $_SESSION['user_id']);
+
+  foreach($laborer_details as $row) {
+    $laborer_id = $row['laborer_id'];
+    $specialization = $row['specialization'];
+  }
+
   $first_name = $_SESSION['first_name']; // for welcome message
 
   /*$hasRequests = false; // for showing cancel button 
@@ -50,223 +56,19 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       }
     } 
 
-    foreach($result as $row) {
-      $request_title = $row['title'];
-      $request_id = $row['request_id'];
-      $customer_name = $row['full_name'];
-      $request_description = $row['description'];
-      $request_address = $row['address'];
-      $request_time = $row['date_time'];
-      $suggested_fee = $row['suggested_fee'];
-      
+    if(isset($_POST['accept'])){
+      $request_id = $_POST['accept'];
+      $sql = "INSERT INTO approved_requests SET status = 'pending', laborer_id = '$laborer_id', request_id = 
+      '$request_id'";
+      mysqli_query($conn, $sql);
+
+      /*$sql = "UPDATE approved_requests
+      SET status = 'accepted'
+      WHERE request_id = '$request_id' 
+      AND laborer_id = '$laborer_id'
+      AND status = 'pending'
+      ";*/
     }
-
-  }
-
-    $result = hasPendingRequest($conn, $_SESSION['user_id']);
-    if($result) {
-      $hasRequests = true; // for showing cancel button 
-      
-      //get on-going request details
-      foreach($result as $row){
-        $labor_title = $row['title'];
-        $request_id = $row['request_id'];
-        $request_address = $row['address'];
-        $request_time = $row['date_time'];
-  
-      }
-  
-      $result = getSuggestedFee($conn, $request_id);
-      foreach($result as $row){
-        $suggested_fee = $row['suggested_fee'];
-      }
-         
-      //get interested laborers for approval
-      $sql = "SELECT L.laborer_id, AR.status, concat(U.first_name, ' ', U.middle_name, ' ', 
-      U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
-      U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
-      A.employer, A.certification
-      FROM users AS U
-      INNER JOIN applications AS A
-      ON U.user_id = A.user_id
-      INNER JOIN laborers AS L
-      ON L.applicant_id =  A.applicant_id
-      INNER JOIN approved_requests AS AR
-      ON L.laborer_id = AR.laborer_id
-      WHERE AR.status = 'direct req' OR AR.status = 'pending'";
-  
-      $result = mysqli_query($conn, $sql);
-      $query_result = mysqli_num_rows($result);
-      if ($query_result == 0) {
-        $hasInterestedLaborers = false;
-      } else {
-        $hasInterestedLaborers = true;
-      }
-  
-      if(isset($_POST['cancel-button'])){
-        $sql = "UPDATE requests AS R 
-        INNER JOIN offers AS O
-        ON R.request_id = O.request_id
-        INNER JOIN users AS U
-        ON O.user_id = U.user_id
-        SET R.progress = 'cancelled', 
-        O.status = 'cancelled'
-        WHERE O.request_id = '$request_id' AND
-        O.user_id = '$_SESSION[user_id]'
-        "; 
-
-        $query_run = mysqli_query($conn, $sql);
-  
-        $sql = "SELECT L.laborer_id 
-        FROM approved_requests AS AR
-        INNER JOIN laborers AS L
-        ON AR.laborer_id = L.laborer_id
-        WHERE AR.request_id = '$request_id'";
-        $query_run = mysqli_query($conn, $sql);
-        $query_result = mysqli_num_rows($query_run);
-        
-        if($query_result > 0) {
-          foreach($query_run as $row) {
-            $laborer_id = $row['laborer_id'];
-          }         
-          $sql = "UPDATE approved_requests
-          SET status = 'cancelled'
-          WHERE request_id = '$request_id' AND
-          laborer_id = '$laborer_id'
-          ";
-          $query_run = mysqli_query($conn, $sql);
-          header("Location: on-going-requests.php?message=cancelsuccessful");
-          exit();
-        }  
-      }
-
-      // accept laborer for the on-going request
-      if(isset($_POST['accept'])){
-        $laborer_id = $_POST['accept'];
-        $sql = "UPDATE approved_requests
-        SET status = 'accepted'
-        WHERE request_id = '$request_id' 
-        AND laborer_id = '$laborer_id'
-        AND status = 'pending'
-        ";
-        $_SESSION['acceptedRequest'] = $request_id;
-        $_SESSION['acceptedLaborer'] = $laborer_id;
-
-        header("Location: on-going-requests.php");
-        exit();
-      }
-      
-      if(isset($_POST['reject'])){
-        $laborer_id = $_POST['reject'];
-        $sql = "UPDATE approved_requests
-        SET status = 'rejected'
-        WHERE request_id = '$request_id' 
-        AND laborer_id = '$laborer_id'
-        AND status = 'pending'
-        ";
-        header("Location: on-going-requests.php");
-        exit();
-      }
-
-    } 
-
-    // APPROVED REQUESTS
-    if((isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer']))
-    || $result = hasAcceptedRequest($conn, $_SESSION['user_id'])) {
-      $hasAcceptedRequest = true;
-      $isPartiallyComplete = false;
-
-      if(isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer'])) {
-        $request_id = $_SESSION['acceptedRequest'];
-        $laborer_id = $_SESSION['acceptedLaborer'];
-      } else {
-        foreach($result as $row) {
-          $request_id = $row['request_id'];
-          $laborer_id = $row['laborer_id'];
-        }
-      }
-
-      //check if the request is partially completed by customer
-      $progress = getRequestProgress($conn, $request_id);
-      if($progress == 'partial-cr') {
-        $isPartiallyComplete = true;
-      }
-
-      //get all necessary details
-      $sql = "SELECT O.offer_id, AR.approval_id, 
-      R.title, R.request_id, R.address, R.date_time, O.suggested_fee,
-      concat(U.first_name, ' ', U.middle_name, ' ', U.last_name, ' ', U.suffix) AS full_name,
-      A.specialization, A.employment_type, A.employer, A.certification, U.email_add,
-      U.sex, U.phone_number, U.city
-      FROM requests AS R
-      INNER JOIN offers AS O
-      ON R.request_id = O.request_id
-      INNER JOIN approved_requests AS AR
-      ON R.request_id = AR.request_id
-      INNER JOIN laborers AS L
-      ON AR.laborer_id = L.laborer_id
-      INNER JOIN applications AS A
-      ON L.applicant_id = A.applicant_id
-      INNER JOIN users AS U
-      ON A.user_id = U.user_id
-      WHERE AR.request_id = '$request_id'
-      AND AR.laborer_id = '$laborer_id'
-      AND AR.status = 'accepted'
-      AND (R.progress = 'pending' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
-      ";
-      $query_run = mysqli_query($conn, $sql);
-      foreach($query_run as $row) {
-        $request_title = $row['title'];
-        $request_id = $row['request_id'];
-        $request_address = $row['address'];
-        $request_time = $row['date_time'];
-        $suggested_fee = $row['suggested_fee'];
-        $name = $row["full_name"];
-        $specialization = $row["specialization"];
-        $type = $row["employment_type"];
-        $employer = $row["employer"];
-        $certification = $row["certification"];
-        $email_add = $row["email_add"];
-        $gender = $row["sex"];
-        $phone_number = $row["phone_number"];
-        $city = $row["city"];
-        $offer_id = $row["offer_id"];
-        $approval_id = $row["approval_id"];
-      }
-
-      if(isset($_POST['complete'])) {
-
-        //check if partially completed by laborer
-        if($progress == 'partial-lr') {
-          //set to fully complete         
-          $sql = "UPDATE requests AS R
-          INNER JOIN offers AS O
-          ON R.request_id = O.request_id
-          INNER JOIN approved_requests AS AR
-          ON R.request_id = AR.request_id
-          SET R.progress = 'completed',
-          AR.status = 'completed',
-          O.status = 'completed'
-          WHERE R.request_id = '$request_id'
-          AND (AR.status = 'accepted' OR AR.status = 'rejected')
-          AND O.status = 'pending'
-          ";
-          mysqli_query($conn, $sql);
-          header("Location: request-history.php?message=requestcompleted");      
-          exit();
-
-        } else if($progress == 'pending') {
-          //set to partially complete by customer
-          $sql = "UPDATE requests SET progress = 'partial-cr'
-          WHERE request_id = '$request_id'
-          ";
-          mysqli_query($conn, $sql);
-          header("Location: on-going-requests.php");      
-          exit();
-        }
-        
-        
-      }
 
     }
   
@@ -414,76 +216,94 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
               >
                 <!--Clients-->
                 <?php
-                echo '
+                foreach($result as $row) {
+                  $request_title = $row['title'];
+                  $request_id = $row['request_id'];
+                  $customer_name = $row['full_name'];
+                  $request_description = $row['description'];
+                  $request_address = $row['address'];
+                  $request_time = $row['date_time'];
+                  $suggested_fee = $row['suggested_fee'];
+
+                  echo '
                   <div
                     class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
                   >
-                    <header class="col-12">
-                      <div class="row align-items-start g-0">
-                        <div class="col-2">
-                          <div class="col-11">
-                            <img
-                              src="../../icons/blank-profile.png"
-                              class="img-fluid d-inline"
-                              alt="..."
-                            />
+                      <header class="col-12">
+                        <div class="row align-items-start g-0">
+                          <div class="col-2">
+                            <div class="col-11">
+                              <img
+                                src="../../icons/blank-profile.png"
+                                class="img-fluid d-inline"
+                                alt="..."
+                              />
+                            </div>
+                          </div>
+                          <div class="col-6">
+                            <h4 class="fs-2 header">'.$request_title.'</h4>
+                            <p class="lead blue-font">Request ID: '.$request_id.'</p>
+                            <p class="blue-font">
+                              <i class="fa-solid fa-user me-3"></i>
+                              <span id="Client Name">'.$customer_name.'</span>
+                              <span class="rating orange-font ms-3">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                              </span>
+                            </p>
+                          </div>
+                          <div class="col text-end">
+                            <form method="POST">
+                              <button type="submit" value="'.$request_id.'" name="accept" class="btn btn-primary green-btn mb-3 me-2">
+                                Accept
+                              </button>
+                              <!--<button type="submit" name="reject" class="btn btn-danger red-btn mb-3">Reject</button>-->
+                              <button
+                                type="submit"
+                                name="offer"
+                                class="btn btn-primary yellow-btn"
+                              >
+                                Make Offer
+                              </button>
+                          </form>
                           </div>
                         </div>
-                        <div class="col-6">
-                          <h4 class="fs-2 header">'.$request_title.'</h4>
-                          <p class="lead blue-font">Request ID: '.$request_id.'</p>
-                          <p class="blue-font">
-                            <i class="fa-solid fa-user me-3"></i>
-                            <span id="Client Name">'.$customer_name.'</span>
-                            <span class="rating orange-font ms-3">
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                              <i class="fa-solid fa-star"></i>
-                            </span>
+                      </header>
+                      <article
+                        class="row mt-1 font-normal text-black overflow-auto"
+                      >
+                        <div style="height: 130px;">
+                          <p>
+                            '.$request_description.'
                           </p>
+                          <p>test</p>
+                          <p>test</p>
+                          <p>test</p>
+                          <p>test</p>
+                          <p>test</p>
+                          <p>test</p>
                         </div>
-                        <div class="col text-end">
-                          <button type="submit" name="accept" class="btn btn-primary green-btn mb-3 me-2">
-                            Accept
-                          </button>
-                          <button type="submit" name="reject" class="btn btn-danger red-btn mb-3">Reject</button>
-                          <button
-                            type="submit"
-                            name="offer"
-                            class="btn btn-primary yellow-btn"
-                          >
-                            Make Offer
-                          </button>
+                      </article>
+                      <footer class="row align-items-end mt-4">
+                        <div class="col-4 blue-font text-center">
+                          <i class="fa-solid fa-location-dot me-3"></i>
+                          <span id="requestAddress">'.$request_address.'</span>
                         </div>
-                      </div>
-                    </header>
-                    <article
-                      class="col-12 mt-1 font-normal text-black overflow-auto"
-                    >
-                      <div class="client-description">
-                        <p>
-                          '.$request_description.'
-                        </p>
-                      </div>
-                    </article>
-                    <footer class="row align-items-end mt-3">
-                      <div class="col-4 blue-font text-center">
-                        <i class="fa-solid fa-location-dot me-3"></i>
-                        <span id="requestAddress">'.$request_address.'</span>
-                      </div>
-                      <div class="col-4 blue-font text-center">
-                        <i class="fa-solid fa-clock me-3"></i>
-                        <span id="requestTime">'.$request_time.'</span>
-                      </div>
-                      <div class="col-4 blue-font text-center">
-                        <i class="fa-solid fa-tag me-3"></i>
-                        <span id="suggestedFee">Php '.$suggested_fee.'</span>
-                      </div>
-                    </footer>
-                  </div>
-                ';
+                        <div class="col-4 blue-font text-center">
+                          <i class="fa-solid fa-clock me-3"></i>
+                          <span id="requestTime">'.$request_time.'</span>
+                        </div>
+                        <div class="col-4 blue-font text-center">
+                          <i class="fa-solid fa-tag me-3"></i>
+                          <span id="suggestedFee">Php '.$suggested_fee.'</span>
+                        </div>
+                      </footer>
+                    </div>
+                  ';              
+                }                
                 ?>
                 <!--End of Clients -->
               </div>
