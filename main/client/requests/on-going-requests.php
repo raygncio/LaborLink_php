@@ -100,6 +100,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         SET status = 'accepted'
         WHERE request_id = '$request_id' 
         AND laborer_id = '$laborer_id'
+        AND status = 'pending'
         ";
         $_SESSION['acceptedRequest'] = $request_id;
         $_SESSION['acceptedLaborer'] = $laborer_id;
@@ -114,6 +115,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         SET status = 'rejected'
         WHERE request_id = '$request_id' 
         AND laborer_id = '$laborer_id'
+        AND status = 'pending'
         ";
         header("Location: on-going-requests.php");
         exit();
@@ -190,16 +192,32 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         //check if partially completed by laborer
         if($progress == 'partial-lr') {
           //set to fully complete         
-          $sql = "UPDATE requests SET progress = 'completed'
-          WHERE request_id = '$request_id'
+          $sql = "UPDATE requests AS R
+          INNER JOIN offers AS O
+          ON R.request_id = O.request_id
+          INNER JOIN approved_requests AS AR
+          ON R.request_id = AR.request_id
+          SET R.progress = 'completed',
+          AR.status = 'completed',
+          O.status = 'completed'
+          WHERE R.request_id = '$request_id'
+          AND (AR.status = 'accepted' OR AR.status = 'rejected')
+          AND O.status = 'pending'
           ";
+          mysqli_query($conn, $sql);
+          header("Location: request-history.php?message=requestcompleted");      
+          exit();
+
         } else if($progress == 'pending') {
           //set to partially complete by customer
           $sql = "UPDATE requests SET progress = 'partial-cr'
           WHERE request_id = '$request_id'
           ";
+          mysqli_query($conn, $sql);
+          header("Location: on-going-requests.php");      
+          exit();
         }
-        mysqli_query($conn, $sql);
+        
         
       }
 
