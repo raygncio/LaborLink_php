@@ -473,6 +473,43 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         }
     }
 
+    function getSpecialization($conn, $user_id) {
+        $sql = "SELECT A.specialization FROM applications AS A
+        INNER JOIN users AS U
+        ON A.user_id = U.user_id
+        WHERE A.user_id = '$user_id'";
+        $query_run = mysqli_query($conn, $sql);
+        foreach($query_run as $row) {
+            $specialization = $row['specialization'];
+        }
+        return $specialization;
+    }
+
+    function getRequests($conn, $specialization) {
+        $sql = "SELECT R.progress, R.category, R.title, R.request_id, concat(U.first_name, ' ', U.middle_name, ' ', 
+        U.last_name, ' ', U.suffix) AS full_name, R.description,
+        R.address, R.date_time, O.suggested_fee
+        FROM requests AS R
+        INNER JOIN approved_requests AS AR
+        ON R.request_id = AR.request_id
+        INNER JOIN users AS U
+        ON R.user_id = U.user_id
+        INNER JOIN offers AS O
+        ON R.request_id = O.request_id
+        WHERE R.progress = 'pending' AND 
+        R.category LIKE '$specialization' AND
+        AR.status != 'accepted' AND
+        AR.status != 'completed';
+        ";
+
+        $result = mysqli_query($conn, $sql);
+        $query_result = mysqli_num_rows($result);
+        
+        if($query_result > 0){
+            return $result;  
+        } 
+    }
+
     
 
 
