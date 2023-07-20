@@ -492,7 +492,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
         if($query_result > 0) {
-            header("Location: ../../on-going-services.php?error=existingapproval");
+            header("Location: ../services/on-going-services.php?error=existingapproval");
             exit();
         }
         

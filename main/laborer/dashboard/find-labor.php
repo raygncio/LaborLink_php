@@ -17,6 +17,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     $specialization = $row['specialization'];
   }
 
+  checkPendingApprovals($conn, $laborer_id);
+
   $first_name = $_SESSION['first_name']; // for welcome message
 
   /*$hasRequests = false; // for showing cancel button 
