@@ -1,3 +1,56 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkLaborer($_SESSION['user_role']);
+  checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
+  $laborer_details = getLaborerDetails($conn, $_SESSION['user_id']);
+
+  foreach($laborer_details as $row) {
+    $laborer_id = $row['laborer_id'];
+    $specialization = $row['specialization'];
+  }
+
+  checkPendingApprovals($conn, $laborer_id);
+
+  $first_name = $_SESSION['first_name']; // for welcome message
+
+  /*$hasRequests = false; // for showing cancel button 
+  $hasInterestedLaborers = false; // for showing interested laborers
+  $hasAcceptedRequest = false; // for showing accepted requests and laborers*/
+  
+  // get available requests for specialization
+  if($result = getRequests($conn, $specialization)) {
+
+    if(isset($_POST['accept'])){
+      $request_id = $_POST['accept'];
+      $sql = "INSERT INTO approved_requests SET status = 'pending', laborer_id = '$laborer_id', request_id = 
+      '$request_id'";
+      mysqli_query($conn, $sql);
+
+      /*$sql = "UPDATE approved_requests
+      SET status = 'accepted'
+      WHERE request_id = '$request_id' 
+      AND laborer_id = '$laborer_id'
+      AND status = 'pending'
+      ";*/
+    }
+
+    }
+  
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -49,12 +102,7 @@
         <!--end of Navigation bar-->
         <!--MAIN-->
         <div class="col p-4 orange-main">
-          <header class="col-12 rounded-4 p-3 whites orange-font">
-            <h2><span>June 4, 2023</span>&nbsp;&nbsp;<span>Sunday</span></h2>
-            <h1 class="display-1 header text-normal">
-              Good <span>morning</span>, <span>Marcus!</span>
-            </h1>
-          </header>
+          <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
 
           <nav class="col-12 mt-3">
             <ul class="nav nav-tabs nav-fill z-1 fs-3">
