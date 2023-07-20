@@ -35,7 +35,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       }
          
       //get interested laborers for approval
-      $sql = "SELECT L.laborer_id, R.status, concat(U.first_name, ' ', U.middle_name, ' ', 
+      $sql = "SELECT L.laborer_id, AR.status, concat(U.first_name, ' ', U.middle_name, ' ', 
       U.last_name, ' ', U.suffix) AS full_name, A.specialization, 
       U.email_add, U.phone_number, U.sex, U.city, A.employment_type, 
       A.employer, A.certification
@@ -44,9 +44,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       ON U.user_id = A.user_id
       INNER JOIN laborers AS L
       ON L.applicant_id =  A.applicant_id
-      INNER JOIN approved_requests AS R
-      ON L.laborer_id = R.laborer_id
-      WHERE R.status = 'direct req' OR R.status = 'pending'";
+      INNER JOIN approved_requests AS AR
+      ON L.laborer_id = AR.laborer_id
+      WHERE AR.status = 'direct req' OR AR.status = 'pending'";
   
       $result = mysqli_query($conn, $sql);
       $query_result = mysqli_num_rows($result);
@@ -82,7 +82,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           foreach($query_run as $row) {
             $laborer_id = $row['laborer_id'];
           }         
-          $sql = "UPDATE approved_requests AS A
+          $sql = "UPDATE approved_requests
           SET status = 'cancelled'
           WHERE request_id = '$request_id' AND
           laborer_id = '$laborer_id'
