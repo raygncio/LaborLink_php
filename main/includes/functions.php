@@ -518,10 +518,52 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         if($query_result > 0){
             return $result;  
         } 
+ 
+    }
 
+    function hasAcceptedRequest($conn, $user_id, $user_role)  {
+        if($user_role == 'customer') {
+            $sql = "SELECT * FROM requests AS R
+            INNER JOIN users AS U
+            ON U.user_id = R.user_id
+            INNER JOIN approved_requests AS AR
+            ON AR.request_id = R.request_id
+            WHERE R.user_id = '$user_id'
+            AND AR.status = 'accepted'
+            AND (R.progress = 'in progress' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
+            ";
+            $query_run = mysqli_query($conn, $sql);
+            $query_result = mysqli_num_rows($query_run);
+            if ($query_result > 0) {
+                return $query_run;
+            } else {
+                return false;
+            }
+        } else if($user_role == 'laborer') {
+            $sql = "SELECT L.laborer_id, R.request_id, R.progress FROM requests AS R
+            INNER JOIN approved_requests AS AR
+            ON R.request_id = AR.request_id
+            INNER JOIN laborers AS L
+            ON AR.laborer_id = L.laborer_id
+            INNER JOIN applications AS A
+            ON L.applicant_id = A.applicant_id
+            INNER JOIN users AS U
+            ON A.user_id = U.user_id
+            WHERE U.user_id = '$user_id'
+            AND (AR.status = 'accepted' OR AR.status = 'pending')
+            AND (R.progress = 'pending' OR R.progress = 'in progress' 
+                OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
+            ";
+            $query_run = mysqli_query($conn, $sql);
+            $query_result = mysqli_num_rows($query_run);
+            if ($query_result > 0) {
+                return $query_run;
+            } else {
+                return false;
+            }
+            
+        }
         
-
-       
     }
 
     
@@ -583,22 +625,5 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         } 
     }
 
-    function hasAcceptedRequest($conn, $user_id)  {
-        $sql = "SELECT * FROM requests AS R
-        INNER JOIN users AS U
-        ON U.user_id = R.user_id
-        INNER JOIN approved_requests AS AR
-        ON AR.request_id = R.request_id
-        WHERE R.user_id = '$user_id'
-        AND AR.status = 'accepted'
-        AND (R.progress = 'in progress' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
-        ";
-        $query_run = mysqli_query($conn, $sql);
-        $query_result = mysqli_num_rows($query_run);
-        if ($query_result > 0) {
-            return $query_run;
-        } else {
-            return false;
-        }
-    }
+
 ?>

@@ -1,3 +1,116 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkLaborer($_SESSION['user_role']);
+  checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
+  $laborer_details = getLaborerDetails($conn, $_SESSION['user_id']);
+  $hasAcceptedRequest = false;
+
+  // CHECK FOR APPROVED REQUEST FOR SERVICE
+  if($result = hasAcceptedRequest($conn, $_SESSION['user_id'], $_SESSION['user_role'])) {
+    $hasAcceptedRequest = true;
+    $isPartiallyComplete = false;
+    $isWaitingForApproval = false;
+    $isInProgress = false;
+
+    foreach($result as $row) {
+      $laborer_id = $row['laborer_id'];
+      $request_id = $row['request_id'];
+      $progress = $row['progress'];
+    }
+
+    //check if progress is pending or in progress
+    if($progress = 'pending') {
+      $isWaitingForApproval = true;
+    } else if ($progress = 'in progress') {
+      $isInProgress = true;
+    }
+    
+    //check if the request is partially completed by customer
+    $progress = getRequestProgress($conn, $request_id);
+    if($progress == 'partial-cr') {
+      $isPartiallyComplete = true;
+    }
+
+    //get all necessary details
+    $sql = "SELECT O.offer_id, AR.approval_id, 
+    R.title, R.request_id, R.address, R.date_time, O.suggested_fee,
+    concat(U.first_name, ' ', U.middle_name, ' ', U.last_name, ' ', 
+    U.suffix) AS full_name, R.description
+    FROM requests AS R
+    INNER JOIN offers AS O
+    ON R.request_id = O.request_id
+    INNER JOIN approved_requests AS AR
+    ON R.request_id = AR.request_id
+    INNER JOIN users AS U
+    ON R.request_id = U.user_id
+    WHERE AR.request_id = '$request_id'
+    AND AR.laborer_id = '$laborer_id'
+    AND (AR.status = 'accepted' OR AR.status = 'pending')
+    AND (R.progress = 'pending' OR R.progress = 'in progress' 
+          OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
+    ";
+
+    $query_run = mysqli_query($conn, $sql);
+    foreach($query_run as $row) {
+      $request_title = $row['title'];
+      $request_id = $row['request_id'];
+      $request_address = $row['address'];
+      $request_time = $row['date_time'];
+      $suggested_fee = $row['suggested_fee'];
+      $name = $row["full_name"];
+      $description = $row["description"];
+      $offer_id = $row["offer_id"];
+      $approval_id = $row["approval_id"];
+    }
+
+    if(isset($_POST['complete'])) {
+
+      //check if partially completed by laborer
+      if($progress == 'partial-lr') {
+        //set to fully complete         
+        $sql = "UPDATE requests AS R
+        INNER JOIN offers AS O
+        ON R.request_id = O.request_id
+        INNER JOIN approved_requests AS AR
+        ON R.request_id = AR.request_id
+        SET R.progress = 'completed',
+        AR.status = 'completed',
+        O.status = 'completed'
+        WHERE R.request_id = '$request_id'
+        AND (AR.status = 'accepted' OR AR.status = 'rejected')
+        AND O.status = 'pending'
+        ";
+        mysqli_query($conn, $sql);
+        header("Location: service-history.php?message=servicecompleted");      
+        exit();
+
+      } else if($progress == 'pending') {
+        //set to partially complete by customer
+        $sql = "UPDATE requests SET progress = 'partial-cr'
+        WHERE request_id = '$request_id'
+        ";
+        mysqli_query($conn, $sql);
+        header("Location: on-going-services.php");      
+        exit();
+      }          
+    }
+  }
+  
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -96,209 +209,253 @@
                 </p>
               </header>
 
-              <div
-                class="col-12 ms-auto mt-2 rounded rounded-4 border border-4 whites p-3"
-              >
-                <div class="row align-items-center">
-                  <div class="col-12 blue-font">
-                    <h2 class="display-5 header">
-                      Labor Needed <span id="laborTitle"></span>
-                      <span class="badge fs-5 yellow-btn align-top"
-                        >Waiting For Approval</span
-                      >
-                    </h2>
-                    <p class="fs-3 font-normal text-normal">
-                      Request ID: <span id="requestID">0128</span>
-                    </p>
-                  </div>
-                  <div class="col-4 blue-font fs-4">
-                    <p>
-                      <i class="fa-solid fa-location-dot me-3"></i>
-                      <span id="requestAddress">516 Juan Luna Ave.</span>
-                    </p>
-                  </div>
-                  <div class="col-4 blue-font fs-4">
-                    <p>
-                      <i class="fa-solid fa-clock me-3"></i>
-                      <span id="requestTime">12:00 PM</span>
-                    </p>
-                  </div>
-                  <div class="col-4 blue-font fs-4">
-                    <p>
-                      <i class="fa-solid fa-tag me-3"></i>
-                      <span id="suggestedFee">Php 550</span>
-                    </p>
-                  </div>
-                </div>
-                <hr />
+            <?php
 
-                <article class="col-12 mt-4">
-                  <header class="row">
-                    <div class="row align-items-start">
-                      <div class="col-1">
-                        <div class="col-12">
-                          <img
-                            src="../../icons/blank-profile.png"
-                            class="img-fluid d-inline"
-                            alt="..."
-                          />
-                        </div>
+              if($hasAcceptedRequest) {
+                echo '
+                  <div
+                    class="col-12 ms-auto mt-2 rounded rounded-4 border border-4 whites p-3"
+                  >
+                    <div class="row align-items-center">
+                      <div class="col-12 blue-font">
+                        <h2 class="display-5 header">
+                        '.$request_title.' <span id="laborTitle"></span>
+                ';
+            
+                if($isWaitingForApproval) {
+
+                        echo '                   
+                          <span class="badge fs-5 yellow-btn align-top"
+                            >Waiting For Approval</span
+                          >
+                        ';
+                } else if($isInProgress) {
+                        echo '                   
+                          <span class="badge fs-5 green-btn align-top"
+                            >In Progress</span
+                          >
+                        ';
+                }
+
+                echo '
+                        </h2>
+                        <p class="fs-3 font-normal text-normal">
+                          Request ID: <span id="requestID">'.$request_id.'</span>
+                        </p>
                       </div>
-                      <div class="col-3">
-                        <h4 class="fs-2 header blue-font">Client Name</h4>
-                        <div class="laborer-rating orange-font">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                        </div>
+                      <div class="col-4 blue-font fs-4">
+                        <p>
+                          <i class="fa-solid fa-location-dot me-3"></i>
+                          <span id="requestAddress">'.$request_address.'</span>
+                        </p>
                       </div>
-                      <div class="col text-end">
-                        <button
-                          type="button"
-                          class="btn text-white green-btn me-3 mb-3"
-                        >
-                          Complete
-                        </button>
-                        <button
-                        type="button"
-                        class="btn yellow-btn mb-3"
-                        data-bs-toggle="modal"
-                        data-bs-target="#rateModal"
-                      >
-                        Rate
-                      </button>
+                      <div class="col-4 blue-font fs-4">
+                        <p>
+                          <i class="fa-solid fa-clock me-3"></i>
+                          <span id="requestTime">'.$request_time.'</span>
+                        </p>
                       </div>
-                      
+                      <div class="col-4 blue-font fs-4">
+                        <p>
+                          <i class="fa-solid fa-tag me-3"></i>
+                          <span id="suggestedFee">'.$suggested_fee.'</span>
+                        </p>
+                      </div>
                     </div>
-                  </header>
-                  <article class="fs-5 text-normal font-normal text-black mt-3">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Repellendus dolor provident rem cum. Corporis illo minima
-                      voluptatibus alias corrupti culpa aliquam laudantium.
-                      Rerum a fuga non, accusamus dolores soluta exercitationem?
-                    </p>
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Repellendus dolor provident rem cum. Corporis illo minima
-                      voluptatibus alias corrupti culpa aliquam laudantium.
-                      Rerum a fuga non, accusamus dolores soluta exercitationem?
-                    </p>
-                  </article>
-                  <hr class="orange-font" />
-                </article>
+                    <hr />
 
-                <!-- Rate Modal -->
-                <div
-                  class="modal fade"
-                  id="rateModal"
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                          Rate your Customer!
-                        </h1>
-                        <button
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div class="modal-body">
-                        <form action="#" class="row">
-                          <div class="col-5 mx-auto">
-                            <img
-                              class="img-fluid"
-                              src="../../icons/blank-profile.png"
-                              alt="profpic"
-                            />
-                          </div>
-                          <div class="col-12 text-center mt-4">
-                            <p class="fs-4 blue-font">
-                              How was the labor service?
-                            </p>
-                          </div>
-                          <div class="col-12 text-center">
-                            <div class="fs-3 laborer-rating orange-font">
-                              <button
-                                type="submit"
-                                id="1star"
-                                name="1star"
-                                value="1"
-                                class="btn btn-link orange-link"
-                              >
-                                <i class="fa-solid fa-star"></i>
-                              </button>
-                              <button
-                                type="submit"
-                                id="2star"
-                                name="2star"
-                                value="2"
-                                class="btn btn-link orange-link"
-                              >
-                                <i class="fa-solid fa-star"></i>
-                              </button>
-                              <button
-                                type="submit"
-                                id="3star"
-                                name="3star"
-                                value="3"
-                                class="btn btn-link orange-link"
-                              >
-                                <i class="fa-solid fa-star"></i>
-                              </button>
-                              <button
-                                type="submit"
-                                id="4star"
-                                name="4star"
-                                value="4"
-                                class="btn btn-link orange-link"
-                              >
-                                <i class="fa-solid fa-star"></i>
-                              </button>
-                              <button
-                                type="submit"
-                                id="5star"
-                                name="5star"
-                                value="5"
-                                class="btn btn-link orange-link"
-                              >
-                                <i class="fa-solid fa-star"></i>
-                              </button>
+                    <article class="col-12 mt-4">
+                      <header class="row">
+                        <div class="row align-items-start">
+                          <div class="col-1">
+                            <div class="col-12">
+                              <img
+                                src="../../icons/blank-profile.png"
+                                class="img-fluid d-inline"
+                                alt="..."
+                              />
                             </div>
                           </div>
-                          <div class="col-8 mt-4 mx-auto">
-                            <textarea
-                              class="form-control"
-                              id="rateComment"
-                              rows="5"
-                              style="resize: none"
-                              placeholder="Comment"
-                            ></textarea>
+                          <div class="col-3">
+                            <h4 class="fs-2 header blue-font">'.$name.'</h4> 
+                            <div class="laborer-rating orange-font">
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                            </div>
                           </div>
+                          
+
+                ';
+
+                if($isInProgress) {
+                  if($isPartiallyComplete) {
+                    echo '
+                          <div class="col text-end">                       
+                            <button
+                            type="button"
+                            class="btn yellow-btn mb-3"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#rateModal"
+                          >
+                            Rate
+                          </button>
+                        </div>
+
+                    ';                 
+                  } else {
+                    echo '
+                        <div class="col text-end">
+                        <form method = "POST">
+                          <button
+                            type="button"
+                            name="complete"
+                            class="btn text-white green-btn me-3 mb-3"
+                          >
+                            Complete
+                          </button>
                         </form>
-                      </div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn text-white red-btn"
-                          data-bs-dismiss="modal"
-                        >
-                          Close
-                        </button>
+                            <button
+                            type="button"
+                            class="btn yellow-btn mb-3"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#rateModal"
+                          >
+                            Rate
+                          </button>
+                        </div>
+
+                    ';
+                  }
+                }
+                                                                         
+                echo '
+                        </div>
+                      </header>
+                      <article class="fs-5 text-normal font-normal text-black mt-3">
+                        <p>
+                        '.$description.'
+                        </p>
+                      </article>
+                      <hr class="orange-font" />
+                    </article>
+
+                    <!-- Rate Modal -->
+                    <div
+                      class="modal fade"
+                      id="rateModal"
+                      tabindex="-1"
+                      aria-labelledby="exampleModalLabel"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                              Rate your Customer!
+                            </h1>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="#" class="row">
+                              <div class="col-5 mx-auto">
+                                <img
+                                  class="img-fluid"
+                                  src="../../icons/blank-profile.png"
+                                  alt="profpic"
+                                />
+                              </div>
+                              <div class="col-12 text-center mt-4">
+                                <p class="fs-4 blue-font">
+                                  How was the labor service?
+                                </p>
+                              </div>
+                              <div class="col-12 text-center">
+                                <div class="fs-3 laborer-rating orange-font">
+                                  <button
+                                    type="submit"
+                                    id="1star"
+                                    name="1star"
+                                    value="1"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="2star"
+                                    name="2star"
+                                    value="2"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="3star"
+                                    name="3star"
+                                    value="3"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="4star"
+                                    name="4star"
+                                    value="4"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    id="5star"
+                                    name="5star"
+                                    value="5"
+                                    class="btn btn-link orange-link"
+                                  >
+                                    <i class="fa-solid fa-star"></i>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="col-8 mt-4 mx-auto">
+                                <textarea
+                                  class="form-control"
+                                  id="rateComment"
+                                  rows="5"
+                                  style="resize: none"
+                                  placeholder="Comment"
+                                ></textarea>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn text-white red-btn"
+                              data-bs-dismiss="modal"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <!-- End of Rate Modal -->
                   </div>
-                </div>
-                <!-- End of Rate Modal -->
-              </div>
+
+                ';
+              }
+              
+            ?>
 
             </div>
           </main>

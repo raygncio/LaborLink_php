@@ -132,7 +132,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     // APPROVED REQUESTS
     if((isset($_SESSION['acceptedRequest']) && isset($_SESSION['acceptedLaborer']))
-    || $result = hasAcceptedRequest($conn, $_SESSION['user_id'])) {
+    || $result = hasAcceptedRequest($conn, $_SESSION['user_id'], $_SESSION['user_role'])) {
       $hasAcceptedRequest = true;
       $isPartiallyComplete = false;
 
