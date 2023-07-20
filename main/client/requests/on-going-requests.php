@@ -60,22 +60,36 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         $sql = "UPDATE requests AS R 
         INNER JOIN offers AS O
         ON R.request_id = O.request_id
+        INNER JOIN users AS U
+        ON O.user_id = U.user_id
         SET R.progress = 'cancelled', 
         O.status = 'cancelled'
-        WHERE R.request_id = '$request_id'";
+        WHERE O.request_id = '$request_id' AND
+        O.user_id = '$_SESSION[user_id]'
+        "; 
+
         $query_run = mysqli_query($conn, $sql);
   
-        $sql = "SELECT COUNT(*) AS count FROM approved_requests
-        WHERE request_id = '$request_id'";
+        $sql = "SELECT L.laborer_id 
+        FROM approved_requests AS AR
+        INNER JOIN laborers AS L
+        ON AR.laborer_id = L.laborer_id
+        WHERE AR.request_id = '$request_id'";
         $query_run = mysqli_query($conn, $sql);
-        foreach($query_run as $row) {
-          $count = $row['count'];
-        }
-        if($count > 0) {
+        $query_result = mysqli_num_rows($query_run);
+        
+        if($query_result > 0) {
+          foreach($query_run as $row) {
+            $laborer_id = $row['laborer_id'];
+          }         
           $sql = "UPDATE approved_requests AS A
           SET status = 'cancelled'
-          WHERE request_id = '$request_id'";
+          WHERE request_id = '$request_id' AND
+          laborer_id = '$laborer_id'
+          ";
           $query_run = mysqli_query($conn, $sql);
+          header("Location: on-going-requests.php?message=cancelsuccessful");
+          exit();
         }  
       }
 
