@@ -431,7 +431,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             $user_status = $row['status'];
         }
         if($user_status == 'blocked') {
-            header("Location: ../login.php?error=accountblocked");
+            header("Location: ../../login.php?error=accountblocked");
             session_unset();
             session_destroy();
             exit();
