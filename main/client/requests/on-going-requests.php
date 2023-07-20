@@ -748,7 +748,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                               <div class="col-5 mx-auto">
                                 <img
                                   class="img-fluid"
-                                  src="icons/blank-profile.png"
+                                  src="../../icons/blank-profile.png"
                                   alt="profpic"
                                 />
                               </div>

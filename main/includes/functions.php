@@ -424,6 +424,10 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
 
     }
 
+    function checkUserStatus($conn, $user_id) {
+        
+    }
+
 
 
     // access control ---------------------------------------------------------
