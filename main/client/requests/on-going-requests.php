@@ -100,11 +100,14 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       // accept laborer for the on-going request
       if(isset($_POST['accept'])){
         $laborer_id = $_POST['accept'];
-        $sql = "UPDATE approved_requests
-        SET status = 'accepted'
-        WHERE request_id = '$request_id' 
-        AND laborer_id = '$laborer_id'
-        AND status = 'pending'
+        $sql = "UPDATE approved_requests AS AR
+        INNER JOIN requests AS R
+        ON AR.request_id = R.request_id
+        SET AR.status = 'accepted', R.progress = 'in progress'
+        WHERE AR.request_id = '$request_id' 
+        AND AR.laborer_id = '$laborer_id'
+        AND AR.status = 'pending'
+        AND R.progress = 'pending'
         ";
         $_SESSION['acceptedRequest'] = $request_id;
         $_SESSION['acceptedLaborer'] = $laborer_id;
@@ -169,7 +172,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       WHERE AR.request_id = '$request_id'
       AND AR.laborer_id = '$laborer_id'
       AND AR.status = 'accepted'
-      AND (R.progress = 'pending' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
+      AND (R.progress = 'in progress' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
       ";
       $query_run = mysqli_query($conn, $sql);
       foreach($query_run as $row) {

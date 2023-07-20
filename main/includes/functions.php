@@ -503,7 +503,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         //check if request has already interested laborers
         $sql = "SELECT R.progress, R.category, R.title, R.request_id, concat(U.first_name, ' ', U.middle_name, ' ', 
         U.last_name, ' ', U.suffix) AS full_name, R.description,
-        R.address, R.date_time, O.suggested_fee, COUNT(AR.approval_id)
+        R.address, R.date_time, O.suggested_fee
         FROM requests AS R
         INNER JOIN users AS U
         ON R.user_id = U.user_id
@@ -591,7 +591,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         ON AR.request_id = R.request_id
         WHERE R.user_id = '$user_id'
         AND AR.status = 'accepted'
-        AND (R.progress = 'pending' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
+        AND (R.progress = 'in progress' OR R.progress = 'partial-cr' OR R.progress = 'partial-lr')
         ";
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
