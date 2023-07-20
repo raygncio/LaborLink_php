@@ -71,6 +71,22 @@
             });
         </script>
         <!--end of Navigation bar-->
+        <?php
+          if (isset($_GET["message"])){
+
+            $modal_title = "NOTICE";
+
+          if($_GET["message"] == "requestcompleted") {
+            $modal_message = "Request done! <br> You can see your completed requests here.";
+          } 
+
+          echo '<script>
+              $(document).ready(function(){
+                  $("#server-message").modal("show")
+              });
+              </script>';
+          }  
+        ?>
         <!--MAIN-->
         <div class="col p-4 orange-main">
           <nav class="col-12 mt-3">
@@ -167,6 +183,24 @@
               </div>
             </div>
           </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage"><?php echo $modal_title; ?></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $modal_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
         </div>
       </div>
     </div>
