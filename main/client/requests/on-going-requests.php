@@ -354,7 +354,6 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                           </p>
                             <form
                             class="d-inline"
-                            action="on-going-requests.php?message=cancelsuccessful"
                             method="POST">
                             <button type="submit" name="cancel-button" class="btn btn-danger red-btn btn-sm ms-2">Cancel Booking</button>
                             </form>         
