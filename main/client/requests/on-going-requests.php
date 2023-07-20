@@ -219,7 +219,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           header("Location: request-history.php?message=requestcompleted");      
           exit();
 
-        } else if($progress == 'pending') {
+        } else if($progress == 'pending' || $progress == 'in progress') {
           //set to partially complete by customer
           $sql = "UPDATE requests SET progress = 'partial-cr'
           WHERE request_id = '$request_id'

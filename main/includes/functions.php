@@ -486,14 +486,22 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
     }
 
     function checkPendingApprovals($conn, $laborer_id){
-        $sql = "SELECT * FROM approved_requests
+        $sql = "SELECT status FROM approved_requests
         WHERE laborer_id = '$laborer_id'
-        AND status = 'pending'";
+        AND (status = 'pending' OR status = 'accepted')";
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
         if($query_result > 0) {
-            header("Location: ../services/on-going-services.php?error=existingapproval");
-            exit();
+            foreach($query_run as $row) {
+                $status = $row['status'];
+            }
+            if($status == 'pending') {
+                header("Location: ../services/on-going-services.php?error=existingapproval");
+                exit();
+            } else if ($status == 'accepted') {
+                header("Location: ../services/on-going-services.php?message=requestinprogress");
+                exit();
+            }       
         }
         
     }

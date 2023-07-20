@@ -27,15 +27,15 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     }
 
     //check if progress is pending or in progress
-    if($progress = 'pending') {
+    if($progress == 'pending') {
       $isWaitingForApproval = true;
-    } else if ($progress = 'in progress') {
+    } else if ($progress == 'in progress' || $progress == 'partial-lr') {
       $isInProgress = true;
     }
     
-    //check if the request is partially completed by customer
+    //check if the request is partially completed by laborer
     $progress = getRequestProgress($conn, $request_id);
-    if($progress == 'partial-cr') {
+    if($progress == 'partial-lr') {
       $isPartiallyComplete = true;
     }
 
@@ -73,8 +73,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     if(isset($_POST['complete'])) {
 
-      //check if partially completed by laborer
-      if($progress == 'partial-lr') {
+      //check if partially completed by customer
+      if($progress == 'partial-cr') {
         //set to fully complete         
         $sql = "UPDATE requests AS R
         INNER JOIN offers AS O
@@ -92,9 +92,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         header("Location: service-history.php?message=servicecompleted");      
         exit();
 
-      } else if($progress == 'pending') {
+      } else if($progress == 'in progress') {
         //set to partially complete by customer
-        $sql = "UPDATE requests SET progress = 'partial-cr'
+        $sql = "UPDATE requests SET progress = 'partial-lr'
         WHERE request_id = '$request_id'
         ";
         mysqli_query($conn, $sql);
@@ -175,6 +175,20 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
               </script>';
           } 
           
+          if (isset($_GET["message"])){
+
+            $modal_title = "NOTICE";
+
+          if($_GET["message"] == "requestinprogress") {
+            $error_message = "You have a service in progress!";
+          } 
+          echo '<script>
+              $(document).ready(function(){
+                  $("#server-message").modal("show")
+              });
+              </script>';
+          } 
+          
         ?>
         <!--MAIN-->
         <div class="col p-4 orange-main">
@@ -199,7 +213,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           </nav>
 
           <main
-            class="col-12 rounded-4 rounded-top-0 oranges orange-font g-0 z-0"
+            class="col-12 rounded-4 rounded-top-0 oranges orange-font requests-envelope g-0 z-0"
           >
             <div class="row p-3 g-1">
               <header class="col-5 mt-4 text-white">
@@ -239,28 +253,31 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
                 echo '
                         </h2>
-                        <p class="fs-3 font-normal text-normal">
+                        <p class="fs-3 font-normal text-normal orange-font">
                           Request ID: <span id="requestID">'.$request_id.'</span>
                         </p>
                       </div>
-                      <div class="col-4 blue-font fs-4">
-                        <p>
-                          <i class="fa-solid fa-location-dot me-3"></i>
-                          <span id="requestAddress">'.$request_address.'</span>
-                        </p>
+                      <div class="font-normal text-normal d-flex justify-content-between">
+                        <div class="blue-font fs-4">
+                          <p>
+                            <i class="fa-solid fa-location-dot me-4"></i>
+                            <span id="requestAddress">'.$request_address.'</span>
+                          </p>
+                        </div>
+                        <div class="blue-font fs-4">
+                          <p>
+                            <i class="fa-solid fa-clock me-4"></i>
+                            <span id="requestTime">'.$request_time.'</span>
+                          </p>
+                        </div>
+                        <div class="blue-font fs-4 me-4">
+                          <p>
+                            <i class="fa-solid fa-tag me-4"></i>
+                            <span id="suggestedFee">Php '.$suggested_fee.'</span>
+                          </p>
+                        </div>
                       </div>
-                      <div class="col-4 blue-font fs-4">
-                        <p>
-                          <i class="fa-solid fa-clock me-3"></i>
-                          <span id="requestTime">'.$request_time.'</span>
-                        </p>
-                      </div>
-                      <div class="col-4 blue-font fs-4">
-                        <p>
-                          <i class="fa-solid fa-tag me-3"></i>
-                          <span id="suggestedFee">'.$suggested_fee.'</span>
-                        </p>
-                      </div>
+                      
                     </div>
                     <hr />
 
@@ -293,7 +310,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                 if($isInProgress) {
                   if($isPartiallyComplete) {
                     echo '
-                          <div class="col text-end">                       
+                          <div class="col text-end"> 
+                          <h3><span class="badge bg-secondary">Waiting for customer&apos;s response</span></h3>                      
                             <button
                             type="button"
                             class="btn yellow-btn mb-3"
@@ -308,9 +326,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                   } else {
                     echo '
                         <div class="col text-end">
-                        <form method = "POST">
+                        <form class="d-inline" method="POST">
                           <button
-                            type="button"
+                            type="submit"
                             name="complete"
                             class="btn text-white green-btn me-3 mb-3"
                           >
