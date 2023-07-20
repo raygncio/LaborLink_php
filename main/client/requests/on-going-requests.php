@@ -52,8 +52,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       AND R.user_id = '$_SESSION[user_id]'
       ";
   
-      $result = mysqli_query($conn, $sql);
-      $query_result = mysqli_num_rows($result);
+      $interested_laborers = mysqli_query($conn, $sql);
+      $query_result = mysqli_num_rows($interested_laborers);
       if ($query_result == 0) {
         $hasInterestedLaborers = false;
       } else {
@@ -109,6 +109,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         AND AR.status = 'pending'
         AND R.progress = 'pending'
         ";
+        mysqli_query($conn, $sql);
+
         $_SESSION['acceptedRequest'] = $request_id;
         $_SESSION['acceptedLaborer'] = $laborer_id;
 
@@ -124,6 +126,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         AND laborer_id = '$laborer_id'
         AND status = 'pending'
         ";
+        mysqli_query($conn, $sql);
+        
         header("Location: on-going-requests.php");
         exit();
       }
@@ -392,7 +396,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                     >
                 ';
                     if($hasInterestedLaborers) {
-                      foreach ($result as $row) {
+                      foreach ($interested_laborers as $row) {
                         $name = $row["full_name"];
                         $specialization = $row["specialization"];
                         $type = $row["employment_type"];
