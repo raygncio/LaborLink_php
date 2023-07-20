@@ -1,3 +1,29 @@
+<?php 
+  session_start();
+
+  require_once "../../includes/config.php";
+  require_once "../../includes/functions.php";
+
+  //check if user is logged in
+  if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+  
+    checkLaborer($_SESSION['user_role']);
+    checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
+
+    $query_run = getHistory($conn, $_SESSION['user_id'], $_SESSION['user_role']);
+    $query_result = mysqli_num_rows($query_run);
+    $num = 0; // for table numbers
+    
+      
+  } else {
+    header("Location: ../index.php");
+    exit();
+  }
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -85,20 +111,16 @@
               <div
                 class="col-12 ms-auto mt-2 rounded rounded-4 border border-4 whites table-content overflow-auto p-3"
               >
-                <div
-                  class="alert alert-info alert-dismissible fade show"
-                  role="alert"
-                >
-                  <strong>No records found yet...</strong>
-                  <hr />
-                  <p class="font-normal">Make your first labor today!</p>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close"
-                  ></button>
-                </div>
+              <?php
+                if($query_result == 0) {
+                  echo '
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                      <strong>No records found yet...</strong> <hr> <p class="font-normal">Make your first request today!</p>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                ';
+                }
+                ?>
 
                 <hr />
 
@@ -109,95 +131,37 @@
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Request ID</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Description</th>
-                          <th scope="col">Customer ID</th>
+                          <th scope="col">Category</th>
+                          <th scope="col">Date Created</th>
+                          <th scope="col">Title</th>                
                           <th scope="col">Customer Name</th>
-                          <th scope="col">Amount</th>
+                          <th scope="col">Fee</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr class="font-normal">
-                          <th scope="row">01</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">02</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
-                        <tr class="font-normal">
-                          <th scope="row">03</th>
-                          <td>123456</td>
-                          <td>12 JAN 2023</td>
-                          <td>Lorem ipsum dolr sit amet</td>
-                          <td>0001</td>
-                          <td>Rob Shandell</td>
-                          <td>Php 150.00</td>
-                        </tr>
+                        <?php                                                  
+                            foreach ($query_run as $row) {
+                              ++$num;
+                              $request_id = $row["request_id"];
+                              $category = $row["category"];
+                              $date = $row["created_at"];
+                              $title = $row["title"];
+                              $fullName = $row["fullName"];
+                              $suggested_fee = $row["suggested_fee"];
+
+                              echo "
+                              <tr class='text-normal font-normal'>
+                                <th scope='row'>$num</th>
+                                <td>$request_id</td>
+                                <td>$category</td>
+                                <td>$date</td>
+                                <td>$title</td>
+                                <td>$fullName</td>
+                                <td>$suggested_fee</td>
+                              </tr>
+                              ";
+                            }
+                         ?>
                       </tbody>
                     </table>
                   </div>
