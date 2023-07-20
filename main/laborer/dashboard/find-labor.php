@@ -278,16 +278,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                         <div style="height: 130px;">
                           <p>
                             '.$request_description.'
-                          </p>
-                          <p>test</p>
-                          <p>test</p>
-                          <p>test</p>
-                          <p>test</p>
-                          <p>test</p>
-                          <p>test</p>
+                          </p>                        
                         </div>
                       </article>
-                      <footer class="row align-items-end mt-4">
+                      <footer class="row align-items-center mt-3">
                         <div class="col-4 blue-font text-center">
                           <i class="fa-solid fa-location-dot me-3"></i>
                           <span id="requestAddress">'.$request_address.'</span>
