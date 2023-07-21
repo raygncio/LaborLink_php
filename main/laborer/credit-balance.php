@@ -10,7 +10,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
   checkLaborer($_SESSION['user_role']);
   checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
+  $hasCreditBalance = true;
   
+  // get header details
   $query = "SELECT L.laborer_id, concat(U.first_name, ' ', U.middle_name, ' ', 
   U.last_name, ' ', U.suffix) AS full_name, L.credit_balance
   FROM laborers AS L
@@ -27,6 +29,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     $laborer_id = $row['laborer_id'];
   }
 
+  if($credit_balance == 0) {
+    $hasCreditBalance = false;
+  }
+
   if(isset($_POST['payBalance'])) {
     $amount = $_POST['amount'];
     $gcash = $_POST['gcashNo'];
@@ -34,7 +40,18 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     $query = "INSERT INTO payment
     (gcash_no, amount, laborer_id) VALUES
     ('$gcash', '$amount', $laborer_id)";
-    mysqli_query($conn, $query);         
+    $result = mysqli_query($conn, $query); 
+    if($result) {
+      $query = "UPDATE laborers
+      SET credit_balance = '0'
+      WHERE laborer_id = '$laborer_id'
+      ";
+      mysqli_query($conn, $query);  
+    }
+
+    header("Location: credit-balance.php");
+    exit();
+       
   }
 
   
@@ -133,6 +150,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                       >
                     </h5>
                   </div>
+
+                  <?php
+                  if($hasCreditBalance) {
+                  echo '
                   <div class="col-3 me-4">
                     <button
                       type="button"
@@ -143,6 +164,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                       <h1 class="header">Settle Credit Balance</h1>
                     </button>
                   </div>
+                  ';
+                  }
+                  ?>
+
                 </header>
 
                 <hr />
@@ -269,7 +294,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                   id="gcashRef"
                                   placeholder="0000-000-000000"
                                   name="gcashNo"
-                                  value=""
+                                  required
                                 />
                               </div>
                               <div class="col-7 mx-auto mb-3">
