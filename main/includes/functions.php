@@ -600,6 +600,39 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         
     }
 
+    function addCreditBalance($conn, $user_id, $suggested_fee) {
+        $rate = 0.10;
+        $new_credit_balance = $suggested_fee - ($suggested_fee/(1+$rate));
+        $total_credit_balance = 0;
+
+        $getBalance = "SELECT L.laborer_id, L.credit_balance
+        FROM laborers AS
+        INNER JOIN applications AS A
+        ON L.applicant_id = A.applicant_id
+        INNER JOIN users AS U
+        ON A.user_id = U.user_id
+        WHERE U.user_id = '$user_id'";
+
+        $query_run = mysqli_query($conn, $getBalance);
+        foreach($query_run as $row) {
+            $laborer_id = $row['laborer_id'];
+            $credit_balance = $row['credit_balance'];
+        }
+        
+        $total_credit_balance = $credit_balance + $new_credit_balance;
+
+        $sql = "UPDATE laborers
+        SET credit_balance = '$total_credit_balance'
+        WHERE laborer_id = '$laborer_id';
+        ";
+        mysqli_query($conn, $sql);
+        
+    }
+
+    function settleCreditBalance($conn, $user_id){
+        
+    }
+
     
 
 

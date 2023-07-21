@@ -89,6 +89,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         AND O.status = 'pending'
         ";
         mysqli_query($conn, $sql);
+
+        addCreditBalance($conn, $_SESSION['user_id'], $suggested_fee);
+
         header("Location: service-history.php?message=servicecompleted");      
         exit();
 
