@@ -86,7 +86,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         AR.status = 'completed',
         O.status = 'completed'
         WHERE R.request_id = '$request_id'
-        AND (AR.status = 'accepted' OR AR.status = 'rejected')
+        AND AR.status = 'accepted'
         AND O.status = 'pending'
         ";
         mysqli_query($conn, $sql);
