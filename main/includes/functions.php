@@ -391,7 +391,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             ON A.applicant_id = L.applicant_id
             INNER JOIN users AS U
             ON A.user_id = U.user_id                          
-            WHERE R.progress = 'completed' AND
+            WHERE R.progress = 'completed' AND AR.status = 'completed' AND
             R.user_id = '$user_id'
             ORDER BY R.created_at;
             ";
@@ -410,7 +410,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             ON R.request_id = AR.request_id
             INNER JOIN laborers AS L
             ON AR.laborer_id = L.laborer_id                        
-            WHERE R.progress = 'completed' 
+            WHERE R.progress = 'completed' AND AR.status = 'completed'
             AND AR.laborer_id = 
                 (SELECT L.laborer_id FROM laborers AS L
                 INNER JOIN applications AS A
