@@ -111,6 +111,18 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         ";
         mysqli_query($conn, $sql);
 
+        //rejects all other approved requests of the same request id
+        $sql = "UPDATE approved_requests AS AR
+        INNER JOIN requests AS R
+        ON AR.request_id = R.request_id
+        SET AR.status = 'rejected'
+        WHERE AR.request_id = '$request_id' 
+        AND AR.status = 'pending'
+        AND R.progress = 'pending'
+        ";
+        mysqli_query($conn, $sql);
+        
+
         $_SESSION['acceptedRequest'] = $request_id;
         $_SESSION['acceptedLaborer'] = $laborer_id;
 
