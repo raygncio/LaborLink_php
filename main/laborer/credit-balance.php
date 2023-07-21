@@ -42,9 +42,13 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     ('$gcash', '$amount', $laborer_id)";
     $result = mysqli_query($conn, $query); 
     if($result) {
-      $query = "UPDATE laborers
-      SET credit_balance = '0'
-      WHERE laborer_id = '$laborer_id'
+      $query = "UPDATE laborers AS L 
+      INNER JOIN applications AS A 
+      ON L.applicant_id = A.applicant_id
+      INNER JOIN users AS U
+      ON A.user_id = U.user_id
+      SET L. credit_balance = '0', U.status = 'active'
+      WHERE L.laborer_id = '$laborer_id'
       ";
       mysqli_query($conn, $query);  
     }
