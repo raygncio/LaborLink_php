@@ -10,6 +10,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
   checkLaborer($_SESSION['user_role']);
   checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
+  checkIfOnHold($conn, $_SESSION['user_id']); //checks if user is on hold
   $laborer_details = getLaborerDetails($conn, $_SESSION['user_id']);
   $hasAcceptedRequest = false;
 

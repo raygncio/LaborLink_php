@@ -2,8 +2,8 @@
 
 session_start();
 
-require_once "../../includes/config.php";
-require_once "../../includes/functions.php";
+require_once "../includes/config.php";
+require_once "../includes/functions.php";
 
 //check if user is logged in
 if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
@@ -11,22 +11,31 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   checkLaborer($_SESSION['user_role']);
   checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
   
-  $sql = "SELECT L.laborer_id, L.credit_balance
-        FROM laborers AS L
-        INNER JOIN applications AS A
-        ON L.applicant_id = A.applicant_id
-        INNER JOIN users AS U
-        ON A.user_id = U.user_id
-        WHERE U.user_id = '$user_id'";
-      
-  $query_run = mysqli_query($conn, $sql);
+  $rate = 0.10;
+  $new_credit_balance = $suggested_fee - ($suggested_fee/(1+$rate));
+  $total_credit_balance = 0;
+
+  $query = "SELECT concat(U.first_name, ' ', U.middle_name, ' ', 
+  U.last_name, ' ', U.suffix) AS full_name, L.credit_balance
+  FROM laborers AS L
+  INNER JOIN applications AS A
+  ON L.applicant_id = A.applicant_id
+  INNER JOIN users AS U
+  ON A.user_id = U.user_id
+  WHERE U.user_id = '$_SESSION[user_id]'";
+
+  $query_run = mysqli_query($conn, $query);
   foreach($query_run as $row) {
-            $laborer_id = $row['laborer_id'];
-            $credit_balance = $row['credit_balance'];
+    $full_name = $row['full_name'];
+    $credit_balance = $row['credit_balance'];
   }
+        
+  $total_credit_balance = $credit_balance + $new_credit_balance;
+
+
   
 } else {
-  header("Location: ../../index.php");
+  header("Location: ../index.php");
   exit();
 }
 
@@ -145,33 +154,46 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr class="font-normal">
-                              <th scope="row">01</th>
-                              <td>101</td>
-                              <td>1000-1000-1000</td>
-                              <td>Php 500</td>
-                              <td>12 JAN 2023</td>
-                            </tr>
-                            <tr class="font-normal">
-                              <th scope="row">01</th>
-                              <td>101</td>
-                              <td>1000-1000-1000</td>
-                              <td>Php 500</td>
-                              <td>12 JAN 2023</td>
-                            </tr>
-                            <tr class="font-normal">
-                              <th scope="row">01</th>
-                              <td>101</td>
-                              <td>1000-1000-1000</td>
-                              <td>Php 500</td>
-                              <td>12 JAN 2023</td>
-                            </tr>
+                          <?php 
+                            $num = 0; 
+                            $query = "SELECT P.payment_id, P.gcash_no,  P.amount, P.created_at 
+                            FROM payment AS P 
+                            INNER JOIN laborers AS L 
+                            ON P.laborer_id = L.laborer_id 
+                            INNER JOIN applications AS A 
+                            ON L.applicant_id = A.applicant_id 
+                            INNER JOIN users AS U 
+                            ON A.user_id = U.user_id 
+                            WHERE U.user_id = '$_SESSION[user_id]';";
+
+                            $query_run = mysqli_query($conn, $query);                           
+                            foreach ($query_run as $row) {
+                              ++$num;
+                              $payment_id = $row["payment_id"];
+                              $gcash_no = $row["gcash_no"];
+                              $amount = $row["amount"];
+                              $date = $row["created_at"];
+
+                              echo "
+                              <tr class='font-normal'>
+                                <th scope='row'>$num</th>
+                                <td>$payment_id</td>
+                                <td>$gcash_no</td>
+                                <td>$amount</td>
+                                <td>$date</td>
+                              </tr>
+                              ";
+                            }
+
+                            ?>
+                        
                           </tbody>
                         </table>
                       </div>
                     </div>
                   </article>
                   <!--End of Past Transactions-->
+
                   <!-- Rate Modal -->
                   <div
                     class="modal fade"
@@ -193,7 +215,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             aria-label="Close"
                           ></button>
                         </div>
-                        <form action="#">
+                        <form method="POST">
                           <div class="modal-body">
                             <div class="row">
                               <div class="col-7 mx-auto mb-3">
@@ -205,7 +227,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                   class="form-control"
                                   id="amountToPay"
                                   value="PHP 500"
-                                  disabled
+                                  readonly
                                 />
                               </div>
                               <div class="col-7 mx-auto mb-3">

@@ -633,7 +633,31 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         
     }
 
-    
+    function checkIfOnHold($conn, $user_id){
+        $sql = "SELECT status FROM users
+        WHERE user_id = '$user_id'
+        ";
+
+        $query_run = mysqli_query($conn, $sql);
+        $query_result = mysqli_num_rows($query_run);
+        if($query_result > 0) {
+            foreach($query_run as $row) {
+                $status = $row['status'];
+            }
+            if($status == 'onhold') {
+                header("Location: ../credit-balance.php?message=accountonhold");
+                exit();
+            }  
+        }
+
+        /* to all pages except credit-balance.php
+        if(isOnHold === true) {
+            header("Location: credit-balance.php?message=accountonhold");
+            exit();
+        }
+        */
+        
+    }
 
 
 
