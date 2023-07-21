@@ -72,6 +72,11 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       ";*/
     }
 
+    if(isset($_POST['offer'])) {
+      header("Location: find-labor.php?error=comingsoon");
+      exit();
+    }
+
     }
   
 } else {
