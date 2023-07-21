@@ -508,7 +508,6 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
 
     function getRequests($conn, $specialization) {
         
-        //check if request has already interested laborers
         $sql = "SELECT R.progress, R.category, R.title, R.request_id, concat(U.first_name, ' ', U.middle_name, ' ', 
         U.last_name, ' ', U.suffix) AS full_name, R.description,
         R.address, R.date_time, O.suggested_fee
@@ -518,6 +517,33 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         INNER JOIN offers AS O
         ON R.request_id = O.request_id
         WHERE (R.progress = 'pending' AND R.category = '$specialization')
+        ";
+
+        $result = mysqli_query($conn, $sql);
+        $query_result = mysqli_num_rows($result);
+        
+        if($query_result > 0){
+            return $result;  
+        } 
+ 
+    }
+
+    function getDirectRequests($conn, $laborer_id) {
+        
+        $sql = "SELECT AR.approval_id, R.progress, R.category, R.title, R.request_id, 
+        concat(U.first_name, ' ', U.middle_name, ' ', 
+        U.last_name, ' ', U.suffix) AS full_name, R.description,
+        R.address, R.date_time, O.suggested_fee
+        FROM requests AS R
+        INNER JOIN users AS U
+        ON R.user_id = U.user_id
+        INNER JOIN offers AS O
+        ON R.request_id = O.request_id
+        INNER JOIN approved_requests AS AR
+        ON R.request_id = AR.request_id
+        WHERE R.progress = 'pending'
+        AND AR.laborer_id = '$laborer_id'
+        AND AR.status = 'direct req'
         ";
 
         $result = mysqli_query($conn, $sql);

@@ -20,18 +20,17 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   checkPendingApprovals($conn, $laborer_id);
 
   $first_name = $_SESSION['first_name']; // for welcome message
-
-  /*$hasRequests = false; // for showing cancel button 
-  $hasInterestedLaborers = false; // for showing interested laborers
-  $hasAcceptedRequest = false; // for showing accepted requests and laborers*/
   
-  // get available requests for specialization
-  if($result = getRequests($conn, $specialization)) {
+  // get direct request
+  if($result = getDirectRequests($conn, $laborer_id)) {
 
     if(isset($_POST['accept'])){
-      $request_id = $_POST['accept'];
-      $sql = "INSERT INTO approved_requests SET status = 'pending', laborer_id = '$laborer_id', request_id = 
-      '$request_id'";
+      $approval_id = $_POST['accept'];
+      $sql = "UPDATE approved_requests 
+      SET status = 'accepted' 
+      WHERE approval_id = '$approval_id' AND
+      status = 'direct req'
+      ";
       mysqli_query($conn, $sql);
 
       /*$sql = "UPDATE approved_requests
@@ -40,6 +39,21 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       AND laborer_id = '$laborer_id'
       AND status = 'pending'
       ";*/
+    }
+
+    if(isset($_POST['reject'])){
+      $approval_id = $_POST['reject'];
+      $sql = "UPDATE approved_requests 
+      SET status = 'rejected' 
+      WHERE approval_id = '$approval_id' AND
+      status = 'direct req'
+      ";
+      mysqli_query($conn, $sql);
+    }
+
+    if(isset($_POST['offer'])) {
+      header("Location: find-labor.php?error=comingsoon");
+      exit();
     }
 
     }
@@ -100,8 +114,31 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
             });
         </script>
         <!--end of Navigation bar-->
+
+        <?php
+          if (isset($_GET["error"])){
+
+            $modal_title = "NOTICE";
+
+          if($_GET["error"] == "comingsoon") {
+            $error_message = "Feature unavailable.<br>We're working on it!";
+          } else if($_GET["error"] == "noresults") {
+            $error_message = "No results!";
+          } else if($_GET["error"] == "noavailablerequests") {
+            $error_message = "There are no available requests at the moment :(";
+          } 
+          echo '<script>
+              $(document).ready(function(){
+                  $("#server-message").modal("show")
+              });
+              </script>';
+          } 
+          
+        ?>
+
         <!--MAIN-->
         <div class="col p-4 orange-main">
+          <!--WELCOME-->
           <?php printWelcomeMessage($first_name, $_SESSION['user_role']); ?>
 
           <nav class="col-12 mt-3">
@@ -109,6 +146,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
               <li class="nav-item">
                 <a
                   class="nav-link text-start"
+                  aria-current="page"
                   href="find-labor.php"
                   >Find Labor</a
                 >
@@ -116,7 +154,6 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
               <li class="nav-item">
                 <a
                   class="nav-link active text-start"
-                  aria-current="page"
                   href="find-labor-dr.php"
                   >Direct Request</a
                 >
@@ -130,105 +167,127 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
             <div class="row p-3">
               <header class="col-7 mt-2">
                 <h2 class="display-4 header text-normal">
-                  Direct Requests
+                  Looking for the closest labor
                 </h2>
                 <p class="fs-4 font-normal text-normal">
                   Find the best labor you need!
                 </p>
-              </header>
+              </header>             
 
               <div
                 class="col-12 scrollable-x mx-auto rounded-4 p-4 d-flex flex-nowrap whites"
               >
                 <!--Clients-->
-                <div
-                  class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
-                >
-                  <header class="col-12">
-                    <div class="row align-items-start g-0">
-                      <div class="col-2">
-                        <div class="col-11">
-                          <img
-                            src="../../icons/blank-profile.png"
-                            class="img-fluid d-inline"
-                            alt="..."
-                          />
-                        </div>
-                      </div>
-                      <div class="col-6">
-                        <h4 class="fs-2 header">Labor Needed</h4>
-                        <p class="lead blue-font">Request ID: 123</p>
-                        <p class="blue-font">
-                          <i class="fa-solid fa-user me-3"></i>
-                          <span id="Client Name">Nina Escueta</span>
-                          <span class="rating orange-font ms-3">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                          </span>
-                        </p>
-                      </div>
-                      <div class="col text-end">
-                        <a href="#" class="btn btn-primary green-btn mb-3 me-2">
-                          Accept
-                        </a>
-                        <button type="button" class="btn btn-danger red-btn mb-3">Reject</button>
-                        <a
-                          href="find-labor-dr-mo.php"
-                          class="btn btn-primary yellow-btn"
-                        >
-                          Make Offer
-                        </a>
-                      </div>
-                    </div>
-                  </header>
-                  <article
-                    class="col-12 mt-1 font-normal text-black overflow-auto"
+                <?php
+                foreach($result as $row) {
+                  $request_title = $row['title'];
+                  $request_id = $row['request_id'];
+                  $customer_name = $row['full_name'];
+                  $request_description = $row['description'];
+                  $request_address = $row['address'];
+                  $request_time = $row['date_time'];
+                  $suggested_fee = $row['suggested_fee'];
+                  $approval_id = $row['approval_id'];
+
+                  echo '
+                  <div
+                    class="col-6 rounded-4 border border-5 orange-font p-3 my-1 me-2"
                   >
-                    <div class="client-description">
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequuntur pariatur blanditiis excepturi facilis
-                        assumenda maiores ipsum, atque, cupiditate veritatis
-                        velit, accusantium provident. Omnis esse optio sunt ut
-                        modi, nemo temporibus.
-                      </p>
+                      <header class="col-12">
+                        <div class="row align-items-start g-0">
+                          <div class="col-2">
+                            <div class="col-11">
+                              <img
+                                src="../../icons/blank-profile.png"
+                                class="img-fluid d-inline"
+                                alt="..."
+                              />
+                            </div>
+                          </div>
+                          <div class="col-6">
+                            <h4 class="fs-2 header d-inline-block text-truncate" 
+                            style="max-width: 400px;">
+                              '.$request_title.'
+                            </h4>
+                            <p class="lead blue-font">Request ID: '.$request_id.'<span class="badge bg-secondary ms-3">Direct Request</span></p>
+                            <p class="blue-font">
+                              <i class="fa-solid fa-user me-3"></i>
+                              <span id="Client Name">'.$customer_name.'</span>
+                              <span class="rating orange-font ms-3">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                              </span>
+                            </p>
+                          </div>
+                          <div class="col text-end">
+                            <form method="POST">
+                              <button type="submit" value="'.$approval_id.'" name="accept" class="btn btn-primary green-btn mb-3 me-2">
+                                Accept
+                              </button>
+                              <button type="submit" value="'.$approval_id.'" name="reject" class="btn btn-danger red-btn mb-3">Reject</button>
+                              <button
+                                type="submit"
+                                name="offer"
+                                class="btn btn-primary yellow-btn"
+                              >
+                                Make Offer
+                              </button>
+                          </form>
+                          </div>
+                        </div>
+                      </header>
+                      <article
+                        class="row mt-1 font-normal text-black overflow-auto"
+                      >
+                        <div style="height: 130px;">
+                          <p>
+                            '.$request_description.'
+                          </p>                        
+                        </div>
+                      </article>
+                      <footer class="row align-items-center mt-3">
+                        <div class="col-4 blue-font text-center">
+                          <i class="fa-solid fa-location-dot me-3"></i>
+                          <span id="requestAddress">'.$request_address.'</span>
+                        </div>
+                        <div class="col-4 blue-font text-center">
+                          <i class="fa-solid fa-clock me-3"></i>
+                          <span id="requestTime">'.$request_time.'</span>
+                        </div>
+                        <div class="col-4 blue-font text-center">
+                          <i class="fa-solid fa-tag me-3"></i>
+                          <span id="suggestedFee">Php '.$suggested_fee.'</span>
+                        </div>
+                      </footer>
                     </div>
-                  </article>
-                  <footer class="row align-items-end mt-3">
-                    <div class="col-4 blue-font text-center">
-                      <i class="fa-solid fa-location-dot me-3"></i>
-                      <span id="requestAddress">516 Juan Luna Ave.</span>
-                    </div>
-                    <div class="col-4 blue-font text-center">
-                      <i class="fa-solid fa-clock me-3"></i>
-                      <span id="requestTime">12:00 PM</span>
-                    </div>
-                    <div class="col-4 blue-font text-center">
-                      <i class="fa-solid fa-tag me-3"></i>
-                      <span id="suggestedFee">Php 550</span>
-                    </div>
-                  </footer>
-                </div>
+                  ';              
+                }                
+                ?>
+                <!--End of Clients -->
               </div>
             </div>
           </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage"><?php echo $modal_title; ?></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $error_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
         </div>
       </div>
     </div>

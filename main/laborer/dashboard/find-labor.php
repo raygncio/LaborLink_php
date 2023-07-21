@@ -60,8 +60,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     if(isset($_POST['accept'])){
       $request_id = $_POST['accept'];
-      $sql = "INSERT INTO approved_requests SET status = 'pending', laborer_id = '$laborer_id', request_id = 
-      '$request_id'";
+      $sql = "INSERT INTO approved_requests 
+      (status, laborer_id, request_id) 
+      VALUES ('pending', '$laborer_id', '$request_id')
+      ";
       mysqli_query($conn, $sql);
 
       /*$sql = "UPDATE approved_requests
