@@ -32,6 +32,8 @@
       $updateQuery = "UPDATE users SET status = 'active' WHERE user_id = '$userId'";
     } else if ($selectedAction == 'deactivate') {
       $updateQuery = "UPDATE users SET status = 'blocked' WHERE user_id = '$userId'";
+    } else if ($selectedAction == 'onhold') {
+      $updateQuery = "UPDATE users SET status = 'onhold' WHERE user_id = '$userId'";
     } 
     $updateResult = mysqli_query($conn, $updateQuery);
   }
@@ -326,6 +328,8 @@
                                     echo "<span class='badge bg-secondary fs-6'>$lr_status</span>";
                                   } else if ($lr_status === "blocked") {
                                     echo "<span class='badge bg-danger fs-6'>$lr_status</span>";
+                                  } else if ($lr_status === "onhold") {
+                                    echo "<span class='badge bg-warning fs-6'>$lr_status</span>";
                                   }
 
                                   echo "
@@ -338,7 +342,8 @@
                                     </button>
                                     <ul class='dropdown-menu'>
                                     <li><button class='dropdown-item' type='submit' name='laborersAction' value='activate'>Activate</button></li>
-                                    <li><button class='dropdown-item' type='submit' name='laborersAction' value='deactivate'>Block</button></li>                                 
+                                    <li><button class='dropdown-item' type='submit' name='laborersAction' value='deactivate'>Block</button></li>
+                                    <li><button class='dropdown-item' type='submit' name='laborersAction' value='onhold'>On hold</button></li>                                  
                                     </ul>
                                   </div>
                                   </td>

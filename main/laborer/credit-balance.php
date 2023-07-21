@@ -1,3 +1,37 @@
+<?php 
+
+session_start();
+
+require_once "../../includes/config.php";
+require_once "../../includes/functions.php";
+
+//check if user is logged in
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+
+  checkLaborer($_SESSION['user_role']);
+  checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
+  
+  $sql = "SELECT L.laborer_id, L.credit_balance
+        FROM laborers AS L
+        INNER JOIN applications AS A
+        ON L.applicant_id = A.applicant_id
+        INNER JOIN users AS U
+        ON A.user_id = U.user_id
+        WHERE U.user_id = '$user_id'";
+      
+  $query_run = mysqli_query($conn, $sql);
+  foreach($query_run as $row) {
+            $laborer_id = $row['laborer_id'];
+            $credit_balance = $row['credit_balance'];
+  }
+  
+} else {
+  header("Location: ../../index.php");
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
