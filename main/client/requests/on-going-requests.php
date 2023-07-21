@@ -293,9 +293,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         <?php
           if (isset($_GET["message"])){
 
-            $modal_title = "Congratulations!";
+            $modal_title = "NOTICE";
 
           if($_GET["message"] == "requestsuccessful") {
+            $modal_title = "Congratulations!";
             $modal_message = "Your request has been posted successfully!";
           } else if ($_GET["message"] == "haspendingrequest") {
             $modal_message = "You can only make 1 request at a time!";
