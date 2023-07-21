@@ -91,7 +91,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         ";
         mysqli_query($conn, $sql);
 
-        addCreditBalance($conn, $_SESSION['user_id'], $suggested_fee);
+        addCreditBalance($conn, $_SESSION['user_id'], $suggested_fee, $_SESSION['user_role'], $request_id);
 
         header("Location: service-history.php?message=servicecompleted");      
         exit();

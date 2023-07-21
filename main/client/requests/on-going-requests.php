@@ -216,6 +216,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           AND O.status = 'pending'
           ";
           mysqli_query($conn, $sql);
+
+          addCreditBalance($conn, $_SESSION['user_id'], $suggested_fee, $_SESION['user_role'], $request_id);
+
           header("Location: request-history.php?message=requestcompleted");      
           exit();
 
