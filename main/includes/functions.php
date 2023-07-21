@@ -606,7 +606,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         $total_credit_balance = 0;
 
         $getBalance = "SELECT L.laborer_id, L.credit_balance
-        FROM laborers AS
+        FROM laborers AS L
         INNER JOIN applications AS A
         ON L.applicant_id = A.applicant_id
         INNER JOIN users AS U
