@@ -41,7 +41,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       ";
       mysqli_query($conn, $sql);
 
-      header("Location: find-labor.php");
+      header("Location: find-labor-dr.php");
       exit();
 
       /*$sql = "UPDATE approved_requests
@@ -61,7 +61,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       ";
       mysqli_query($conn, $sql);
 
-      header("Location: find-labor.php");
+      header("Location: find-labor-dr.php");
       exit();
     }
 
