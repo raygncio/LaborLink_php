@@ -29,7 +29,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
     //check if progress is pending or in progress
     if($progress == 'pending') {
       $isWaitingForApproval = true;
-    } else if ($progress == 'in progress' || $progress == 'partial-lr') {
+    } else if ($progress == 'in progress' || $progress == 'partial-lr' || $progress == 'partial-cr') {
       $isInProgress = true;
     }
     
