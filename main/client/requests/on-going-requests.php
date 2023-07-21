@@ -18,7 +18,6 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
 
     $result = hasPendingRequest($conn, $_SESSION['user_id']);
     if($result) {
-      $hasRequests = true; // for showing cancel button 
       
       //get on-going request details
       foreach($result as $row){
@@ -26,7 +25,11 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
         $request_id = $row['request_id'];
         $request_address = $row['address'];
         $request_time = $row['date_time'];
-  
+        $request_progress = $row['progress'];
+      }
+
+      if($request_progress == 'pending') {
+        $hasRequests = true; // for showing the ongoing request details NOT in progress and cancel button 
       }
   
       $result = getSuggestedFee($conn, $request_id);
