@@ -28,10 +28,20 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       $approval_id = $_POST['accept'];
       $sql = "UPDATE approved_requests 
       SET status = 'accepted' 
-      WHERE approval_id = '$approval_id' AND
-      status = 'direct req'
+      WHERE approval_id = '$approval_id'
       ";
       mysqli_query($conn, $sql);
+
+      $sql = "UPDATE requests AS R
+      INNER JOIN approved_requests AS AR
+      ON R.request_id = AR.request_id
+      SET R.progress = 'in progress'
+      WHERE AR.approval_id = '$approval_id'
+      ";
+      mysqli_query($conn, $sql);
+
+      header("Location: find-labor.php");
+      exit();
 
       /*$sql = "UPDATE approved_requests
       SET status = 'accepted'
@@ -49,6 +59,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       status = 'direct req'
       ";
       mysqli_query($conn, $sql);
+
+      header("Location: find-labor.php");
+      exit();
     }
 
     if(isset($_POST['offer'])) {
