@@ -392,7 +392,9 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             INNER JOIN users AS U
             ON A.user_id = U.user_id                          
             WHERE R.progress = 'completed' AND
-            R.user_id = '$user_id';";
+            R.user_id = '$user_id'
+            ORDER BY R.created_at;
+            ";
             $query_run = mysqli_query($conn, $query); 
 
         } else if ($user_role == "laborer") {
@@ -416,6 +418,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
                 INNER JOIN users AS U
                 ON A.user_id = U.user_id
                 WHERE U.user_id = '$user_id')
+            ORDER BY R.created_at;
             ";
             $query_run = mysqli_query($conn, $query); 
         }
