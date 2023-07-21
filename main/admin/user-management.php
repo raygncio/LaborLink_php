@@ -16,20 +16,20 @@
 
   if (isset($_POST['activate'])) {
     $user_id = $_POST['activate'];
-    $updateQuery = "UPDATE users SET status = 'active' WHERE user_id = '$userId'";
+    $updateQuery = "UPDATE users SET status = 'active' WHERE user_id = '$user_id'";
     mysqli_query($conn, $updateQuery);
   }
 
   if (isset($_POST['block'])) {
     $user_id = $_POST['block'];
-    $updateQuery = "UPDATE users SET status = 'blocked' WHERE user_id = '$userId'";
+    $updateQuery = "UPDATE users SET status = 'blocked' WHERE user_id = '$user_id'";
     mysqli_query($conn, $updateQuery);
 
   }
 
   if (isset($_POST['onhold'])) {
     $user_id = $_POST['onhold'];
-    $updateQuery = "UPDATE users SET status = 'onhold' WHERE user_id = '$userId'";
+    $updateQuery = "UPDATE users SET status = 'onhold' WHERE user_id = '$user_id'";
     mysqli_query($conn, $updateQuery);
   }
   
@@ -181,8 +181,8 @@
                                       Actions
                                     </button>
                                     <ul class='dropdown-menu'>
-                                      <li><button class='dropdown-item' type='submit' name='clientsAction' value='activate'>Activate</button></li>
-                                      <li><button class='dropdown-item' type='submit' name='clientsAction' value='blocked'>Block</button></li>
+                                      <li><button class='dropdown-item' type='submit' name='activate' value='".$userId."'>Activate</button></li>
+                                      <li><button class='dropdown-item' type='submit' name='block' value='".$userId."'>Block</button></li>
                                     </ul>
                                   </div>
                               </td>
@@ -336,9 +336,9 @@
                                       Actions
                                     </button>
                                     <ul class='dropdown-menu'>
-                                    <li><button class='dropdown-item' type='submit' name='activate' value='activate'>Activate</button></li>
-                                    <li><button class='dropdown-item' type='submit' name='block' value='deactivate'>Block</button></li>
-                                    <li><button class='dropdown-item' type='submit' name='onhold' value='onhold'>On hold</button></li>                                  
+                                    <li><button class='dropdown-item' type='submit' name='activate' value='$lr_user_id'>Activate</button></li>
+                                    <li><button class='dropdown-item' type='submit' name='block' value='$lr_user_id'>Block</button></li>
+                                    <li><button class='dropdown-item' type='submit' name='onhold' value='$lr_user_id'>On hold</button></li>                                  
                                     </ul>
                                   </div>
                                   </td>
