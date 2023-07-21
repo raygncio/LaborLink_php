@@ -72,6 +72,9 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
       AND laborer_id = '$laborer_id'
       AND status = 'pending'
       ";*/
+
+      header("Location: find-labor.php");
+      exit();
     }
 
     if(isset($_POST['offer'])) {
