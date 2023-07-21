@@ -725,7 +725,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
         INNER JOIN users AS U
         ON U.user_id = R.user_id
         WHERE U.user_id = '$user_id'
-        AND R.progress = 'pending'
+        AND (R.progress = 'pending' OR R.progress = 'in progress')
         ";
         $query_run = mysqli_query($conn, $sql);
         $query_result = mysqli_num_rows($query_run);
