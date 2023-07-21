@@ -655,7 +655,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                           Request ID: '.$request_id.'
                         </p>
                       </div>
-                      <div class="font-normal d-flex justify-content-between">
+                      <div class="font-normal text-normal d-flex justify-content-between">
                         <div class="blue-font fs-4">
                           <p>
                             <i class="fa-solid fa-location-dot me-3"></i>
