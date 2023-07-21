@@ -11,11 +11,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   checkLaborer($_SESSION['user_role']);
   checkUserStatus($conn, $_SESSION['user_id']); //checks user if blocked
   
-  $rate = 0.10;
-  $new_credit_balance = $suggested_fee - ($suggested_fee/(1+$rate));
-  $total_credit_balance = 0;
-
-  $query = "SELECT concat(U.first_name, ' ', U.middle_name, ' ', 
+  $query = "SELECT L.laborer_id, concat(U.first_name, ' ', U.middle_name, ' ', 
   U.last_name, ' ', U.suffix) AS full_name, L.credit_balance
   FROM laborers AS L
   INNER JOIN applications AS A
@@ -28,10 +24,18 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
   foreach($query_run as $row) {
     $full_name = $row['full_name'];
     $credit_balance = $row['credit_balance'];
+    $laborer_id = $row['laborer_id'];
   }
-        
-  $total_credit_balance = $credit_balance + $new_credit_balance;
 
+  if(isset($_POST['payBalance'])) {
+    $amount = $_POST['amount'];
+    $gcash = $_POST['gcashNo'];
+    
+    $query = "INSERT INTO payment
+    (gcash_no, amount, laborer_id) VALUES
+    ('$gcash', '$amount', $laborer_id)";
+    mysqli_query($conn, $query);         
+  }
 
   
 } else {
@@ -90,7 +94,22 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           });
         </script>
         <!--end of Navigation bar-->
+        <?php
+          if (isset($_GET["message"])){
 
+            $modal_title = "Your account is on hold!";
+
+          if($_GET["message"] == "accountonhold") {
+            $error_message = "Max credit balance is <em>Php 500</em> <br>Please settle the balance now.";
+          }
+          echo '<script>
+              $(document).ready(function(){
+                  $("#server-message").modal("show")
+              });
+              </script>';
+          } 
+          
+        ?>
         <!--MAIN-->
         <div class="col p-4">
           <main
@@ -104,10 +123,10 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                   <div class="col ms-4">
                     <h1 class="display-1 blue-font header">
                       Credit Balance: <span class="orange-font">Php</span>
-                      <spanc class="orange-font">500</spanc>
+                      <spanc class="orange-font"><?php echo $credit_balance ?></spanc>
                     </h1>
                     <h5 class="header text-normal">
-                      Laborer Name,
+                      <?php echo $full_name ?>,
                       <span class="ms-1 blue-font font-normal"
                         >please settle your credit balance immediately to
                         continue using our services</span
@@ -219,16 +238,26 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                           <div class="modal-body">
                             <div class="row">
                               <div class="col-7 mx-auto mb-3">
+                                <div class="blue-font">
+                                <p class="text-normal fs-3">GCash</p>
+                                <p class="text-normal"><span class="font-normal">Account Name:</span><br>Nina Thalia Anne Escueta</p>
+                                <p class="text-normal"><span class="font-normal">Account No.:</span><br>09123450422</p><br>
+                                </div>
                                 <label for="amountToPay" class="form-label"
                                   >Amount to Pay:</label
                                 >
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  id="amountToPay"
-                                  value="PHP 500"
-                                  readonly
-                                />
+                                <?php
+                                echo '
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    id="amountToPay"
+                                    name="amount"
+                                    value="'.$credit_balance.'"
+                                    readonly
+                                  />
+                                ';
+                                ?>
                               </div>
                               <div class="col-7 mx-auto mb-3">
                                 <label for="gcashRef" class="form-label"
@@ -238,6 +267,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                                   type="text"
                                   class="form-control"
                                   id="gcashRef"
+                                  placeholder="0000-000-000000"
+                                  name="gcashNo"
                                   value=""
                                 />
                               </div>
@@ -258,6 +289,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                             <button
                               type="submit"
                               class="btn text-white green-btn"
+                              name="payBalance"
                               data-bs-dismiss="modal"
                             >
                               Pay
@@ -272,6 +304,24 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
               </div>
             </div>
           </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="server-message" tabindex="-1" aria-labelledby="serverMessage" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 header" id="serverMessage"><?php echo $modal_title; ?></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body font-normal text-normal">
+            <?php echo $error_message; ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary blue-btn" data-bs-dismiss="modal">Got it</button>
+          </div>
         </div>
       </div>
     </div>

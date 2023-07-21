@@ -634,6 +634,26 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
     }
 
     function checkIfOnHold($conn, $user_id){
+        $sql = "SELECT L.credit_balance FROM laborers AS L
+        INNER JOIN applications AS A
+        ON L.applicant_id = A.applicant_id
+        INNER JOIN users AS U
+        ON A.user_id = U.user_id
+        WHERE U.user_id = '$user_id'
+        ";
+        $query_run = mysqli_query($conn, $sql);
+        foreach($query_run as $row) {
+            $credit_balance = $row['credit_balance'];
+        }
+
+        if($credit_balance >= 500) {
+            $sql = "UPDATE users
+            SET status = 'onhold'
+            WHERE user_id = '$user_id'
+            ";
+            mysqli_query($conn, $sql);
+        }
+
         $sql = "SELECT status FROM users
         WHERE user_id = '$user_id'
         ";
