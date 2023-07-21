@@ -627,30 +627,36 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
                     <div class="row align-items-center">
                       <div class="col-12 blue-font">
                         <h2 class="display-5 header">
-                          '.$request_title.'
+                          '.$request_title.' 
+                          <span class="badge fs-5 green-btn align-top">
+                            In Progress
+                          </span>
                         </h2>
-                        <p class="fs-3 font-normal text-normal">
+                        <p class="fs-3 font-normal text-normal orange-font">
                           Request ID: '.$request_id.'
                         </p>
                       </div>
-                      <div class="col-6 blue-font fs-4">
-                        <p>
-                          <i class="fa-solid fa-location-dot me-3"></i>
-                          <span id="requestAddress">'.$request_address.'</span>
-                        </p>
-                      </div>
-                      <div class="col-4 blue-font fs-4">
-                        <p>
-                          <i class="fa-solid fa-clock me-3"></i>
-                          '.$request_time.'
-                        </p>
-                      </div>
-                      <div class="col-2 blue-font fs-4">
-                        <p>
-                          <i class="fa-solid fa-tag me-3"></i>
-                          '.$suggested_fee.'
-                        </p>
-                      </div>
+                      <div class="font-normal d-flex justify-content-between">
+                        <div class="blue-font fs-4">
+                          <p>
+                            <i class="fa-solid fa-location-dot me-3"></i>
+                            <span id="requestAddress">'.$request_address.'</span>
+                          </p>
+                        </div>
+                        <div class="blue-font fs-4">
+                          <p>
+                            <i class="fa-solid fa-clock me-3"></i>
+                            '.$request_time.'
+                          </p>
+                        </div>
+                        <div class="blue-font fs-4 me-4">
+                          <p>
+                            <i class="fa-solid fa-tag me-3"></i>
+                            '.$suggested_fee.'
+                          </p>
+                        </div>
+                      </div>                   
+
                     </div>
                     <hr />
 
