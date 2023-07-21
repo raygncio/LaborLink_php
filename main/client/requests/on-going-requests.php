@@ -217,7 +217,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
           ";
           mysqli_query($conn, $sql);
 
-          addCreditBalance($conn, $_SESSION['user_id'], $suggested_fee, $_SESION['user_role'], $request_id);
+          addCreditBalance($conn, $_SESSION['user_id'], $suggested_fee, $_SESSION['user_role'], $request_id);
 
           header("Location: request-history.php?message=requestcompleted");      
           exit();

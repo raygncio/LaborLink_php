@@ -621,7 +621,7 @@ function createUser($conn, $user_role, $first_name, $last_name, $middle_name, $s
             ON AR.laborer_id = L.laborer_id
             INNER JOIN requests AS R
             ON AR.request_id = R.request_id
-            WHERE R.request_id = '$request_id AND
+            WHERE R.request_id = '$request_id' AND
             AR.status = 'completed';
             ";          
         }
