@@ -6,7 +6,7 @@
 
 ## Summary
 
-This is a web app version of LaborLink, developed using PHP, HTML, CSS, JS, MySQL, and XAMPP. 
+This is a web app version of LaborLink, developed using PHP, HTML, CSS (Bootstrap 5), JS, MySQL, and XAMPP. 
 
 > [!NOTE]
 > This is a prototype of the android application, 
